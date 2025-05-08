@@ -18,12 +18,19 @@ services:
     volumes:
       - ~/.aspnet/https:/https:ro
 
-  frontend:
+  client:
     build:
-      context: react
+      context: react-tutorial-client
       dockerfile: Dockerfile
-    image: react-tutorial-frontend
-    container_name: "react-tutorial-frontend"
+    image: react-tutorial-client
+    container_name: "react-tutorial-client"
+    init: true
+    volumes:
+      - type: bind
+        source: react-tutorial-client
+        target: /usr/src/app
+      - type: volume
+        target: /usr/src/app/node_modules
     ports:
       - "5173:5173"
     depends_on:
