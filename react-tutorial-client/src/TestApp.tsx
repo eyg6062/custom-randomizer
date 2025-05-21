@@ -1,9 +1,13 @@
 import './index.css'
+import reactLogo from './assets/react.svg'
 
 function TestApp() {
     return(
         <>
-            <h1>meep</h1>
+            <main>
+                <img src={reactLogo} width="40px"/>
+                <h1>meep</h1>
+            </main>
         </>
     )
 }
