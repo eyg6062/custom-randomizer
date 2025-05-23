@@ -1,5 +1,17 @@
 services:
 
+  db:
+    image: postgres:17.5-alpine
+    container_name: db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1048
+      - POSTGRES_DB=react_tutorial_db
+    ports:
+      - 5432:5432
+
   api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -39,3 +51,6 @@ services:
       - "5173:5173"
     depends_on:
       - api
+
+volumes:
+  pgdata:
