@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using react_tutorial_api.Models;
+using custom_randomizer_api.Models;
 
 #nullable disable
 
-namespace react_tutorial_api.Migrations
+namespace custom_randomizer_api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20250523061548_Init")]
@@ -24,7 +24,7 @@ namespace react_tutorial_api.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("react_tutorial_api.Models.Test", b =>
+            modelBuilder.Entity("custom_randomizer_api.Models.Test", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

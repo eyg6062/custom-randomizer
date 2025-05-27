@@ -1,4 +1,4 @@
-namespace react_tutorial_api
+namespace custom_randomizer_api
 {
     public class WeatherForecast
     {

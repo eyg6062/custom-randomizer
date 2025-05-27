@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>react_tutorial_api</RootNamespace>
+    <RootNamespace>custom-randomizer-api</RootNamespace>
     <UserSecretsId>afbf08c5-7f96-4dc7-8a2e-ff1ab4238adb</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>

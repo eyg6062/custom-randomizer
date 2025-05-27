@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using react_tutorial_api.Models;
+using custom_randomizer_api.Models;
 
-namespace react_tutorial_api.Controllers
+namespace custom_randomizer_api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

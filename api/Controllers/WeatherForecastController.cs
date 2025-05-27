@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace react_tutorial_api.Controllers
+namespace custom_randomizer_api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

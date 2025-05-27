@@ -1,4 +1,4 @@
-﻿namespace react_tutorial_api.Models
+﻿namespace custom_randomizer_api.Models
 {
     public class Test
     {

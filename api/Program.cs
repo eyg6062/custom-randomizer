@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using react_tutorial_api.Models;
+using custom_randomizer_api.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

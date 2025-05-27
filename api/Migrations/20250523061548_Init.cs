@@ -3,7 +3,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace react_tutorial_api.Migrations
+namespace custom_randomizer_api.Migrations
 {
     /// <inheritdoc />
     public partial class Init : Migration

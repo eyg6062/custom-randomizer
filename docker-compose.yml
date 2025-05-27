@@ -8,7 +8,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=1048
-      - POSTGRES_DB=react_tutorial_db
+      - POSTGRES_DB=custom_randomizer_db
     ports:
       - 5432:5432
 
@@ -18,32 +18,32 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - ASPNETCORE_Kestrel__Certificates__Default__Password=1048
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/react-tutorial.pfx
-    container_name: react-tutorial-api
-    image: react-tutorial-api
-    command: ["dotnet", "watch", "run", "--project" , "react-tutorial-api.csproj", "--urls", "http://*:8080;https://*:8081"]
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/custom-randomizer.pfx
+    container_name: custom-randomizer-api
+    image: custom-randomizer-api
+    command: ["dotnet", "watch", "run", "--project" , "custom-randomizer-api.csproj", "--urls", "http://*:8080;https://*:8081"]
     build:
-      context: react-tutorial-api
+      context: api
       dockerfile: Dockerfile.dev
     ports:
       - "8080:8080"
       - "8081:8081"
     volumes:
       - ~/.aspnet/https:/https:ro
-      - ./react-tutorial-api:/src
+      - ./api:/src
       - /src/obj/ # <- directory won't be mounted
       - /src/bin/ # <- directory won't be mounted
 
   client:
     build:
-      context: react-tutorial-client
+      context: custom-randomizer-client
       dockerfile: Dockerfile
-    image: react-tutorial-client
-    container_name: "react-tutorial-client"
+    image: custom-randomizer-client
+    container_name: "custom-randomizer-client"
     init: true
     volumes:
       - type: bind
-        source: react-tutorial-client
+        source: custom-randomizer-client
         target: /usr/src/app
       - type: volume
         target: /usr/src/app/node_modules
