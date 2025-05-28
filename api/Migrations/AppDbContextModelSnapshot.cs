@@ -7,7 +7,7 @@ using custom_randomizer_api.Models;
 
 #nullable disable
 
-namespace custom_randomizer_api.Migrations
+namespace customrandomizerapi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot

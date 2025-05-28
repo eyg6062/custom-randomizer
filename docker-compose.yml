@@ -33,17 +33,19 @@ services:
       - ./api:/src
       - /src/obj/ # <- directory won't be mounted
       - /src/bin/ # <- directory won't be mounted
+    depends_on:
+      - db
 
   client:
     build:
-      context: custom-randomizer-client
+      context: client
       dockerfile: Dockerfile
     image: custom-randomizer-client
     container_name: "custom-randomizer-client"
     init: true
     volumes:
       - type: bind
-        source: custom-randomizer-client
+        source: client
         target: /usr/src/app
       - type: volume
         target: /usr/src/app/node_modules

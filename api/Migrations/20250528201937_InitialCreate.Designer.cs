@@ -8,11 +8,11 @@ using custom_randomizer_api.Models;
 
 #nullable disable
 
-namespace custom_randomizer_api.Migrations
+namespace customrandomizerapi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250523061548_Init")]
-    partial class Init
+    [Migration("20250528201937_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
