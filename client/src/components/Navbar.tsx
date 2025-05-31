@@ -1,13 +1,12 @@
-import { Link } from 'react-router'
+import { NavLink } from 'react-router'
+import './Header.css'
 
 function Navbar() {
   return (
     <nav>
-        <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/dashboard">Dashboard</Link></li>
-            <li><Link to="/about">About</Link></li>
-        </ul>
+        <NavLink to="/" end className="navlink">Home</NavLink>
+        <NavLink to="/dashboard" className="navlink">Dashboard</NavLink>
+        <NavLink to="/about" className="navlink">About</NavLink>
     </nav>
   )
 }
