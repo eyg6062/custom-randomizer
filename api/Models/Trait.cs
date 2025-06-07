@@ -1,6 +1,7 @@
 ﻿using custom_randomizer_api.Models.Enums;
 using custom_randomizer_api.Models.TraitOptions;
 using Models.Randomizer;
+using NodaTime;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -16,10 +17,13 @@ namespace custom_randomizer_api.Models
         public TraitType TraitType { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public DateTime CreatedAt { get; set; }
+        public Instant CreatedAt { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime UpdatedAt { get; set; }
+        public Instant UpdatedAt { get; set; }
+
+        public Instant? DeletedAt { get; set; }
+
+        public bool IsDeleted { get; set; } = false;
 
         public int RandomizerId { get; set; }
 

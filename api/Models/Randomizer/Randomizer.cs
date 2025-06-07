@@ -1,4 +1,5 @@
 using custom_randomizer_api.Models;
+using NodaTime;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -14,11 +15,15 @@ namespace Models.Randomizer
         public string? Description { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public DateTime CreatedAt { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime UpdatedAt { get; set; }
+        public Instant CreatedAt { get; set; }
+
+        public Instant UpdatedAt { get; set; }
+
+        public Instant? DeletedAt { get; set; }
+
         public bool IsDeleted { get; set; } = false;
+
         public ICollection<Trait> Traits { get; } = new List<Trait>();
 
     }

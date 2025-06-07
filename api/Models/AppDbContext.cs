@@ -1,6 +1,7 @@
 ﻿using custom_randomizer_api.Models.TraitOptions;
 using Microsoft.EntityFrameworkCore;
 using Models.Randomizer;
+using NodaTime;
 
 namespace custom_randomizer_api.Models
 {
@@ -9,8 +10,6 @@ namespace custom_randomizer_api.Models
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) 
         {
         }
-
-        public DbSet<Test> Test { get; set; }
 
         public DbSet<Randomizer> Randomizers { get; set; }
 
@@ -35,6 +34,9 @@ namespace custom_randomizer_api.Models
                 .Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("now()");
 
+            modelBuilder.Entity<Randomizer>()
+                .HasQueryFilter(e => !e.IsDeleted);
+
 
             modelBuilder.Entity<Trait>()
                 .Property(e => e.CreatedAt)
@@ -45,15 +47,20 @@ namespace custom_randomizer_api.Models
                 .HasDefaultValueSql("now()");
 
 
+            modelBuilder.Entity<Trait>()
+                .HasQueryFilter(e => !e.IsDeleted);
+
+
             base.OnModelCreating(modelBuilder);
         }
 
         public override int SaveChanges()
         {
-            // updates UpdatedAt when changes are made
-
             var modifiedEntities = ChangeTracker.Entries()
                 .Where(e => e.State == EntityState.Modified);
+
+            var deletedEntities = ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Deleted);
 
             foreach (var entity in modifiedEntities)
             {
@@ -61,11 +68,48 @@ namespace custom_randomizer_api.Models
                 var updatedAtProperty = entity.Properties.FirstOrDefault(p => p.Metadata.Name == "UpdatedAt");
                 if (updatedAtProperty != null)
                 {
-                    entity.Property("UpdatedAt").CurrentValue = DateTime.Now;
+                    entity.Property("UpdatedAt").CurrentValue = SystemClock.Instance.GetCurrentInstant();
                 }  
             }
 
+            foreach (var entity in deletedEntities)
+            {
+                entity.Property("DeletedAt").CurrentValue = SystemClock.Instance.GetCurrentInstant();
+                entity.Property("IsDeleted").CurrentValue = true;
+
+                entity.State = EntityState.Modified;
+            }
+
             return base.SaveChanges();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            var modifiedEntities = ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Modified);
+
+            var deletedEntities = ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Deleted);
+
+            foreach (var entity in modifiedEntities)
+            {
+                // checks if UpdatedAt property exists
+                var updatedAtProperty = entity.Properties.FirstOrDefault(p => p.Metadata.Name == "UpdatedAt");
+                if (updatedAtProperty != null)
+                {
+                    entity.Property("UpdatedAt").CurrentValue = SystemClock.Instance.GetCurrentInstant();
+                }
+            }
+
+            foreach (var entity in deletedEntities)
+            {
+                entity.Property("DeletedAt").CurrentValue = SystemClock.Instance.GetCurrentInstant();
+                entity.Property("IsDeleted").CurrentValue = true;
+
+                entity.State = EntityState.Modified;
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
         }
     }
 }

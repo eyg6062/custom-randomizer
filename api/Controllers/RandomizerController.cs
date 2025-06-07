@@ -66,10 +66,35 @@ namespace custom_randomizer_api.Controllers
 			return Ok(randomizer);
         }
 
+		[HttpPut("{id}")]
+		public async Task<IActionResult> PutRandomizer(int id, [FromBody] PutRandomizerDto randomizerDto) {
+
+            var randomizer = await _context.Randomizers.FindAsync(id);
+
+            if (randomizer == null)
+            {
+                return NotFound();
+            }
+
+			if (randomizerDto.Name != null) randomizer.Name = randomizerDto.Name;
+            if (randomizerDto.Description != null) randomizer.Description = randomizerDto.Description;
+
+            await _context.SaveChangesAsync(); 
+			return Ok(); 
+		}
+
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteRandomizer(int id)
 		{
-			var rows = await _context.Randomizers.Where(x => x.Id == id).ExecuteDeleteAsync();
+			var randomizer = await _context.Randomizers.FindAsync(id);
+
+            if (randomizer == null)
+            {
+                return NotFound();
+            }
+
+			_context.Randomizers.Remove(randomizer);
+			await _context.SaveChangesAsync();
 
 			return Ok(true);
 		}
