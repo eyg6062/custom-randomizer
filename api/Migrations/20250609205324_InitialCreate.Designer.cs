@@ -12,7 +12,7 @@ using custom_randomizer_api.Models;
 namespace customrandomizerapi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250607001120_InitialCreate")]
+    [Migration("20250609205324_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

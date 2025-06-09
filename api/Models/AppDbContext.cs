@@ -25,6 +25,9 @@ namespace custom_randomizer_api.Models
                 .HasValue<BasicTraitOption>("Text")
                 .HasValue<ColorTraitOption>("Color");
 
+            modelBuilder.Entity<TraitOption>()
+                .HasQueryFilter(e => !e.Trait.IsDeleted);
+
 
             modelBuilder.Entity<Randomizer>()
                 .Property(e => e.CreatedAt)
@@ -45,7 +48,6 @@ namespace custom_randomizer_api.Models
             modelBuilder.Entity<Trait>()
                 .Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("now()");
-
 
             modelBuilder.Entity<Trait>()
                 .HasQueryFilter(e => !e.IsDeleted);
