@@ -1,33 +1,35 @@
 import { NavLink } from "react-router"
+import { ReactNode } from "react"
+import { Card, Group, Text, Image, Menu, Button } from "@mantine/core"
+import reactLogo from '../assets/react.svg'
+
 //import './RandomizerCard.css'
 
-import { Card, Group, Text, Image, Menu, Button } from "@mantine/core"
-import { ReactNode } from "react"
-
 interface RandomizerCardProps {
-    imageUrl: string,
     title: string,
-    menu: ReactNode
+    imageUrl?: string
 }
 
-function RandomizerCard (props: RandomizerCardProps) {
+function RandomizerCard (props: RandomizerCardProps, menu: ReactNode = null) {
+    const imageUrl = (props.imageUrl == null) ? reactLogo : props.imageUrl;
+
     return (
         <Card padding="xs" radius="md" withBorder style={{ maxWidth: 300 }}>
             <Card.Section>
                 <Image 
-                src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png" 
+                src={imageUrl}
                 height={160}
                 />
             </Card.Section>
             <Group justify="space-between" mt="md" mb="xs">
-                <Text>Title</Text>
-                <>{props.menu}</>
+                <Text>{props.title}</Text>
+                <>{menu}</>
             </Group>
         </Card>
     )
 }
 
-function RandomizerCardEdit (props: RandomizerCardProps) {
+export function RandomizerCardEdit (props: RandomizerCardProps) {
     const menu = (
         <Menu shadow="xs" width={100}>
             <Menu.Target>
@@ -42,16 +44,9 @@ function RandomizerCardEdit (props: RandomizerCardProps) {
         </Menu>
     )
 
-    return (
-        <RandomizerCard
-            {...props}
-            menu={menu} 
-        />
-    )
+    return RandomizerCard(props, menu)
 }
 
-function RandomizerCardPublic () {
-    return
+export function RandomizerCardPublic (props: RandomizerCardProps) {
+    return RandomizerCard(props)
 }
-
-export default { RandomizerCard, RandomizerCardEdit }
