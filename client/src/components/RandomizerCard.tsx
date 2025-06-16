@@ -14,7 +14,7 @@ function RandomizerCard (props: RandomizerCardProps, menu: ReactNode = null) {
     const imageUrl = (props.imageUrl == null) ? reactLogo : props.imageUrl;
 
     return (
-        <Card padding="xs" radius="md" withBorder style={{ maxWidth: 300 }}>
+        <Card padding="xs" radius="md" withBorder style={{ minWidth: 300, maxWidth: 300 }}>
             <Card.Section>
                 <Image 
                 src={imageUrl}
