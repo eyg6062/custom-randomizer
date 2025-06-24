@@ -2,15 +2,11 @@ import { NavLink } from "react-router"
 import { ReactNode } from "react"
 import { Card, Group, Text, Image, Menu, Button } from "@mantine/core"
 import reactLogo from '../assets/react.svg'
+import { Randomizer } from "../types/randomizer"
 
 //import './RandomizerCard.css'
 
-interface RandomizerCardProps {
-    title: string,
-    imageUrl?: string
-}
-
-function RandomizerCard (props: RandomizerCardProps, menu: ReactNode = null) {
+function RandomizerCard (props: Randomizer, menu: ReactNode = null) {
     const imageUrl = (props.imageUrl == null) ? reactLogo : props.imageUrl;
 
     return (
@@ -19,17 +15,18 @@ function RandomizerCard (props: RandomizerCardProps, menu: ReactNode = null) {
                 <Image 
                 src={imageUrl}
                 height={160}
+                fit="contain"
                 />
             </Card.Section>
             <Group justify="space-between" mt="md" mb="xs">
-                <Text>{props.title}</Text>
+                <Text>{props.name}</Text>
                 <>{menu}</>
             </Group>
         </Card>
     )
 }
 
-export function RandomizerCardEdit (props: RandomizerCardProps) {
+export function RandomizerCardEdit (props: Randomizer) {
     const menu = (
         <Menu shadow="xs" width={100}>
             <Menu.Target>
@@ -47,6 +44,6 @@ export function RandomizerCardEdit (props: RandomizerCardProps) {
     return RandomizerCard(props, menu)
 }
 
-export function RandomizerCardPublic (props: RandomizerCardProps) {
+export function RandomizerCardPublic (props: Randomizer) {
     return RandomizerCard(props)
 }
