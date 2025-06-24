@@ -20,6 +20,7 @@ namespace customrandomizerapi.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
+                    ImageUrl = table.Column<string>(type: "text", nullable: true),
                     CreatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
                     UpdatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
                     DeletedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: true),

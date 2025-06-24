@@ -23,7 +23,8 @@ namespace custom_randomizer_api.Controllers
 			{
 				Id = x.Id,
 				Name = x.Name,
-				Description = x.Description
+				Description = x.Description,
+				ImageUrl = x.ImageUrl
 
 			}).ToListAsync();
 
@@ -39,7 +40,8 @@ namespace custom_randomizer_api.Controllers
 				{
 					Id = x.Id,
 					Name = x.Name,
-					Description = x.Description
+					Description = x.Description,
+					ImageUrl = x.ImageUrl
 
 				}).FirstOrDefaultAsync();
 
@@ -57,7 +59,8 @@ namespace custom_randomizer_api.Controllers
 			var randomizer = new Randomizer
 			{
 				Name = randomizerDto.Name,
-				Description = randomizerDto.Description
+				Description = randomizerDto.Description,
+				ImageUrl = randomizerDto.ImageUrl
 			};
 
 			_context.Randomizers.Add(randomizer);
@@ -78,6 +81,7 @@ namespace custom_randomizer_api.Controllers
 
 			if (randomizerDto.Name != null) randomizer.Name = randomizerDto.Name;
             if (randomizerDto.Description != null) randomizer.Description = randomizerDto.Description;
+			if (randomizerDto.ImageUrl != null) randomizer.ImageUrl = randomizerDto.ImageUrl;
 
             await _context.SaveChangesAsync(); 
 			return Ok(); 

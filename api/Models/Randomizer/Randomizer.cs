@@ -12,10 +12,13 @@ namespace Models.Randomizer
 
         [Required]
         public required string Name { get; set; }
+
         public string? Description { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public string? ImageUrl { get; set; }
 
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Instant CreatedAt { get; set; }
 
         public Instant UpdatedAt { get; set; }

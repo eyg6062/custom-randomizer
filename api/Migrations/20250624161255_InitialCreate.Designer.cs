@@ -12,7 +12,7 @@ using custom_randomizer_api.Models;
 namespace customrandomizerapi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250609205324_InitialCreate")]
+    [Migration("20250624161255_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -42,6 +42,9 @@ namespace customrandomizerapi.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImageUrl")
                         .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
