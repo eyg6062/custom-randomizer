@@ -45,5 +45,9 @@ export function RandomizerCardEdit (props: Randomizer) {
 }
 
 export function RandomizerCardPublic (props: Randomizer) {
-    return RandomizerCard(props)
+    return (
+        <NavLink to={`/randomizer/${props.id}`}>
+            {RandomizerCard(props)}
+        </NavLink>
+    )
 }

@@ -12,9 +12,6 @@ function Home () {
             .then(json => setData(json))
     }, [] );
 
-    const data = [{title:"meep", imageUrl:"https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png"}, {title: "beep"}]
-    //const item1 = {title:"meep", imageUrl:"https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-8.png"}
-
     return (
         <>
             <h1>Home</h1>
