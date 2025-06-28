@@ -1,6 +1,7 @@
 ﻿using custom_randomizer_api.Models.TraitOptions;
 using Microsoft.EntityFrameworkCore;
-using Models.Randomizer;
+using Models.RandomizerModels;
+using Models.TraitModels;
 using NodaTime;
 
 namespace custom_randomizer_api.Models
@@ -28,6 +29,12 @@ namespace custom_randomizer_api.Models
             modelBuilder.Entity<TraitOption>()
                 .HasQueryFilter(e => !e.Trait.IsDeleted);
 
+            modelBuilder.Entity<TraitOption>()
+                .HasOne(e => e.Trait)
+                .WithMany(e => e.TraitOptions)
+                .HasForeignKey(e => e.TraitId)
+                .IsRequired();
+
 
             modelBuilder.Entity<Randomizer>()
                 .Property(e => e.CreatedAt)
@@ -40,6 +47,12 @@ namespace custom_randomizer_api.Models
             modelBuilder.Entity<Randomizer>()
                 .HasQueryFilter(e => !e.IsDeleted);
 
+
+            modelBuilder.Entity<Trait>()
+                .HasOne(e => e.Randomizer)
+                .WithMany(e => e.Traits)
+                .HasForeignKey(e => e.RandomizerId)
+                .IsRequired();
 
             modelBuilder.Entity<Trait>()
                 .Property(e => e.CreatedAt)

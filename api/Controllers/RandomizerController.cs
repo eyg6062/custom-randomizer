@@ -1,7 +1,7 @@
 using custom_randomizer_api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Models.Randomizer;
+using Models.RandomizerModels;
 
 namespace custom_randomizer_api.Controllers
 {

@@ -1,8 +1,7 @@
-namespace Models.Randomizer
+namespace Models.RandomizerModels
 {
-    public class GetRandomizerDto
+    public class CreateRandomizerDto
     {
-        public int Id { get; set; }
         public required string Name { get; set; }
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }

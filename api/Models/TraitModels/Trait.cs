@@ -1,11 +1,11 @@
 ﻿using custom_randomizer_api.Models.Enums;
 using custom_randomizer_api.Models.TraitOptions;
-using Models.Randomizer;
+using Models.RandomizerModels;
 using NodaTime;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace custom_randomizer_api.Models
+namespace Models.TraitModels
 {
     public class Trait
     {
@@ -27,8 +27,8 @@ namespace custom_randomizer_api.Models
 
         public int RandomizerId { get; set; }
 
-        [ForeignKey("RandomizerId")]
-        public required Randomizer Randomizer { get; set; }
+        [ForeignKey(nameof(RandomizerId))]
+        public required Randomizer Randomizer { get; init; }
 
         public ICollection<TraitOption> TraitOptions { get; } = new List<TraitOption>();
 

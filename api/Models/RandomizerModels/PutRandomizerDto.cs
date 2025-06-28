@@ -1,4 +1,4 @@
-namespace Models.Randomizer
+namespace Models.RandomizerModels
 {
     public class PutRandomizerDto
     {

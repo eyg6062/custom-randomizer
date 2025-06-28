@@ -22,7 +22,7 @@ namespace customrandomizerapi.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Models.Randomizer.Randomizer", b =>
+            modelBuilder.Entity("Models.RandomizerModels.Randomizer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -61,7 +61,7 @@ namespace customrandomizerapi.Migrations
                     b.ToTable("Randomizers");
                 });
 
-            modelBuilder.Entity("custom_randomizer_api.Models.Trait", b =>
+            modelBuilder.Entity("Models.TraitModels.Trait", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -161,9 +161,9 @@ namespace customrandomizerapi.Migrations
                     b.HasDiscriminator().HasValue("Number");
                 });
 
-            modelBuilder.Entity("custom_randomizer_api.Models.Trait", b =>
+            modelBuilder.Entity("Models.TraitModels.Trait", b =>
                 {
-                    b.HasOne("Models.Randomizer.Randomizer", "Randomizer")
+                    b.HasOne("Models.RandomizerModels.Randomizer", "Randomizer")
                         .WithMany("Traits")
                         .HasForeignKey("RandomizerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -174,7 +174,7 @@ namespace customrandomizerapi.Migrations
 
             modelBuilder.Entity("custom_randomizer_api.Models.TraitOptions.TraitOption", b =>
                 {
-                    b.HasOne("custom_randomizer_api.Models.Trait", "Trait")
+                    b.HasOne("Models.TraitModels.Trait", "Trait")
                         .WithMany("TraitOptions")
                         .HasForeignKey("TraitId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -183,12 +183,12 @@ namespace customrandomizerapi.Migrations
                     b.Navigation("Trait");
                 });
 
-            modelBuilder.Entity("Models.Randomizer.Randomizer", b =>
+            modelBuilder.Entity("Models.RandomizerModels.Randomizer", b =>
                 {
                     b.Navigation("Traits");
                 });
 
-            modelBuilder.Entity("custom_randomizer_api.Models.Trait", b =>
+            modelBuilder.Entity("Models.TraitModels.Trait", b =>
                 {
                     b.Navigation("TraitOptions");
                 });

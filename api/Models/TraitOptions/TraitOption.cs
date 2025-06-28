@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Models.TraitModels;
 
 namespace custom_randomizer_api.Models.TraitOptions
 {
@@ -11,7 +12,7 @@ namespace custom_randomizer_api.Models.TraitOptions
         public int TraitId { get; set; }
 
         [ForeignKey("TraitId")]
-        public required Trait Trait { get; set; }
+        public required Trait Trait { get; init; }
 
     }
 }

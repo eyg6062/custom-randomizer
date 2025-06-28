@@ -1,9 +1,9 @@
-using custom_randomizer_api.Models;
+using Models.TraitModels;
 using NodaTime;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Models.Randomizer
+namespace Models.RandomizerModels
 {
     public class Randomizer
     {

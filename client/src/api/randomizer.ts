@@ -4,8 +4,6 @@ import { Randomizer } from "../types/randomizer";
 const REQUEST_URL : string = `${BASE_URL}Randomizer`
 
 export async function getRandomizers() {
-    console.log(REQUEST_URL);
-
     return apiFetch(REQUEST_URL);
 }
 
