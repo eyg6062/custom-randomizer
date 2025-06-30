@@ -5,7 +5,7 @@ import { getRandomizers } from "../api/randomizer";
 import { Randomizer } from "../types/randomizer";
 
 function Home () {
-    const [data1, setData] = useState<Randomizer[]>([]);
+    const [data, setData] = useState<Randomizer[]>([]);
 
     useEffect( () => {
         getRandomizers()
@@ -17,7 +17,7 @@ function Home () {
             <h1>Home</h1>
 
             <CustomGrid
-                data={data1}
+                data={data}
                 Component={RandomizerCardPublic}
             />
             

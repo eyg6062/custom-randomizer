@@ -7,12 +7,16 @@ export async function getRandomizers() {
     return apiFetch(REQUEST_URL);
 }
 
+export async function getRandomizer(id: string) {
+    return apiFetch(`${REQUEST_URL}/${id}`);
+}
+
 export async function postRandomizer(data: Omit<Randomizer, 'id'>) {
     const options = {
         method: 'POST',
         body: JSON.stringify(data),
     };
 
-    return apiFetch(REQUEST_URL, options)
+    return apiFetch(REQUEST_URL, options);
 }
 

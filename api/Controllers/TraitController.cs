@@ -64,6 +64,7 @@ namespace custom_randomizer_api.Controllers
 					Id = x.Id,
 					Name = x.Name,
 					TraitType = x.TraitType,
+					RandomizerId = x.RandomizerId,
 				})
                 .ToListAsync();
 
