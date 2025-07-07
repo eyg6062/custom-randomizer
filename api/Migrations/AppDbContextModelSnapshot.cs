@@ -99,6 +99,10 @@ namespace customrandomizerapi.Migrations
                     b.HasIndex("RandomizerId");
 
                     b.ToTable("Traits");
+
+                    b.HasDiscriminator<int>("TraitType");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("custom_randomizer_api.Models.TraitOptions.TraitOption", b =>
@@ -109,10 +113,11 @@ namespace customrandomizerapi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("character varying(13)");
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("text");
 
                     b.Property<int>("TraitId")
                         .HasColumnType("integer");
@@ -122,35 +127,25 @@ namespace customrandomizerapi.Migrations
                     b.HasIndex("TraitId");
 
                     b.ToTable("TraitOptions");
-
-                    b.HasDiscriminator().HasValue("TraitOption");
-
-                    b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("custom_randomizer_api.Models.TraitOptions.BasicTraitOption", b =>
+            modelBuilder.Entity("Models.TraitModels.BasicTrait", b =>
                 {
-                    b.HasBaseType("custom_randomizer_api.Models.TraitOptions.TraitOption");
+                    b.HasBaseType("Models.TraitModels.Trait");
 
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("text");
-
-                    b.HasDiscriminator().HasValue("Text");
+                    b.HasDiscriminator().HasValue(0);
                 });
 
-            modelBuilder.Entity("custom_randomizer_api.Models.TraitOptions.ColorTraitOption", b =>
+            modelBuilder.Entity("Models.TraitModels.ColorTrait", b =>
                 {
-                    b.HasBaseType("custom_randomizer_api.Models.TraitOptions.TraitOption");
+                    b.HasBaseType("Models.TraitModels.Trait");
 
-                    b.HasDiscriminator().HasValue("Color");
+                    b.HasDiscriminator().HasValue(2);
                 });
 
-            modelBuilder.Entity("custom_randomizer_api.Models.TraitOptions.NumberTraitOption", b =>
+            modelBuilder.Entity("Models.TraitModels.NumberTrait", b =>
                 {
-                    b.HasBaseType("custom_randomizer_api.Models.TraitOptions.TraitOption");
+                    b.HasBaseType("Models.TraitModels.Trait");
 
                     b.Property<int>("MaxNum")
                         .HasColumnType("integer");
@@ -158,7 +153,7 @@ namespace customrandomizerapi.Migrations
                     b.Property<int>("MinNum")
                         .HasColumnType("integer");
 
-                    b.HasDiscriminator().HasValue("Number");
+                    b.HasDiscriminator().HasValue(1);
                 });
 
             modelBuilder.Entity("Models.TraitModels.Trait", b =>
@@ -174,13 +169,13 @@ namespace customrandomizerapi.Migrations
 
             modelBuilder.Entity("custom_randomizer_api.Models.TraitOptions.TraitOption", b =>
                 {
-                    b.HasOne("Models.TraitModels.Trait", "Trait")
+                    b.HasOne("Models.TraitModels.BasicTrait", "BasicTrait")
                         .WithMany("TraitOptions")
                         .HasForeignKey("TraitId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Trait");
+                    b.Navigation("BasicTrait");
                 });
 
             modelBuilder.Entity("Models.RandomizerModels.Randomizer", b =>
@@ -188,7 +183,7 @@ namespace customrandomizerapi.Migrations
                     b.Navigation("Traits");
                 });
 
-            modelBuilder.Entity("Models.TraitModels.Trait", b =>
+            modelBuilder.Entity("Models.TraitModels.BasicTrait", b =>
                 {
                     b.Navigation("TraitOptions");
                 });

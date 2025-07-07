@@ -1,4 +1,6 @@
 using custom_randomizer_api.Models;
+using custom_randomizer_api.Models.Enums;
+using custom_randomizer_api.Models.TraitOptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models.TraitModels;
@@ -58,19 +60,91 @@ namespace custom_randomizer_api.Controllers
         public async Task<IActionResult> GetTraitsByRandomizer(int randomizerId)
         {
             var traits = await _context.Traits
-                .Where(x => x.RandomizerId == randomizerId)
-				.Select(x => new TraitDto
-				{
-					Id = x.Id,
-					Name = x.Name,
-					TraitType = x.TraitType,
-					RandomizerId = x.RandomizerId,
-				})
-                .ToListAsync();
+				.Where(x => x.RandomizerId == randomizerId)
+				//.Include(x => ((BasicTrait)x).TraitOptions)
+				.ToListAsync();
 
-            return Ok(traits);
+			if (traits == null)
+			{
+				return NotFound();
+			}
+
+			var result = traits
+				.AsParallel()
+				.Select<Trait, TraitDto>(trait => trait switch
+				{
+					BasicTrait basic => new BasicTraitDto
+					{
+						Id = basic.Id,
+						Name = basic.Name,
+						TraitType = basic.TraitType,
+						TraitOptions = basic.TraitOptions,
+					},
+
+					NumberTrait number => new NumberTraitDto
+					{
+						Id = number.Id,
+						Name = number.Name,
+						TraitType = number.TraitType,
+						MinNum = number.MinNum,
+						MaxNum = number.MaxNum,
+					},
+
+					ColorTrait color => new ColorTraitDto
+					{
+						Id = color.Id,
+						Name = color.Name,
+						TraitType = color.TraitType,
+					},
+
+					_ => throw new InvalidOperationException("Unknown trait type")
+				})
+				.ToList();
+
+            return Ok(result);
         }
 
+		[HttpPost]
+        public async Task<IActionResult> CreateTrait(int randomizerId, [FromBody] CreateTraitDto traitDto)
+		{
+            var randomizer = await _context.Randomizers.FindAsync(randomizerId);
+
+            if (randomizer == null) { return NotFound(); }
+
+            Trait trait = traitDto.TraitType switch
+            {
+                TraitType.Basic => new BasicTrait
+                {
+                    Name = traitDto.Name,
+                    TraitType = TraitType.Basic,
+                    Randomizer = randomizer,
+                    // todo: set trait options here?
+                },
+
+                TraitType.Number => new NumberTrait
+                {
+                    Name = traitDto.Name,
+                    TraitType = TraitType.Number,
+                    Randomizer = randomizer,
+                    MinNum = ((CreateNumberTraitDto)traitDto).MinNum,
+                    MaxNum = ((CreateNumberTraitDto)traitDto).MaxNum,
+                },
+                TraitType.Color => new ColorTrait
+                {
+                    Name = traitDto.Name,
+                    TraitType = TraitType.Color,
+                    Randomizer = randomizer,
+                },
+                _ => throw new InvalidOperationException("Invalid trait type")
+            };
+
+            _context.Traits.Add(trait);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+		}
+
+        /*
         [HttpPost]
 		public async Task<IActionResult> CreateTrait(int randomizerId,[FromBody] CreateTraitDto traitDto)
 		{
@@ -102,7 +176,8 @@ namespace custom_randomizer_api.Controllers
 			return Ok(result);
         }
 
-		[HttpPut("{id}")]
+
+        [HttpPut("{id}")]
 		public async Task<IActionResult> PutTrait(int id, string? name) {
 
             var trait = await _context.Traits.FindAsync(id);
@@ -117,6 +192,8 @@ namespace custom_randomizer_api.Controllers
             await _context.SaveChangesAsync(); 
 			return Ok(); 
 		}
+
+		*/
 
 		[HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteTrait(int id)

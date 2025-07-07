@@ -43,7 +43,9 @@ namespace customrandomizerapi.Migrations
                     UpdatedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()"),
                     DeletedAt = table.Column<Instant>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    RandomizerId = table.Column<int>(type: "integer", nullable: false)
+                    RandomizerId = table.Column<int>(type: "integer", nullable: false),
+                    MinNum = table.Column<int>(type: "integer", nullable: true),
+                    MaxNum = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -62,12 +64,9 @@ namespace customrandomizerapi.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TraitId = table.Column<int>(type: "integer", nullable: false),
-                    Discriminator = table.Column<string>(type: "character varying(13)", maxLength: 13, nullable: false),
                     Text = table.Column<string>(type: "text", nullable: true),
                     ImageUrl = table.Column<string>(type: "text", nullable: true),
-                    MinNum = table.Column<int>(type: "integer", nullable: true),
-                    MaxNum = table.Column<int>(type: "integer", nullable: true)
+                    TraitId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

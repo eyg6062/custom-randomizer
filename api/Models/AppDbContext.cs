@@ -1,4 +1,5 @@
-﻿using custom_randomizer_api.Models.TraitOptions;
+﻿using custom_randomizer_api.Models.Enums;
+using custom_randomizer_api.Models.TraitOptions;
 using Microsoft.EntityFrameworkCore;
 using Models.RandomizerModels;
 using Models.TraitModels;
@@ -20,33 +21,11 @@ namespace custom_randomizer_api.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<TraitOption>()
-                .HasDiscriminator<string>("Discriminator")
-                .HasValue<NumberTraitOption>("Number")
-                .HasValue<BasicTraitOption>("Text")
-                .HasValue<ColorTraitOption>("Color");
-
-            modelBuilder.Entity<TraitOption>()
-                .HasQueryFilter(e => !e.Trait.IsDeleted);
-
-            modelBuilder.Entity<TraitOption>()
-                .HasOne(e => e.Trait)
-                .WithMany(e => e.TraitOptions)
-                .HasForeignKey(e => e.TraitId)
-                .IsRequired();
-
-
-            modelBuilder.Entity<Randomizer>()
-                .Property(e => e.CreatedAt)
-                .HasDefaultValueSql("now()");
-
-            modelBuilder.Entity<Randomizer>()
-                .Property(e => e.UpdatedAt)
-                .HasDefaultValueSql("now()");
-
-            modelBuilder.Entity<Randomizer>()
-                .HasQueryFilter(e => !e.IsDeleted);
-
+            modelBuilder.Entity<Trait>()
+                .HasDiscriminator<TraitType>("TraitType")
+                .HasValue<BasicTrait>(TraitType.Basic)
+                .HasValue<NumberTrait>(TraitType.Number)
+                .HasValue<ColorTrait>(TraitType.Color);
 
             modelBuilder.Entity<Trait>()
                 .HasOne(e => e.Randomizer)
@@ -63,6 +42,28 @@ namespace custom_randomizer_api.Models
                 .HasDefaultValueSql("now()");
 
             modelBuilder.Entity<Trait>()
+                .HasQueryFilter(e => !e.IsDeleted);
+
+
+            modelBuilder.Entity<TraitOption>()
+                .HasOne(e => e.BasicTrait)
+                .WithMany(e => e.TraitOptions)
+                .HasForeignKey(e => e.TraitId)
+                .IsRequired();
+
+            modelBuilder.Entity<TraitOption>()
+                .HasQueryFilter(e => !e.BasicTrait.IsDeleted);
+
+
+            modelBuilder.Entity<Randomizer>()
+                .Property(e => e.CreatedAt)
+                .HasDefaultValueSql("now()");
+
+            modelBuilder.Entity<Randomizer>()
+                .Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("now()");
+
+            modelBuilder.Entity<Randomizer>()
                 .HasQueryFilter(e => !e.IsDeleted);
 
 

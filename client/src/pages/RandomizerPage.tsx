@@ -34,7 +34,7 @@ function RandomizerPage () {
 
     return (
         <>
-            <h1>Randomizer id:{id}</h1>
+            <h1>{randomizerData.name} {`(id: ${id})`}</h1>
 
             <div>
                 <p>{randomizerData.description}</p>
