@@ -3,6 +3,7 @@ using custom_randomizer_api.Models.Enums;
 using custom_randomizer_api.Models.TraitOptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Models.RandomizerModels;
 using Models.TraitModels;
 using System.Diagnostics;
 
@@ -19,17 +20,52 @@ namespace custom_randomizer_api.Controllers
 			_context = context;
 		}
 
+		static public TraitDto MapTraitType(Trait trait)
+		{
+            return trait switch
+            {
+                BasicTrait basic => new BasicTraitDto
+                {
+                    Id = basic.Id,
+                    Name = basic.Name,
+                    TraitType = basic.TraitType,
+                    RandomizerId = basic.RandomizerId,
+                    TraitOptions = basic.TraitOptions,
+                },
+
+                NumberTrait number => new NumberTraitDto
+                {
+                    Id = number.Id,
+                    Name = number.Name,
+                    TraitType = number.TraitType,
+                    RandomizerId = number.RandomizerId,
+                    MinNum = number.MinNum,
+                    MaxNum = number.MaxNum,
+                },
+
+                ColorTrait color => new ColorTraitDto
+                {
+                    Id = color.Id,
+                    Name = color.Name,
+                    TraitType = color.TraitType,
+                    RandomizerId = color.RandomizerId,
+                },
+
+                _ => throw new InvalidOperationException("Unknown trait type")
+            };
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetTraits()
         {
-            var result = await _context.Traits.Select(x => new TraitDto
-            {
-                Id = x.Id,
-                Name = x.Name,
-				TraitType = x.TraitType,
-                RandomizerId = x.RandomizerId,
+            var traits = await _context.Traits
+                .Include(x => ((BasicTrait)x).TraitOptions)
+                .ToListAsync();
 
-            }).ToListAsync();
+            var result = traits
+                .AsParallel()
+                .Select(MapTraitType)
+                .ToList();
 
             return Ok(result);
         }
@@ -71,40 +107,14 @@ namespace custom_randomizer_api.Controllers
 
 			var result = traits
 				.AsParallel()
-				.Select<Trait, TraitDto>(trait => trait switch
-				{
-					BasicTrait basic => new BasicTraitDto
-					{
-						Id = basic.Id,
-						Name = basic.Name,
-						TraitType = basic.TraitType,
-						TraitOptions = basic.TraitOptions,
-					},
-
-					NumberTrait number => new NumberTraitDto
-					{
-						Id = number.Id,
-						Name = number.Name,
-						TraitType = number.TraitType,
-						MinNum = number.MinNum,
-						MaxNum = number.MaxNum,
-					},
-
-					ColorTrait color => new ColorTraitDto
-					{
-						Id = color.Id,
-						Name = color.Name,
-						TraitType = color.TraitType,
-					},
-
-					_ => throw new InvalidOperationException("Unknown trait type")
-				})
+				.Select(MapTraitType)
 				.ToList();
 
             return Ok(result);
         }
 
-		[HttpPost]
+
+        [HttpPost]
         public async Task<IActionResult> CreateTrait(int randomizerId, [FromBody] CreateTraitDto traitDto)
 		{
             var randomizer = await _context.Randomizers.FindAsync(randomizerId);
@@ -118,7 +128,7 @@ namespace custom_randomizer_api.Controllers
                     Name = traitDto.Name,
                     TraitType = TraitType.Basic,
                     Randomizer = randomizer,
-                    // todo: set trait options here?
+                    // todo: set trait options here
                 },
 
                 TraitType.Number => new NumberTrait
@@ -126,8 +136,8 @@ namespace custom_randomizer_api.Controllers
                     Name = traitDto.Name,
                     TraitType = TraitType.Number,
                     Randomizer = randomizer,
-                    MinNum = traitDto.MinNum ?? 0,
-                    MaxNum = traitDto.MaxNum ?? 100,
+                    MinNum = ((CreateNumberTraitDto)traitDto).MinNum,
+                    MaxNum = ((CreateNumberTraitDto)traitDto).MaxNum,
                 },
                 TraitType.Color => new ColorTrait
                 {
