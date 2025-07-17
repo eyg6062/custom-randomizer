@@ -56,12 +56,12 @@ namespace custom_randomizer_api.Controllers
 			return Ok(trait);
 		}
 
-        [HttpGet("randomizer/{randomizerId}")]
+        [HttpGet("ByRandomizer/{randomizerId}")]
         public async Task<IActionResult> GetTraitsByRandomizer(int randomizerId)
         {
             var traits = await _context.Traits
 				.Where(x => x.RandomizerId == randomizerId)
-				//.Include(x => ((BasicTrait)x).TraitOptions)
+				.Include(x => ((BasicTrait)x).TraitOptions)
 				.ToListAsync();
 
 			if (traits == null)
@@ -126,8 +126,8 @@ namespace custom_randomizer_api.Controllers
                     Name = traitDto.Name,
                     TraitType = TraitType.Number,
                     Randomizer = randomizer,
-                    MinNum = ((CreateNumberTraitDto)traitDto).MinNum,
-                    MaxNum = ((CreateNumberTraitDto)traitDto).MaxNum,
+                    MinNum = traitDto.MinNum ?? 0,
+                    MaxNum = traitDto.MaxNum ?? 100,
                 },
                 TraitType.Color => new ColorTrait
                 {

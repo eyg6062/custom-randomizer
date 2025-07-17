@@ -9,12 +9,17 @@ namespace Models.TraitModels
 
         public TraitType TraitType { get; set; }
 
+        public int? MinNum { get; set; }
+
+        public int? MaxNum { get; set; }
     }
 
+    /*
     public class CreateBasicTraitDto : CreateTraitDto
     {
         public ICollection<TraitOption> TraitOptions { get; set; } = new List<TraitOption>();
     }
+
 
     public class CreateNumberTraitDto : CreateTraitDto
     {
@@ -22,7 +27,10 @@ namespace Models.TraitModels
         public int MaxNum { get; set; }
     }
 
+
     public class CreateColorTraitDto : CreateTraitDto
     {
     }
+
+    */
 }
