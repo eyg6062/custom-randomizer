@@ -22,7 +22,7 @@ namespace Models.TraitModels
 
     public class BasicTraitDto : TraitDto
     {
-        public ICollection<TraitOption> TraitOptions { get; set; } = new List<TraitOption>();
+        public ICollection<TraitOptionDto> TraitOptions { get; set; } = new List<TraitOptionDto>();
     }
 
     public class NumberTraitDto : TraitDto 

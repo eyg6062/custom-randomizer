@@ -20,41 +20,6 @@ namespace custom_randomizer_api.Controllers
 			_context = context;
 		}
 
-		static public TraitDto MapTraitType(Trait trait)
-		{
-            return trait switch
-            {
-                BasicTrait basic => new BasicTraitDto
-                {
-                    Id = basic.Id,
-                    Name = basic.Name,
-                    TraitType = basic.TraitType,
-                    RandomizerId = basic.RandomizerId,
-                    TraitOptions = basic.TraitOptions,
-                },
-
-                NumberTrait number => new NumberTraitDto
-                {
-                    Id = number.Id,
-                    Name = number.Name,
-                    TraitType = number.TraitType,
-                    RandomizerId = number.RandomizerId,
-                    MinNum = number.MinNum,
-                    MaxNum = number.MaxNum,
-                },
-
-                ColorTrait color => new ColorTraitDto
-                {
-                    Id = color.Id,
-                    Name = color.Name,
-                    TraitType = color.TraitType,
-                    RandomizerId = color.RandomizerId,
-                },
-
-                _ => throw new InvalidOperationException("Unknown trait type")
-            };
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetTraits()
         {
@@ -64,7 +29,7 @@ namespace custom_randomizer_api.Controllers
 
             var result = traits
                 .AsParallel()
-                .Select(MapTraitType)
+                .Select(TraitTypeMapper.MapTraitType)
                 .ToList();
 
             return Ok(result);
@@ -107,7 +72,7 @@ namespace custom_randomizer_api.Controllers
 
 			var result = traits
 				.AsParallel()
-				.Select(MapTraitType)
+				.Select(TraitTypeMapper.MapTraitType)
 				.ToList();
 
             return Ok(result);
@@ -117,13 +82,15 @@ namespace custom_randomizer_api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTrait(int randomizerId, [FromBody] CreateTraitDto traitDto)
 		{
+            // note: the first property in the json needs to be traitType
+
             var randomizer = await _context.Randomizers.FindAsync(randomizerId);
 
             if (randomizer == null) { return NotFound(); }
 
-            Trait trait = traitDto.TraitType switch
+            Trait trait = traitDto switch
             {
-                TraitType.Basic => new BasicTrait
+                CreateBasicTraitDto basic => new BasicTrait
                 {
                     Name = traitDto.Name,
                     TraitType = TraitType.Basic,
@@ -131,7 +98,7 @@ namespace custom_randomizer_api.Controllers
                     // todo: set trait options here
                 },
 
-                TraitType.Number => new NumberTrait
+                CreateNumberTraitDto number => new NumberTrait
                 {
                     Name = traitDto.Name,
                     TraitType = TraitType.Number,
@@ -139,7 +106,7 @@ namespace custom_randomizer_api.Controllers
                     MinNum = ((CreateNumberTraitDto)traitDto).MinNum,
                     MaxNum = ((CreateNumberTraitDto)traitDto).MaxNum,
                 },
-                TraitType.Color => new ColorTrait
+                CreateColorTraitDto color => new ColorTrait
                 {
                     Name = traitDto.Name,
                     TraitType = TraitType.Color,
@@ -155,37 +122,6 @@ namespace custom_randomizer_api.Controllers
 		}
 
         /*
-        [HttpPost]
-		public async Task<IActionResult> CreateTrait(int randomizerId,[FromBody] CreateTraitDto traitDto)
-		{
-            var randomizer = await _context.Randomizers.FindAsync(randomizerId);
-
-            if (randomizer == null)
-            {
-                return NotFound();
-            }
-
-            var trait = new Trait
-			{
-				Name = traitDto.Name,
-				TraitType = traitDto.TraitType,
-				Randomizer = randomizer,
-			};
-
-            var result = new TraitDto
-            {
-                Id = trait.Id,
-                Name = trait.Name,
-                TraitType = trait.TraitType,
-				RandomizerId = randomizer.Id,
-            };
-
-            _context.Traits.Add(trait);
-			await _context.SaveChangesAsync();
-
-			return Ok(result);
-        }
-
 
         [HttpPut("{id}")]
 		public async Task<IActionResult> PutTrait(int id, string? name) {
