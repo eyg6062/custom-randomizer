@@ -4,5 +4,5 @@ import { BASE_URL, apiFetch } from "./client";
 const REQUEST_URL : string = `${BASE_URL}Trait`
 
 export async function getTraitsByRandomizer(randomizerId: string) { 
-    return apiFetch(`${REQUEST_URL}/randomizer/${randomizerId}`);
+    return apiFetch(`${REQUEST_URL}/ByRandomizer/${randomizerId}`);
 }
