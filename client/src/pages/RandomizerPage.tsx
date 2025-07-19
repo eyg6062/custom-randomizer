@@ -8,7 +8,7 @@ import { Randomizer } from "../types/randomizer";
 import { getRandomizer } from "../api/randomizer";
 import { TraitCardProps } from "../types/traitCardProps";
 import { randomizeTrait } from "../Utils/traitRandomizer";
-import { Button } from "@mantine/core";
+import { Button, Group, Text } from "@mantine/core";
 //import { Button } from "@mantine/core";
 
 
@@ -99,22 +99,25 @@ function RandomizerPage () {
         <>
             <h1>{randomizerData.name} {`(id: ${id})`}</h1>
 
-            <div>
-                <p>{randomizerData.description}</p>
-            </div>
+            <Text>
+                {randomizerData.description}
+            </Text>
 
             <CustomGrid 
                 data={traitPropData}
                 Component={TraitCard}
             />
 
-            <Button onClick={clearAllCards}>
-                Clear All
-            </Button>
+            <Group justify="center">
+                <Button onClick={clearAllCards} variant="default">
+                    Clear All
+                </Button>
+                
+                <Button onClick={randomizeAllCards} variant="default">
+                    Randomize All
+                </Button>
+            </Group>
             
-            <Button onClick={randomizeAllCards}>
-                Randomize All
-            </Button>
         </>
     )
 }

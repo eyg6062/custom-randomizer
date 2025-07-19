@@ -29,7 +29,7 @@ function BasicContent(props: TraitCardProps) {
 
 function NumberContent(props: TraitCardProps) {
     return (
-        <Text size="xl">{props.value}</Text>
+        <Text style={{ fontSize: '3rem' }}>{props.value}</Text>
     )
 }
 
