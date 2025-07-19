@@ -1,14 +1,14 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
-import { BasicTrait, NumberTrait, Trait } from "../types/trait";
+import { Trait } from "../types/trait";
 import { getTraitsByRandomizer } from "../api/trait";
 import CustomGrid from "../components/CustomGrid";
 import { TraitCard } from "../components/TraitCard";
 import { Randomizer } from "../types/randomizer";
 import { getRandomizer } from "../api/randomizer";
 import { TraitCardProps } from "../types/traitCardProps";
-import { TraitType } from "../types/traitType";
-import { randomizeBasicTrait, randomizeNumberTrait } from "../Utils/traitRandomizer";
+import { randomizeTrait } from "../Utils/traitRandomizer";
+import { Button } from "@mantine/core";
 //import { Button } from "@mantine/core";
 
 
@@ -35,37 +35,25 @@ function RandomizerPage () {
     }, [] );
     
 
+    // randomizes trait card on click 
     const handleUpdateTraitCard = (traitId: number) => {
         const traitData = traitsData.find(trait => trait.id === traitId);
+        if (!traitData) {
+            console.log("invalid trait id");
+            return;
+        }
 
         setTraitPropData(prev =>
             prev.map(trait => {
                 if (trait.id === traitId) {
                     console.log(`Editing trait ${trait.id}`);
-                    switch (trait.traitType) {
-                        case TraitType.Basic:
-                            const traitOption = randomizeBasicTrait(traitData as BasicTrait);
-                            return {...trait, imageUrl: traitOption.imageUrl, value: traitOption.text};
-                        case TraitType.Number:
-                            const numVal = randomizeNumberTrait(traitData as NumberTrait);
-                            return {...trait, value: String(numVal)};
-                        case TraitType.Color:
-                            // todo: add color in
-                            return {...trait};
-                        default:
-                    }
+                    return randomizeTrait(traitData, trait);
 
-                    console.log("no trait type match");
-                    return {...trait};
-            } else {
-                console.log(`Skipping trait ${trait.id}`);
-                return trait;
-            }
-        }
-            //    trait.id === traitId ? {...trait, value: "new value"} : trait
-            )
+                } else {
+                    return trait;
+                }
+            })
         )
-
         console.log(traitPropData);
     }
 
@@ -78,13 +66,32 @@ function RandomizerPage () {
         }));
         setTraitPropData(mappedTraitProps)
     }, [traitsData] );
-
-
     
+    // Clears all trait cards
+    const clearAllCards = () => {
+        setTraitPropData(prev =>
+            prev.map(trait => {
+                return {...trait, imageUrl: undefined, value: undefined}
+            })
+        )
+    }
 
-    //console.log(traitPropData);
+    // randomizes all trait cards
+    const randomizeAllCards = () => {
+        setTraitPropData(prev =>
+            prev.map(traitPropData => {
+                // todo: not efficient, find a better way to to this later
+                const traitData = traitsData.find(trait => trait.id === traitPropData.id);
+                if (!traitData) {
+                    console.log("invalid trait id");
+                    return traitPropData;
+                }
+                return randomizeTrait(traitData, traitPropData)
+            })
+        )
+    }
     
-    if (!randomizerData) {
+    if (!randomizerData || !traitsData) {
         return null;
     }
 
@@ -100,7 +107,14 @@ function RandomizerPage () {
                 data={traitPropData}
                 Component={TraitCard}
             />
+
+            <Button onClick={clearAllCards}>
+                Clear All
+            </Button>
             
+            <Button onClick={randomizeAllCards}>
+                Randomize All
+            </Button>
         </>
     )
 }
