@@ -79,12 +79,12 @@ namespace custom_randomizer_api.Controllers
                 return NotFound();
             }
 
-			if (randomizerDto.Name != null) randomizer.Name = randomizerDto.Name;
-            if (randomizerDto.Description != null) randomizer.Description = randomizerDto.Description;
-			if (randomizerDto.ImageUrl != null) randomizer.ImageUrl = randomizerDto.ImageUrl;
+            randomizer.Name = randomizerDto.Name ?? randomizer.Name;
+            randomizer.Description = randomizerDto.Description ?? randomizer.Description;
+            randomizer.ImageUrl = randomizerDto.ImageUrl ?? randomizer.ImageUrl;
 
             await _context.SaveChangesAsync(); 
-			return Ok(); 
+			return Ok(true); 
 		}
 
 		[HttpDelete("{id}")]
