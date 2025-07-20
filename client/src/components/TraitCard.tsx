@@ -1,4 +1,4 @@
-import { Card, Group, Text, Center, Image, UnstyledButton, Flex, Box } from "@mantine/core";
+import { Card, Group, Text, Center, Image, UnstyledButton, Flex } from "@mantine/core";
 import { TraitType } from "../types/traitType";
 import { TraitCardProps } from "../types/traitCardProps";
 
@@ -62,7 +62,7 @@ export function TraitCard (props: TraitCardProps) {
                         {content}
                     </Center>
                 </Card.Section>
-                <Group justify="space-between" mt="md" mb="xs">
+                <Group justify="space-between" p={0} mt="md">
                     <Text>{props.name}</Text>
                 </Group>
             </Card>

@@ -1,8 +1,10 @@
 import { NavLink } from "react-router"
 import { ReactNode } from "react"
-import { Card, Group, Text, Image, Menu, Button } from "@mantine/core"
+import { Card, Group, Text, Image, Menu } from "@mantine/core"
 import reactLogo from '../assets/react.svg'
 import { Randomizer } from "../types/randomizer"
+import {IconDotsVertical, IconEye} from '@tabler/icons-react'
+import CircleButton from "./CircleButton"
 
 //import './RandomizerCard.css'
 
@@ -18,7 +20,7 @@ function RandomizerCard (props: Randomizer, menu: ReactNode = null) {
                 fit="contain"
                 />
             </Card.Section>
-            <Group justify="space-between" mt="md" mb="xs">
+            <Group justify="space-between" p={0} mt="md">
                 <Text>{props.name}</Text>
                 <>{menu}</>
             </Group>
@@ -28,17 +30,36 @@ function RandomizerCard (props: Randomizer, menu: ReactNode = null) {
 
 export function RandomizerCardEdit (props: Randomizer) {
     const menu = (
-        <Menu shadow="xs" width={100}>
-            <Menu.Target>
-                <Button>Toggle menu</Button>
-            </Menu.Target>
+        <Group gap="xs">
+            <NavLink to={`/randomizer/${props.id}`}>
+                <CircleButton 
+                    icon={IconEye}
+                />
+            </NavLink>
+            {/*}
+            <NavLink to={`/randomizer/${props.id}`}>
+                <UnstyledButton variant="default" p={4} style={{borderRadius:'50%'}}>
+                    <Center>
+                        <IconEye/>
+                    </Center>
+                </UnstyledButton>
+            </NavLink>
+            */}
+            <Menu shadow="xs" width={100}>
+                <Menu.Target>
+                    <CircleButton 
+                        icon={IconDotsVertical}
+                    />
+                </Menu.Target>
 
-            <Menu.Dropdown>
-                <Menu.Item>Rename</Menu.Item>
-                <Menu.Item>Edit</Menu.Item>
-                <Menu.Item>Delete</Menu.Item>
-            </Menu.Dropdown>
-        </Menu>
+                <Menu.Dropdown>
+                    <Menu.Item>Rename</Menu.Item>
+                    <Menu.Item>Edit</Menu.Item>
+                    <Menu.Item>Delete</Menu.Item>
+                </Menu.Dropdown>
+            </Menu>
+        </Group>
+        
     )
 
     return RandomizerCard(props, menu)
