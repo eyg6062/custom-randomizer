@@ -31,21 +31,14 @@ function RandomizerCard (props: Randomizer, menu: ReactNode = null) {
 export function RandomizerCardEdit (props: Randomizer) {
     const menu = (
         <Group gap="xs">
+
             <NavLink to={`/randomizer/${props.id}`}>
                 <CircleButton 
                     icon={IconEye}
                 />
             </NavLink>
-            {/*}
-            <NavLink to={`/randomizer/${props.id}`}>
-                <UnstyledButton variant="default" p={4} style={{borderRadius:'50%'}}>
-                    <Center>
-                        <IconEye/>
-                    </Center>
-                </UnstyledButton>
-            </NavLink>
-            */}
-            <Menu shadow="xs" width={100}>
+
+            <Menu shadow="xs" position="bottom-start" width={100}>
                 <Menu.Target>
                     <CircleButton 
                         icon={IconDotsVertical}
@@ -58,6 +51,7 @@ export function RandomizerCardEdit (props: Randomizer) {
                     <Menu.Item>Delete</Menu.Item>
                 </Menu.Dropdown>
             </Menu>
+
         </Group>
         
     )
