@@ -29,3 +29,10 @@ export async function postRandomizer(data: Omit<Randomizer, 'id'>) {
     return apiFetch(REQUEST_URL, options);
 }
 
+export async function apiDeleteRandomizer(id: string) {
+    const options = {
+        method: 'DELETE'
+    };
+
+    return apiFetch(`${REQUEST_URL}/${id}`, options);
+}

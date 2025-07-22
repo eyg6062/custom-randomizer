@@ -2,11 +2,9 @@ import { NavLink } from "react-router"
 import { ReactNode } from "react"
 import { Card, Group, Text, Image, Menu } from "@mantine/core"
 import reactLogo from '../assets/react.svg'
-import { Randomizer } from "../types/randomizer"
+import { Randomizer, RandomizerCardEditProps } from "../types/randomizer"
 import {IconDotsVertical, IconEye} from '@tabler/icons-react'
 import CircleButton from "./CircleButton"
-
-//import './RandomizerCard.css'
 
 function RandomizerCard (props: Randomizer, menu: ReactNode = null) {
     const imageUrl = (props.imageUrl == null) ? reactLogo : props.imageUrl;
@@ -28,8 +26,11 @@ function RandomizerCard (props: Randomizer, menu: ReactNode = null) {
     )
 }
 
-export function RandomizerCardEdit (props: Randomizer) {
+export function RandomizerCardEdit (props: RandomizerCardEditProps) {
+    
+
     const menu = (
+        
         <Group gap="xs">
 
             <NavLink to={`/randomizer/${props.id}`}>
@@ -48,7 +49,7 @@ export function RandomizerCardEdit (props: Randomizer) {
                 <Menu.Dropdown>
                     <Menu.Item>Rename</Menu.Item>
                     <Menu.Item>Edit</Menu.Item>
-                    <Menu.Item>Delete</Menu.Item>
+                    <Menu.Item onClick={ () => {props.onDeleteClick(props.id)} }>Delete</Menu.Item>
                 </Menu.Dropdown>
             </Menu>
 

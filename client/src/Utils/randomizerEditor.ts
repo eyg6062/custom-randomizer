@@ -16,8 +16,4 @@ function editRandomizerImage(id: string, imageUrl: string) {
     putRandomizer(id, data);
 }
 
-function deleteRandomizer(id: string) {
-    deleteRandomizer(id);
-}
-
-export {editRandomizerName, editRandomizerDescription, editRandomizerImage, deleteRandomizer}
+export {editRandomizerName, editRandomizerDescription, editRandomizerImage}
