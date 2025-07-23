@@ -14,8 +14,13 @@ export async function getRandomizer(id: string) {
 export async function putRandomizer(id: string, data: EditRandomizerDto) {
     const options = {
         method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
         body: JSON.stringify(data),
     };
+
+    console.log(JSON.stringify(data))
 
     return apiFetch(`${REQUEST_URL}/${id}`, options);
 }
@@ -23,6 +28,9 @@ export async function putRandomizer(id: string, data: EditRandomizerDto) {
 export async function postRandomizer(data: Omit<Randomizer, 'id'>) {
     const options = {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
         body: JSON.stringify(data),
     };
 

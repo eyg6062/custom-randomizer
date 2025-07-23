@@ -4,20 +4,29 @@ import { getRandomizers, apiDeleteRandomizer } from "../api/randomizer";
 import CustomGrid from "../components/CustomGrid";
 import { RandomizerCardEdit } from "../components/RandomizerCard";
 import { editRandomizerName } from "../Utils/randomizerEditor";
-import { Button, Group, Modal } from "@mantine/core";
+import { Button, Group, Modal, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
 function Dashboard () {
     const [randomizerData, setRandomizerData] = useState<Randomizer[]>([]);
     const [randomizerPropData, setRandomizerPropData] = useState<RandomizerCardEditProps[]>([]);
+    const [selectedCardId, setSelectedCardId] = useState<string>();
 
     // delete confirmation modal
     const [deleteConfirmOpened, { open: openDeleteConfirm, close: closeDeleteConfirm }] = useDisclosure(false);
-    const [selectedRandId, setSelectedRandId] = useState<string>();
+
+    // edit modals
+    const [editThumbOpened, { open: openEditThumb, close: closeEditThumb }] = useDisclosure(false);
+    const [renameOpened, { open: openRename, close: closeRename }] = useDisclosure(false);
+
+    // rename input value
+    const [renameInput, setRenameInput] = useState('');
+
+    
 
     const handleDeleteClick = (id: string) => {
         openDeleteConfirm();
-        setSelectedRandId(id);
+        setSelectedCardId(id);
     }
 
     const handleDelete = async (id?: string) => {
@@ -33,8 +42,44 @@ function Dashboard () {
         }
     }
 
-    const handleEdit = () => {
-        //
+    const handleRenameClick = (id: string) => {
+        setRenameInput("");
+        openRename();
+        setSelectedCardId(id);
+    }
+
+    const handleSubmitRename = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        
+        if (!selectedCardId) {
+            console.log("no randomizer id selected");
+            return;
+        }
+
+        try {
+            await editRandomizerName(selectedCardId, renameInput);
+            setRandomizerPropData(prev => 
+                prev.map(randomizer => {
+                    if (randomizer.id === selectedCardId) {
+                        console.log("editing name");
+                        return {...randomizer, name: renameInput};
+                    }
+                    else {
+                        return randomizer;
+                    }
+                })
+            );
+
+        } catch (error) {
+            console.error(`Failed to rename randomizer ${selectedCardId}:`, error);
+        }
+
+        closeRename();
+    }
+
+    const handleEditThumbClick = (id: string) => {
+        openEditThumb();
+        setSelectedCardId(id);
     }
 
     useEffect( () => {
@@ -47,8 +92,9 @@ function Dashboard () {
                 id: randomizer.id,
                 name: randomizer.name,
                 imageUrl: randomizer.imageUrl,
+                onRenameClick: handleRenameClick,
                 onDeleteClick: handleDeleteClick,
-                onEditClick: handleEdit
+                onEditThumbClick: handleEditThumbClick
             }));
             setRandomizerPropData(mappedRandProps)
         }, [randomizerData] );
@@ -65,8 +111,19 @@ function Dashboard () {
             <Modal opened={deleteConfirmOpened} onClose={closeDeleteConfirm} title={"Are you sure you want to delete?"} centered>
                 <Group>
                     <Button onClick={closeDeleteConfirm} variant="default">No</Button>
-                    <Button onClick={() => { handleDelete(selectedRandId); closeDeleteConfirm()}} variant="default">Yes</Button>
+                    <Button onClick={() => { handleDelete(selectedCardId); closeDeleteConfirm()}} variant="default">Yes</Button>
                 </Group> 
+            </Modal>
+
+            <Modal opened={renameOpened} onClose={closeRename} title={"Enter a new name:"} centered>
+                <form onSubmit={handleSubmitRename}>
+                    <TextInput
+                    placeholder="Edit name"
+                    value={renameInput}
+                    onChange={(event) => setRenameInput(event.currentTarget.value)}
+                    />
+                    <Button type="submit" variant="default">Submit</Button>
+                </form>
             </Modal>
         </>
     )
