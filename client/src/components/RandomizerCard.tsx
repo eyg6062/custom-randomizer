@@ -47,7 +47,7 @@ export function RandomizerCardEdit (props: RandomizerCardEditProps) {
                 </Menu.Target>
 
                 <Menu.Dropdown>
-                    <Menu.Item onClick={ () => props.onRenameClick(props.id) }>Rename</Menu.Item>
+                    <Menu.Item onClick={ () => props.onRenameClick(props.id, props.name) }>Rename</Menu.Item>
                     <Menu.Item onClick={ () => props.onEditThumbClick(props.id) }>Edit thumbnail</Menu.Item>
                     <Menu.Item onClick={ () => {props.onDeleteClick(props.id)} }>Delete</Menu.Item>
                 </Menu.Dropdown>

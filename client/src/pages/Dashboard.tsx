@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Randomizer, RandomizerCardEditProps } from "../types/randomizer";
 import { getRandomizers, apiDeleteRandomizer } from "../api/randomizer";
 import CustomGrid from "../components/CustomGrid";
@@ -22,7 +22,8 @@ function Dashboard () {
     // rename input value
     const [renameInput, setRenameInput] = useState('');
 
-    
+    const renameInputRef = useRef<HTMLInputElement>(null);
+
 
     const handleDeleteClick = (id: string) => {
         openDeleteConfirm();
@@ -42,10 +43,15 @@ function Dashboard () {
         }
     }
 
-    const handleRenameClick = (id: string) => {
-        setRenameInput("");
-        openRename();
+    const handleRenameClick = (id: string, prevName: string) => {
         setSelectedCardId(id);
+        setRenameInput(prevName);
+        openRename();
+        setTimeout(() => {
+            if (renameInputRef.current) {
+            renameInputRef.current.select();
+            }
+        }, 0);
     }
 
     const handleSubmitRename = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -118,9 +124,10 @@ function Dashboard () {
             <Modal opened={renameOpened} onClose={closeRename} title={"Enter a new name:"} centered>
                 <form onSubmit={handleSubmitRename}>
                     <TextInput
-                    placeholder="Edit name"
-                    value={renameInput}
-                    onChange={(event) => setRenameInput(event.currentTarget.value)}
+                        ref={renameInputRef}
+                        value={renameInput}
+                        onChange={(event) => setRenameInput(event.currentTarget.value)}
+                        data-autofocus
                     />
                     <Button type="submit" variant="default">Submit</Button>
                 </form>
