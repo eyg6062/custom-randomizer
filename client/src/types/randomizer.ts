@@ -6,8 +6,9 @@ interface Randomizer {
 }   
 
 interface RandomizerCardEditProps extends Randomizer {
-    onEditClick: (id: string) => void; 
-    onDeleteClick: (id: string) => void;
+    onRenameClick: (id: string) => void,
+    onEditThumbClick: (id: string) => void,
+    onDeleteClick: (id: string) => void,
 }
 
 interface EditRandomizerDto {

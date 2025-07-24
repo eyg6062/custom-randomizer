@@ -88,16 +88,16 @@ function Dashboard () {
     }, [] );
 
     useEffect(() => {
-            const mappedRandProps: RandomizerCardEditProps[] = randomizerData.map(randomizer => ({
-                id: randomizer.id,
-                name: randomizer.name,
-                imageUrl: randomizer.imageUrl,
-                onRenameClick: handleRenameClick,
-                onDeleteClick: handleDeleteClick,
-                onEditThumbClick: handleEditThumbClick
-            }));
-            setRandomizerPropData(mappedRandProps)
-        }, [randomizerData] );
+        const mappedRandProps: RandomizerCardEditProps[] = randomizerData.map(randomizer => ({
+            id: randomizer.id,
+            name: randomizer.name,
+            imageUrl: randomizer.imageUrl,
+            onRenameClick: handleRenameClick,
+            onDeleteClick: handleDeleteClick,
+            onEditThumbClick: handleEditThumbClick
+        }));
+        setRandomizerPropData(mappedRandProps)
+    }, [randomizerData] );
 
     return (
         <>
