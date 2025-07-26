@@ -1,10 +1,10 @@
-import { NavLink } from "react-router"
+import { NavLink, useNavigate } from "react-router"
 import { ReactNode } from "react"
-import { Card, Group, Text, Image, Menu, Button } from "@mantine/core"
+import { Card, Group, Text, Image, Menu, UnstyledButton } from "@mantine/core"
 import reactLogo from '../assets/react.svg'
-import { Randomizer } from "../types/randomizer"
-
-//import './RandomizerCard.css'
+import { Randomizer, RandomizerCardEditProps } from "../types/randomizer"
+import {IconDotsVertical, IconEye} from '@tabler/icons-react'
+import CircleButton from "./CircleButton"
 
 function RandomizerCard (props: Randomizer, menu: ReactNode = null) {
     const imageUrl = (props.imageUrl == null) ? reactLogo : props.imageUrl;
@@ -18,7 +18,7 @@ function RandomizerCard (props: Randomizer, menu: ReactNode = null) {
                 fit="contain"
                 />
             </Card.Section>
-            <Group justify="space-between" mt="md" mb="xs">
+            <Group justify="space-between" p={0} mt="md">
                 <Text>{props.name}</Text>
                 <>{menu}</>
             </Group>
@@ -26,22 +26,52 @@ function RandomizerCard (props: Randomizer, menu: ReactNode = null) {
     )
 }
 
-export function RandomizerCardEdit (props: Randomizer) {
-    const menu = (
-        <Menu shadow="xs" width={100}>
-            <Menu.Target>
-                <Button>Toggle menu</Button>
-            </Menu.Target>
+export function RandomizerCardEdit (props: RandomizerCardEditProps) {
+    const navigate = useNavigate();
 
-            <Menu.Dropdown>
-                <Menu.Item>Rename</Menu.Item>
-                <Menu.Item>Edit</Menu.Item>
-                <Menu.Item>Delete</Menu.Item>
-            </Menu.Dropdown>
-        </Menu>
+    const handlePublicViewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        navigate(`/randomizer/${props.id}`);
+    } 
+
+    const handleEditViewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        navigate(`/randomizer/${props.id}/edit`);
+    } 
+
+    const menu = (
+        <Group gap="xs">
+
+
+            <CircleButton 
+                icon={IconEye}
+                onClick={handlePublicViewClick}
+            />
+
+            <div onClick={(e) => {e.stopPropagation()}}>
+            <Menu shadow="xs" position="bottom-start" width="dropdown">
+                <Menu.Target>
+                    <CircleButton 
+                        icon={IconDotsVertical}
+                    />
+                </Menu.Target>
+
+                <Menu.Dropdown>
+                    <Menu.Item onClick={ () => props.onRenameClick(props.id, props.name) }>Rename</Menu.Item>
+                    <Menu.Item onClick={ () => props.onEditThumbClick(props.id) }>Edit thumbnail</Menu.Item>
+                    <Menu.Item onClick={ () => props.onDeleteClick(props.id) }>Delete</Menu.Item>
+                </Menu.Dropdown>
+            </Menu>
+            </div>
+
+        </Group>
     )
 
-    return RandomizerCard(props, menu)
+    return ( 
+        <UnstyledButton onClick={handleEditViewClick}>
+            {RandomizerCard(props, menu)} 
+        </UnstyledButton>
+    ) 
 }
 
 export function RandomizerCardPublic (props: Randomizer) {

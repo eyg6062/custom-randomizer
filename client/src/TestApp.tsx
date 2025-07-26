@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard'
 import About from './pages/About'
 import './App.css'
 import RandomizerPage from './pages/RandomizerPage'
+import RandomizerEditPage from './pages/RandomizerEditPage'
 
 function TestApp() {
     return(
@@ -15,6 +16,7 @@ function TestApp() {
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="about" element={<About />} />
                 <Route path="randomizer/:id" element={<RandomizerPage />} />
+                <Route path="randomizer/:id/edit" element={<RandomizerEditPage />} />
             </Routes>
         </main>
     )
