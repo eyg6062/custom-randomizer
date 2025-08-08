@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from "react-router"
 import { ReactNode } from "react"
-import { Card, Group, Text, Image, Menu, UnstyledButton } from "@mantine/core"
+import { Card, Group, Text, Image, Menu } from "@mantine/core"
 import reactLogo from '../assets/react.svg'
 import { Randomizer, RandomizerCardEditProps } from "../types/randomizer"
 import {IconDotsVertical, IconEye} from '@tabler/icons-react'
@@ -34,7 +34,7 @@ export function RandomizerCardEdit (props: RandomizerCardEditProps) {
         navigate(`/randomizer/${props.id}`);
     } 
 
-    const handleEditViewClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const handleEditViewClick = (e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
         navigate(`/randomizer/${props.id}/edit`);
     } 
@@ -68,9 +68,9 @@ export function RandomizerCardEdit (props: RandomizerCardEditProps) {
     )
 
     return ( 
-        <UnstyledButton onClick={handleEditViewClick}>
+        <div onClick={handleEditViewClick} style={{cursor: "pointer"}}>
             {RandomizerCard(props, menu)} 
-        </UnstyledButton>
+        </div>
     ) 
 }
 
