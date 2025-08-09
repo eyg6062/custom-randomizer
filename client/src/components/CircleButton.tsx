@@ -1,4 +1,4 @@
-import { Center, Button } from "@mantine/core"
+import { ActionIcon } from "@mantine/core"
 import { ForwardedRef, forwardRef, MouseEventHandler } from "react";
 
 type CircleButtonProps = {
@@ -10,11 +10,9 @@ const CircleButton = forwardRef<HTMLButtonElement, CircleButtonProps>(
     ({ icon: Icon, onClick } : CircleButtonProps, ref : ForwardedRef<HTMLButtonElement>) => {
 
         return  (
-            <Button ref={ref} onClick={onClick} variant="default" p={4} style={{borderRadius:'50%'}}>
-                <Center>
-                    <Icon/>
-                </Center>
-            </Button>
+            <ActionIcon ref={ref} onClick={onClick} variant="default" size="lg" radius="xl">
+                <Icon/>
+            </ActionIcon>
         );
 });
 

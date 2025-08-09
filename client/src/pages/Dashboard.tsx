@@ -4,8 +4,10 @@ import { getRandomizers, apiDeleteRandomizer } from "../api/randomizer";
 import CustomGrid from "../components/CustomGrid";
 import { RandomizerCardEdit } from "../components/RandomizerCard";
 import { editRandomizerName } from "../Utils/randomizerEditor";
-import { Button, Group, Modal, TextInput } from "@mantine/core";
+import { ActionIcon, Button, Group, Modal, TextInput, Tooltip } from "@mantine/core";
+import {IconPlus} from '@tabler/icons-react'
 import { useDisclosure } from "@mantine/hooks";
+import CreateRandomizerModal from "../components/CreateRandomizerModal";
 
 function Dashboard () {
     const [randomizerData, setRandomizerData] = useState<Randomizer[]>([]);
@@ -18,12 +20,19 @@ function Dashboard () {
     // edit modals
     const [editThumbOpened, { open: openEditThumb, close: closeEditThumb }] = useDisclosure(false);
     const [renameOpened, { open: openRename, close: closeRename }] = useDisclosure(false);
+    const [createOpened, { open: openCreate, close: closeCreate }] = useDisclosure(false);
 
     // rename input value
     const [renameInput, setRenameInput] = useState('');
 
     const renameInputRef = useRef<HTMLInputElement>(null);
 
+
+    const handleCreateSubmit = async (event: React.FormEvent<HTMLFormElement>, name: string, description: string) => {
+        event.preventDefault();
+        console.log(`name: ${name}`)
+        console.log(`description: ${description}`)
+    }
 
     const handleDeleteClick = (id: string) => {
         openDeleteConfirm();
@@ -107,8 +116,16 @@ function Dashboard () {
 
     return (
         <>
-            <h1>Dashboard</h1>
-
+            <Group>
+                <h1>Dashboard</h1>
+                <Tooltip label="Create new randomizer" openDelay={500} withArrow arrowSize={8} position="bottom">
+                    <ActionIcon onClick={openCreate} variant="default" radius="xl" size="lg">
+                        <IconPlus size={24} />
+                    </ActionIcon>
+                </Tooltip>
+                
+            </Group>
+            
             <CustomGrid
                 data={randomizerPropData}
                 Component={RandomizerCardEdit}
@@ -132,6 +149,12 @@ function Dashboard () {
                     <Button type="submit" variant="default">Submit</Button>
                 </form>
             </Modal>
+
+            <CreateRandomizerModal
+                opened={createOpened}
+                close={closeCreate}
+                handleSubmit={handleCreateSubmit}
+            />
         </>
     )
 }
