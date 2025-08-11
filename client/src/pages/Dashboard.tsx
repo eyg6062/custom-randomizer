@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Randomizer, RandomizerCardEditProps } from "../types/randomizer";
-import { getRandomizers, apiDeleteRandomizer } from "../api/randomizer";
+import { getRandomizers, apiDeleteRandomizer, postRandomizer } from "../api/randomizer";
 import CustomGrid from "../components/CustomGrid";
 import { RandomizerCardEdit } from "../components/RandomizerCard";
 import { editRandomizerName } from "../Utils/randomizerEditor";
@@ -30,8 +30,32 @@ function Dashboard () {
 
     const handleCreateSubmit = async (event: React.FormEvent<HTMLFormElement>, name: string, description: string) => {
         event.preventDefault();
+
         console.log(`name: ${name}`)
         console.log(`description: ${description}`)
+
+        const data : Omit<Randomizer, "id"> = {
+            name: name,
+            description: description
+        }
+
+        try {
+            const response = await postRandomizer(data);
+
+            const newRand : RandomizerCardEditProps = {
+                id: response.id,
+                name: name,
+                onRenameClick: handleRenameClick,
+                onDeleteClick: handleDeleteClick,
+                onEditThumbClick: handleEditThumbClick
+            }
+            setRandomizerPropData(prev => [...prev, newRand]);
+
+        } catch (error) {
+            console.error(`Failed to create randomizer:`, error);
+        }
+
+        closeCreate();
     }
 
     const handleDeleteClick = (id: string) => {

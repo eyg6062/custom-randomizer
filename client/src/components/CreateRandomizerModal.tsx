@@ -18,7 +18,7 @@ function CreateRandomizerModal({ opened, close, handleSubmit } : CreateRandomize
 
     return (
         <>
-            <Modal opened={opened} onClose={() => {close(); resetValues();}}  title={"Create a new randomizer"} centered>
+            <Modal opened={opened} onExitTransitionEnd={resetValues} onClose={close} title={"Create a new randomizer"} centered>
                 <form onSubmit={(e) => {handleSubmit(e, nameInput, descInput)}}>
                     <TextInput
                         label="Name"
