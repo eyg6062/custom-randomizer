@@ -31,9 +31,6 @@ function Dashboard () {
     const handleCreateSubmit = async (event: React.FormEvent<HTMLFormElement>, name: string, description: string) => {
         event.preventDefault();
 
-        console.log(`name: ${name}`)
-        console.log(`description: ${description}`)
-
         const data : Omit<Randomizer, "id"> = {
             name: name,
             description: description

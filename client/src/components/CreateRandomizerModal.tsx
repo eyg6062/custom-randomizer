@@ -1,5 +1,5 @@
 import { Button, Modal, Textarea, TextInput } from "@mantine/core"
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 interface CreateRandomizerProps {
     opened: boolean,
