@@ -1,11 +1,24 @@
 using Microsoft.EntityFrameworkCore;
 using custom_randomizer_api.Models;
+using custom_randomizer_api.Services;
+using Amazon.S3;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+// AWS
+
+builder.Services.Configure<AwsSettings>(
+    builder.Configuration.GetSection("AWS"));
+
+builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+
+builder.Services.AddAWSService<IAmazonS3>();
+
+builder.Services.AddSingleton<S3Service>();
 
 
 var connectionString = builder.Configuration.GetConnectionString("PostgresConnection");
