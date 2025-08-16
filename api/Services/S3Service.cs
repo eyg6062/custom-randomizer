@@ -2,6 +2,7 @@
 using Amazon.S3.Model;
 using custom_randomizer_api.Models;
 using Microsoft.Extensions.Options;
+using NodaTime;
 
 namespace custom_randomizer_api.Services
 {
@@ -26,7 +27,9 @@ namespace custom_randomizer_api.Services
                 {
                     BucketName = _bucketName,
                     Key = objectKey,
-                    Expires = DateTime.UtcNow.AddMinutes(5),
+                    Verb = HttpVerb.PUT,
+                    //Expires = DateTime.UtcNow.AddMinutes(5),
+                    Expires = (SystemClock.Instance.GetCurrentInstant() + Duration.FromMinutes(5)).ToDateTimeUtc(),
                     ContentType = contentType,
                 };
                 urlString = _s3Client.GetPreSignedURL(request);

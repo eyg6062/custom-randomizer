@@ -21,7 +21,7 @@ namespace custom_randomizer_api.Controllers
         public ActionResult GetPreSignedUrl(string fileName, string contentType)
         {
             var url = _s3Service.GeneratePresignedURL(fileName, contentType);
-            return Ok(url);
+            return Ok(new PreSignedUrlResponse { Url = url });
         }
 
     }
