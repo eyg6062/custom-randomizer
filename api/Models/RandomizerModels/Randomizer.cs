@@ -15,7 +15,7 @@ namespace Models.RandomizerModels
 
         public string? Description { get; set; }
 
-        public string? ImageUrl { get; set; }
+        public string? ImageKey { get; set; }
 
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+
 namespace Models.RandomizerModels
 {
     public class GetRandomizerDto
@@ -5,6 +7,15 @@ namespace Models.RandomizerModels
         public int Id { get; set; }
         public required string Name { get; set; }
         public string? Description { get; set; }
-        public string? ImageUrl { get; set; }
+        public string? ImageKey { get; set; }
+
+        public static Expression<Func<Randomizer, GetRandomizerDto>> Selector =>
+            randomizer => new GetRandomizerDto
+            {
+                Id = randomizer.Id,
+                Name = randomizer.Name,
+                Description = randomizer.Description,
+                ImageKey = randomizer.ImageKey
+            };
     }
 }

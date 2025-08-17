@@ -21,14 +21,7 @@ namespace custom_randomizer_api.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetTraitOptions()
 		{
-			var result = await _context.TraitOptions.Select(x => new TraitOptionDto
-            {
-				Id = x.Id,
-				Text = x.Text,
-				ImageUrl = x.ImageUrl,
-				TraitId = x.TraitId,
-
-			}).ToListAsync();
+			var result = await _context.TraitOptions.Select(TraitOptionDto.Selector).ToListAsync();
 
 			return Ok(result);
 		}
@@ -50,14 +43,7 @@ namespace custom_randomizer_api.Controllers
 
             var result = await _context.TraitOptions
                 .Where(x => x.TraitId == traitId)
-                .Select(x => new TraitOptionDto
-				{
-					Id = x.Id,
-					Text = x.Text,
-					ImageUrl = x.ImageUrl,
-					TraitId = x.TraitId,
-
-				}).ToListAsync();
+                .Select(TraitOptionDto.Selector).ToListAsync();
 
             return Ok(result);
 		}
@@ -77,23 +63,12 @@ namespace custom_randomizer_api.Controllers
                 return BadRequest("Trait is not of type BasicTrait.");
             }
 
-            var traitOption = new TraitOption
-			{
-				Text = traitOptionDto.Text,
-				ImageUrl = traitOptionDto.ImageUrl,
-				BasicTrait = (BasicTrait)trait,
-			};
+			var traitOption = traitOptionDto.ToEntity((BasicTrait)trait);
 
 			_context.TraitOptions.Add(traitOption);
 			await _context.SaveChangesAsync();
 
-			var result = new TraitOptionDto
-			{
-				Id = traitOption.Id,
-				Text = traitOption.Text,
-				ImageUrl = traitOption.ImageUrl,
-				TraitId = traitOption.TraitId,
-			};
+			var result = TraitOptionDto.Map(traitOption);
 
             return Ok(result);
         }
@@ -112,12 +87,7 @@ namespace custom_randomizer_api.Controllers
                 return BadRequest("Trait is not of type BasicTrait.");
             }
 
-			var traitOptions = traitOptionDtos.Select(x => new TraitOption
-			{
-				Text = x.Text,
-				ImageUrl = x.ImageUrl,
-				BasicTrait = (BasicTrait)trait,
-			})
+			var traitOptions = traitOptionDtos.Select(x => x.ToEntity((BasicTrait)trait))
 			.ToList();
 
             _context.TraitOptions.AddRange(traitOptions);

@@ -1,4 +1,5 @@
 using custom_randomizer_api.Models;
+using custom_randomizer_api.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models.RandomizerModels;
@@ -19,14 +20,7 @@ namespace custom_randomizer_api.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetRandomizers()
 		{
-			var result = await _context.Randomizers.Select(x => new GetRandomizerDto
-			{
-				Id = x.Id,
-				Name = x.Name,
-				Description = x.Description,
-				ImageUrl = x.ImageUrl
-
-			}).ToListAsync();
+			var result = await _context.Randomizers.Select(GetRandomizerDto.Selector).ToListAsync();
 
 			return Ok(result);
 		}
@@ -36,14 +30,7 @@ namespace custom_randomizer_api.Controllers
 		{
 			var randomizer = await _context.Randomizers
 				.Where(x => x.Id == id)
-				.Select(x => new GetRandomizerDto
-				{
-					Id = x.Id,
-					Name = x.Name,
-					Description = x.Description,
-					ImageUrl = x.ImageUrl
-
-				}).FirstOrDefaultAsync();
+				.Select(GetRandomizerDto.Selector).FirstOrDefaultAsync();
 
             if (randomizer == null)
 			{
@@ -56,12 +43,7 @@ namespace custom_randomizer_api.Controllers
 		[HttpPost]
 		public async Task<IActionResult> CreateRandomizer([FromBody] CreateRandomizerDto randomizerDto)
 		{
-			var randomizer = new Randomizer
-			{
-				Name = randomizerDto.Name,
-				Description = randomizerDto.Description,
-				ImageUrl = randomizerDto.ImageUrl
-			};
+			var randomizer = randomizerDto.ToEntity();
 
 			_context.Randomizers.Add(randomizer);
 			await _context.SaveChangesAsync();
@@ -81,7 +63,7 @@ namespace custom_randomizer_api.Controllers
 
             randomizer.Name = randomizerDto.Name ?? randomizer.Name;
             randomizer.Description = randomizerDto.Description ?? randomizer.Description;
-            randomizer.ImageUrl = randomizerDto.ImageUrl ?? randomizer.ImageUrl;
+            randomizer.ImageKey = randomizerDto.ImageKey ?? randomizer.ImageKey;
 
             await _context.SaveChangesAsync(); 
 			return Ok(true); 

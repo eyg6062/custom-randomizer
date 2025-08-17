@@ -1,7 +1,7 @@
 ﻿using custom_randomizer_api.Models.TraitOptions;
 using Models.TraitModels;
 
-namespace custom_randomizer_api.Models.Enums
+namespace custom_randomizer_api.Utils
 {
     public static class TraitTypeMapper
     {
@@ -16,13 +16,7 @@ namespace custom_randomizer_api.Models.Enums
                     TraitType = basic.TraitType,
                     RandomizerId = basic.RandomizerId,
                     TraitOptions = basic.TraitOptions
-                        .Select(x => new TraitOptionDto
-                        {
-                            Id = x.Id,
-                            Text = x.Text,
-                            ImageUrl = x.ImageUrl,
-                            TraitId = x.TraitId,
-                        })
+                        .Select(TraitOptionDto.Map)
                         .ToList(),
                 },
 

@@ -12,7 +12,7 @@ using custom_randomizer_api.Models;
 namespace customrandomizerapi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250707200810_InitialCreate")]
+    [Migration("20250817225221_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -44,7 +44,7 @@ namespace customrandomizerapi.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("ImageKey")
                         .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
@@ -116,7 +116,7 @@ namespace customrandomizerapi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("ImageKey")
                         .HasColumnType("text");
 
                     b.Property<string>("Text")

@@ -1,6 +1,8 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+
+using Models.RandomizerModels;
 using Models.TraitModels;
+using System.Linq.Expressions;
+using System.Xml.Linq;
 
 namespace custom_randomizer_api.Models.TraitOptions
 {
@@ -9,15 +11,42 @@ namespace custom_randomizer_api.Models.TraitOptions
         public int Id { get; set; }
 
         public string? Text { get; set; }
-        public string? ImageUrl { get; set; }
+        public string? ImageKey { get; set; }
 
         public int TraitId { get; set; }
+
+        public static TraitOptionDto Map(TraitOption x) => new TraitOptionDto
+        {
+            Id = x.Id,
+            Text = x.Text,
+            ImageKey = x.ImageKey,
+            TraitId = x.TraitId
+        };
+
+        public static Expression<Func<TraitOption, TraitOptionDto>> Selector =>
+            option => new TraitOptionDto
+            {
+                Id = option.Id,
+                Text = option.Text,
+                ImageKey = option.ImageKey,
+                TraitId = option.TraitId
+            };
 
     }
 
     public class CreateTraitOptionDto
     {
         public string? Text { get; set; }
-        public string? ImageUrl { get; set; }
+        public string? ImageKey { get; set; }
+
+        public TraitOption ToEntity(BasicTrait trait)
+        {
+            return new TraitOption
+            {
+                Text = Text,
+                ImageKey = ImageKey,
+                BasicTrait = trait
+            };
+        }
     }
 }
