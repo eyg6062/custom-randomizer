@@ -17,7 +17,11 @@ namespace custom_randomizer_api.Services
             _bucketName = awsOptions.Value.BucketName;
         }
 
-        public string GeneratePresignedURL(string objectKey, string contentType)
+        public string GenerateUniqueKey(string filename) {
+            return $"{Guid.NewGuid()}{Path.GetExtension(filename)}";
+        }
+
+        public string GeneratePresignedURL(string objectKey, string contentType, HttpVerb verb)
         {
             string urlString = string.Empty;
 
@@ -27,7 +31,7 @@ namespace custom_randomizer_api.Services
                 {
                     BucketName = _bucketName,
                     Key = objectKey,
-                    Verb = HttpVerb.PUT,
+                    Verb = verb,
                     //Expires = DateTime.UtcNow.AddMinutes(5),
                     Expires = (SystemClock.Instance.GetCurrentInstant() + Duration.FromMinutes(5)).ToDateTimeUtc(),
                     ContentType = contentType,

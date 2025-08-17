@@ -20,7 +20,8 @@ namespace custom_randomizer_api.Controllers
         [HttpGet("PreSignedUrl")]
         public ActionResult GetPreSignedUrl(string fileName, string contentType)
         {
-            var url = _s3Service.GeneratePresignedURL(fileName, contentType);
+            var key = _s3Service.GenerateUniqueKey(fileName);
+            var url = _s3Service.GeneratePresignedURL(key, contentType, Amazon.S3.HttpVerb.PUT);
             return Ok(new PreSignedUrlResponse { Url = url });
         }
 
