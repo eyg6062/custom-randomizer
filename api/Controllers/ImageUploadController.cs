@@ -22,14 +22,14 @@ namespace custom_randomizer_api.Controllers
         {
             var key = _s3Service.GenerateUniqueKey(fileName);
             var url = _s3Service.GeneratePresignedURL(key, Amazon.S3.HttpVerb.PUT, contentType);
-            return Ok(new PreSignedUrlResponse { Url = url });
+            return Ok(new PreSignedUrlResponse { Url = url, ImageKey = key });
         }
 
         [HttpGet("PreSignedUrlGet")]
         public ActionResult GetPreSignedUrl(string imageKey)
         {
             var url = _s3Service.GeneratePresignedURL(imageKey, Amazon.S3.HttpVerb.GET);
-            return Ok(new PreSignedUrlResponse { Url = url });
+            return Ok(new PreSignedUrlResponse { Url = url, ImageKey = imageKey });
         }
 
     }

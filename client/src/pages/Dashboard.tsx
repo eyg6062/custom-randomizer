@@ -1,14 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import { Randomizer, RandomizerCardEditProps } from "../types/randomizer";
-import { getRandomizers, apiDeleteRandomizer, postRandomizer } from "../api/randomizer";
+import { CreateRandomizerDto, Randomizer, RandomizerCardEditProps } from "../types/randomizer";
+import { getRandomizers, apiDeleteRandomizer} from "../api/randomizer";
 import CustomGrid from "../components/CustomGrid";
 import { RandomizerCardEdit } from "../components/RandomizerCard";
-import { editRandomizerName } from "../Utils/randomizerEditor";
+import { createRandomizer, editRandomizerName } from "../Utils/randomizerEditor";
 import { ActionIcon, Button, Group, Modal, TextInput, Tooltip } from "@mantine/core";
 import {IconPlus} from '@tabler/icons-react'
 import { useDisclosure } from "@mantine/hooks";
 import CreateRandomizerModal from "../components/CreateRandomizerModal";
-import { uploadImageToBucket } from "../api/imageUpload";
 
 function Dashboard () {
     const [randomizerData, setRandomizerData] = useState<Randomizer[]>([]);
@@ -32,24 +31,14 @@ function Dashboard () {
     const handleCreateSubmit = async (event: React.FormEvent<HTMLFormElement>, name: string, description: string, image: File | undefined) => {
         event.preventDefault();
 
-        const data : Omit<Randomizer, "id"> = {
+        const data : CreateRandomizerDto = {
             name: name,
+            imageFile: image,
             description: description
-        }
-
-        if (image) {
-            try {
-                const response = await uploadImageToBucket(image);
-                console.log(`uploading ${image.name} to bucket`)
-                console.log(response)
-
-            } catch (error) {
-                console.error(`Failed to upload image to bucket:`, error);
-            }
         }
         
         try {
-            const response = await postRandomizer(data);
+            const response = await createRandomizer(data)
 
             const newRand : RandomizerCardEditProps = {
                 id: response.id,

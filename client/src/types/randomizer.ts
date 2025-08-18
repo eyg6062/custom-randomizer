@@ -3,6 +3,7 @@ interface Randomizer {
     name: string,
     description?: string,
     imageUrl?: string,
+    imageKey?: string,
 }   
 
 interface RandomizerCardEditProps extends Randomizer {
@@ -15,6 +16,13 @@ interface EditRandomizerDto {
     name?: string,
     description?: string,
     imageUrl?: string,
+    imageKey?: string,
 }
 
-export type {Randomizer, RandomizerCardEditProps, EditRandomizerDto}
+interface CreateRandomizerDto {
+    name: string,
+    imageFile?: File,
+    description?: string,
+}
+
+export type {Randomizer, RandomizerCardEditProps, EditRandomizerDto, CreateRandomizerDto}

@@ -7,7 +7,7 @@ function About () {
     const [url, setUrl] = useState();
 
     useEffect( () => {
-        const testKey = "6cca62b1-5029-4266-8b5b-1a0f1a4d3d16.png";
+        const testKey = "f8d5e71d-9275-40ed-9090-e711aded15ef.png";
         getImageUrl(testKey)
             .then(json => setUrl(json.url))
     }
