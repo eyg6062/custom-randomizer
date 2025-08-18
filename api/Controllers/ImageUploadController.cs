@@ -17,11 +17,18 @@ namespace custom_randomizer_api.Controllers
             _s3Service = s3Service;
         }
 
-        [HttpGet("PreSignedUrl")]
+        [HttpGet("PreSignedUrlPut")]
         public ActionResult GetPreSignedUrl(string fileName, string contentType)
         {
             var key = _s3Service.GenerateUniqueKey(fileName);
-            var url = _s3Service.GeneratePresignedURL(key, contentType, Amazon.S3.HttpVerb.PUT);
+            var url = _s3Service.GeneratePresignedURL(key, Amazon.S3.HttpVerb.PUT, contentType);
+            return Ok(new PreSignedUrlResponse { Url = url });
+        }
+
+        [HttpGet("PreSignedUrlGet")]
+        public ActionResult GetPreSignedUrl(string imageKey)
+        {
+            var url = _s3Service.GeneratePresignedURL(imageKey, Amazon.S3.HttpVerb.GET);
             return Ok(new PreSignedUrlResponse { Url = url });
         }
 

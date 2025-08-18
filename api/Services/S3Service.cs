@@ -21,7 +21,7 @@ namespace custom_randomizer_api.Services
             return $"{Guid.NewGuid()}{Path.GetExtension(filename)}";
         }
 
-        public string GeneratePresignedURL(string objectKey, string contentType, HttpVerb verb)
+        public string GeneratePresignedURL(string objectKey, HttpVerb verb, string? contentType=null)
         {
             string urlString = string.Empty;
 

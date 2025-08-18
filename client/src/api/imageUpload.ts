@@ -4,9 +4,7 @@ const REQUEST_URL : string = `${BASE_URL}ImageUpload`
 
 export async function uploadImageToBucket(file: File) {
     // get presigned url from server
-    const response = await getPreSignedUrl(file.name, file.type);
-
-    console.log(`uploadImageToBucket response: ${response}`)
+    const response = await getPreSignedUrlPut(file.name, file.type);
     const presignedUrl = response.url;
 
     // upload image to s3 using url
@@ -18,18 +16,24 @@ export async function uploadImageToBucket(file: File) {
         body: file
     };
 
-    const s3Url = presignedUrl.split("?")[0];
-    console.log("File uploading to:", s3Url);
-
     return apiFetch(presignedUrl, options);
 }
 
-export async function getPreSignedUrl(filename: string, contentType: string) {
+export async function getImageUrl(imageKey: string) {
+    const params = new URLSearchParams({
+        imageKey: imageKey
+    });
+
+    return apiFetch(`${REQUEST_URL}/PreSignedUrlGet?${params.toString()}`)
+}
+
+export async function getPreSignedUrlPut(filename: string, contentType: string) {
     
     const params = new URLSearchParams({
         fileName: filename,
         contentType: contentType,
     });
 
-    return apiFetch(`${REQUEST_URL}/PreSignedUrl?${params.toString()}`)
+    return apiFetch(`${REQUEST_URL}/PreSignedUrlPut?${params.toString()}`)
 }
+
