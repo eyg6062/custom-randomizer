@@ -18,4 +18,9 @@ namespace Models.RandomizerModels
                 ImageKey = randomizer.ImageKey
             };
     }
+
+    public class GetRandomizerWithImageDto : GetRandomizerDto
+    {
+        public string? PreSignedUrl { get; set; }
+    }
 }

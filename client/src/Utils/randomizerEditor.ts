@@ -27,9 +27,9 @@ async function editRandomizerDescription(id: string, desc: string) {
     await putRandomizer(id, data);
 }
 
-async function editRandomizerImage(id: string, imageUrl: string) {
-    const data : EditRandomizerDto = {imageUrl: imageUrl}
-    await putRandomizer(id, data);
+async function editRandomizerImage(id: string, file: File) {
+    //const data : EditRandomizerDto = {imageUrl: imageUrl}
+    //await putRandomizer(id, data);
 }
 
 export {editRandomizerName, editRandomizerDescription, editRandomizerImage, createRandomizer}

@@ -2,11 +2,14 @@ interface Randomizer {
     id: string,
     name: string,
     description?: string,
-    imageUrl?: string,
     imageKey?: string,
 }   
 
-interface RandomizerCardEditProps extends Randomizer {
+interface RandomizerCardProps extends Randomizer {
+    preSignedUrl?: string
+}
+
+interface RandomizerCardEditProps extends RandomizerCardProps {
     onRenameClick: (id: string, prevName: string) => void,
     onEditThumbClick: (id: string) => void,
     onDeleteClick: (id: string) => void,
@@ -15,7 +18,6 @@ interface RandomizerCardEditProps extends Randomizer {
 interface EditRandomizerDto {
     name?: string,
     description?: string,
-    imageUrl?: string,
     imageKey?: string,
 }
 
@@ -25,4 +27,4 @@ interface CreateRandomizerDto {
     description?: string,
 }
 
-export type {Randomizer, RandomizerCardEditProps, EditRandomizerDto, CreateRandomizerDto}
+export type {Randomizer, RandomizerCardProps, RandomizerCardEditProps, EditRandomizerDto, CreateRandomizerDto }

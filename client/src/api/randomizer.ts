@@ -7,6 +7,10 @@ export async function getRandomizers() {
     return apiFetch(REQUEST_URL);
 }
 
+export async function getRandomizersWithImageUrl() {
+    return apiFetch(`${REQUEST_URL}/WithImageUrl`)
+}
+
 export async function getRandomizer(id: string) {
     return apiFetch(`${REQUEST_URL}/${id}`);
 }

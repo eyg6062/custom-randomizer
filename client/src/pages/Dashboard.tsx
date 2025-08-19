@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { CreateRandomizerDto, Randomizer, RandomizerCardEditProps } from "../types/randomizer";
-import { getRandomizers, apiDeleteRandomizer} from "../api/randomizer";
+import { CreateRandomizerDto, RandomizerCardEditProps, RandomizerCardProps } from "../types/randomizer";
+import { apiDeleteRandomizer, getRandomizersWithImageUrl} from "../api/randomizer";
 import CustomGrid from "../components/CustomGrid";
 import { RandomizerCardEdit } from "../components/RandomizerCard";
 import { createRandomizer, editRandomizerName } from "../Utils/randomizerEditor";
@@ -8,9 +8,10 @@ import { ActionIcon, Button, Group, Modal, TextInput, Tooltip } from "@mantine/c
 import {IconPlus} from '@tabler/icons-react'
 import { useDisclosure } from "@mantine/hooks";
 import CreateRandomizerModal from "../components/CreateRandomizerModal";
+import { getImageUrl } from "../api/imageUpload";
 
 function Dashboard () {
-    const [randomizerData, setRandomizerData] = useState<Randomizer[]>([]);
+    const [randomizerData, setRandomizerData] = useState<RandomizerCardProps[]>([]);
     const [randomizerPropData, setRandomizerPropData] = useState<RandomizerCardEditProps[]>([]);
     const [selectedCardId, setSelectedCardId] = useState<string>();
 
@@ -39,10 +40,17 @@ function Dashboard () {
         
         try {
             const response = await createRandomizer(data)
+            
+            let imageUrl;
+            if (response.imageKey) {
+                imageUrl = (await getImageUrl(response.imageKey)).url;
+            }
 
             const newRand : RandomizerCardEditProps = {
                 id: response.id,
                 name: name,
+                imageKey: response.imageKey,
+                preSignedUrl: imageUrl,
                 onRenameClick: handleRenameClick,
                 onDeleteClick: handleDeleteClick,
                 onEditThumbClick: handleEditThumbClick
@@ -120,7 +128,7 @@ function Dashboard () {
     }
 
     useEffect( () => {
-        getRandomizers()
+        getRandomizersWithImageUrl()
             .then(json => setRandomizerData(json))
     }, [] );
 
@@ -128,7 +136,8 @@ function Dashboard () {
         const mappedRandProps: RandomizerCardEditProps[] = randomizerData.map(randomizer => ({
             id: randomizer.id,
             name: randomizer.name,
-            imageUrl: randomizer.imageUrl,
+            imageKey: randomizer.imageKey,
+            preSignedUrl: randomizer.preSignedUrl,
             onRenameClick: handleRenameClick,
             onDeleteClick: handleDeleteClick,
             onEditThumbClick: handleEditThumbClick
