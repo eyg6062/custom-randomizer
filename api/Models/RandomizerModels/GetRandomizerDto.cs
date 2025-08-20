@@ -1,3 +1,4 @@
+using custom_randomizer_api.Models.TraitOptions;
 using System.Linq.Expressions;
 
 namespace Models.RandomizerModels
@@ -17,6 +18,14 @@ namespace Models.RandomizerModels
                 Description = randomizer.Description,
                 ImageKey = randomizer.ImageKey
             };
+
+        public static GetRandomizerDto Map(Randomizer randomizer) => new GetRandomizerDto
+        {
+            Id = randomizer.Id,
+            Name = randomizer.Name,
+            Description = randomizer.Description,
+            ImageKey = randomizer.ImageKey
+        };
     }
 
     public class GetRandomizerWithImageDto : GetRandomizerDto

@@ -3,12 +3,13 @@ import { CreateRandomizerDto, RandomizerCardEditProps, RandomizerCardProps } fro
 import { apiDeleteRandomizer, getRandomizersWithImageUrl} from "../api/randomizer";
 import CustomGrid from "../components/CustomGrid";
 import { RandomizerCardEdit } from "../components/RandomizerCard";
-import { createRandomizer, editRandomizerName } from "../Utils/randomizerEditor";
+import { createRandomizer, editRandomizerImage, editRandomizerName } from "../Utils/randomizerEditor";
 import { ActionIcon, Button, Group, Modal, TextInput, Tooltip } from "@mantine/core";
 import {IconPlus} from '@tabler/icons-react'
 import { useDisclosure } from "@mantine/hooks";
 import CreateRandomizerModal from "../components/CreateRandomizerModal";
 import { getImageUrl } from "../api/imageUpload";
+import EditImageModal from "../components/EditImageModal";
 
 function Dashboard () {
     const [randomizerData, setRandomizerData] = useState<RandomizerCardProps[]>([]);
@@ -127,6 +128,38 @@ function Dashboard () {
         setSelectedCardId(id);
     }
 
+    const handleSubmitEditThumb = async (event: React.FormEvent<HTMLFormElement>, image: File | undefined) => {
+        event.preventDefault();
+
+        if (!selectedCardId) {
+            console.log("no randomizer id selected");
+            return;
+        }
+        
+        try {
+            const putResponse = await editRandomizerImage(selectedCardId, image as File);
+            const getResponse = await getImageUrl(putResponse.imageKey);
+
+            setRandomizerPropData(prev => 
+                prev.map(randomizer => {
+                    if (randomizer.id === putResponse.id) {
+                        console.log("editing image key");
+                        return {...randomizer, imageKey: putResponse.imageKey, preSignedUrl: getResponse.url};
+                    }
+                    else {
+                        return randomizer;
+                    }
+                })
+            );
+
+        } catch (error) {
+            console.error(`Failed to edit randomizer thumbnail ${selectedCardId}:`, error);
+        }
+
+        closeEditThumb();
+
+    }
+
     useEffect( () => {
         getRandomizersWithImageUrl()
             .then(json => setRandomizerData(json))
@@ -180,6 +213,12 @@ function Dashboard () {
                     <Button type="submit" variant="default">Submit</Button>
                 </form>
             </Modal>
+
+            <EditImageModal
+                opened={editThumbOpened}
+                close={closeEditThumb}
+                handleSubmit={handleSubmitEditThumb}
+            />
 
             <CreateRandomizerModal
                 opened={createOpened}

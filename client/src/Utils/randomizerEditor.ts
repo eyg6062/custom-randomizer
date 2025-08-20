@@ -28,8 +28,14 @@ async function editRandomizerDescription(id: string, desc: string) {
 }
 
 async function editRandomizerImage(id: string, file: File) {
-    //const data : EditRandomizerDto = {imageUrl: imageUrl}
-    //await putRandomizer(id, data);
+    const response = await getPreSignedUrlPut(file);
+    const presignedUrl = response.url;
+    const imageKey = response.imageKey;
+
+    putImageInBucket(file, presignedUrl);
+
+    const data : EditRandomizerDto = {imageKey: imageKey}
+    return await putRandomizer(id, data);
 }
 
 export {editRandomizerName, editRandomizerDescription, editRandomizerImage, createRandomizer}

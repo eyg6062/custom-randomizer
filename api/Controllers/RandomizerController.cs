@@ -99,7 +99,7 @@ namespace custom_randomizer_api.Controllers
             randomizer.ImageKey = randomizerDto.ImageKey ?? randomizer.ImageKey;
 
             await _context.SaveChangesAsync(); 
-			return Ok(true); 
+			return Ok(GetRandomizerDto.Map(randomizer)); 
 		}
 
 		[HttpDelete("{id}")]
