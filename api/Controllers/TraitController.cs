@@ -1,5 +1,6 @@
 using custom_randomizer_api.Models;
 using custom_randomizer_api.Models.Enums;
+using custom_randomizer_api.Utils;
 using custom_randomizer_api.Models.TraitOptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

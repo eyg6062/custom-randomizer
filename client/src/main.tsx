@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router'
 
 import './index.css'
 import '@mantine/core/styles.css'
+import '@mantine/dropzone/styles.css'
 
 import TestApp from './TestApp.tsx'
 import { MantineProvider } from '@mantine/core'

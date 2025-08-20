@@ -41,7 +41,7 @@ namespace customrandomizerapi.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("ImageKey")
                         .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
@@ -113,7 +113,7 @@ namespace customrandomizerapi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("ImageKey")
                         .HasColumnType("text");
 
                     b.Property<string>("Text")

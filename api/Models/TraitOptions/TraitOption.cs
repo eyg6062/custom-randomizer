@@ -10,7 +10,7 @@ namespace custom_randomizer_api.Models.TraitOptions
         public int Id { get; set; }
 
         public string? Text { get; set; }
-        public string? ImageUrl { get; set; }
+        public string? ImageKey { get; set; }
 
         public int TraitId { get; set; }
 

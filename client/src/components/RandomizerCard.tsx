@@ -1,19 +1,19 @@
 import { NavLink, useNavigate } from "react-router"
 import { ReactNode } from "react"
 import { Card, Group, Text, Image, Menu } from "@mantine/core"
-import reactLogo from '../assets/react.svg'
-import { Randomizer, RandomizerCardEditProps } from "../types/randomizer"
+import diceIcon from '../assets/dice.png'
+import { Randomizer, RandomizerCardEditProps, RandomizerCardProps } from "../types/randomizer"
 import {IconDotsVertical, IconEye} from '@tabler/icons-react'
 import CircleButton from "./CircleButton"
 
-function RandomizerCard (props: Randomizer, menu: ReactNode = null) {
-    const imageUrl = (props.imageUrl == null) ? reactLogo : props.imageUrl;
+function RandomizerCard (props: RandomizerCardProps, menu: ReactNode = null) {
+    const imageUrl = props.imageUrl;
 
     return (
         <Card padding="xs" radius="md" withBorder style={{ minWidth: 300, maxWidth: 300 }}>
             <Card.Section>
                 <Image 
-                src={imageUrl}
+                src={imageUrl ? imageUrl : diceIcon}
                 height={160}
                 fit="contain"
                 />

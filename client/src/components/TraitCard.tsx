@@ -1,6 +1,10 @@
 import { Card, Group, Text, Center, Image, UnstyledButton, Flex } from "@mantine/core";
 import { TraitType } from "../types/traitType";
-import { TraitCardProps } from "../types/traitCardProps";
+import { TraitCardProps } from "../types/trait";
+
+interface TraitCardPropsWithFunction extends TraitCardProps {
+    onCardClick: (id: number) => void
+}
 
 function BasicContent(props: TraitCardProps) {
     return (
@@ -38,7 +42,7 @@ function ColorContent() {
 }
 
 
-export function TraitCard (props: TraitCardProps) {
+export function TraitCard (props: TraitCardPropsWithFunction) {
 
     let content;
     switch (props.traitType) {

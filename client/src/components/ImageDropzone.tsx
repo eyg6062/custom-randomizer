@@ -1,0 +1,48 @@
+import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import { Text, Image, Group } from "@mantine/core";
+import { IconPhoto } from '@tabler/icons-react';
+
+interface ImageDropzoneProps {
+    file: File | undefined,
+    onFileChange: (file: File) => void
+}
+
+export function ImageDropzone({file, onFileChange} : ImageDropzoneProps) {
+
+    const handleDrop = (files: FileWithPath[]) => {
+        onFileChange(files[0] as File);
+    }
+
+    const handleReject = () => {
+        console.log("file rejected, over 5mb")
+    }
+
+    const imagePreview = () => { 
+        console.log((file as File).name)
+        console.log((file as File).type)
+
+        return (
+        <Image 
+            src={URL.createObjectURL(file as File)}
+            fit="contain"
+            height={240}
+        />
+    )}
+
+    return (
+        <Dropzone 
+            accept={IMAGE_MIME_TYPE} 
+            onDrop={handleDrop} 
+            multiple={false}
+            maxSize={5 * 1024 * 1024}
+            onReject={handleReject}
+        >
+                
+            <Group>
+                <IconPhoto/>
+                <Text>Select or drop image here</Text>
+            </Group>
+            {file && imagePreview()}
+        </Dropzone>
+    )
+}

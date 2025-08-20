@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react"
 import { RandomizerCardPublic } from "../components/RandomizerCard"
 import CustomGrid from "../components/CustomGrid"
-import { getRandomizers } from "../api/randomizer";
-import { Randomizer } from "../types/randomizer";
+import { getRandomizersWithImageUrl } from "../api/randomizer";
+import { RandomizerCardProps} from "../types/randomizer";
 
 function Home () {
-    const [data, setData] = useState<Randomizer[]>([]);
+    const [randomizerData, setRandomizerData] = useState<RandomizerCardProps[]>([]);
 
     useEffect( () => {
-        getRandomizers()
-            .then(json => setData(json))
+        getRandomizersWithImageUrl()
+            .then(json => setRandomizerData(json))
     }, [] );
 
     return (
@@ -17,7 +17,7 @@ function Home () {
             <h1>Home</h1>
 
             <CustomGrid
-                data={data}
+                data={randomizerData}
                 Component={RandomizerCardPublic}
             />
             

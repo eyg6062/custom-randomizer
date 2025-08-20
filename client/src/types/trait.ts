@@ -17,7 +17,19 @@ interface NumberTrait extends Trait {
 
 interface TraitOption {
     text?: string,
+    imageKey?: string
+}
+
+
+interface TraitCardProps extends Trait {
+    imageUrl?: string,
+    value?: string,
+    ///onCardClick: (traitId: number) => void;
+}   
+
+interface TraitOptionProps extends TraitOption {
     imageUrl?: string
 }
 
-export type {Trait, BasicTrait, NumberTrait, TraitOption}
+
+export type {Trait, BasicTrait, NumberTrait, TraitOption, TraitCardProps, TraitOptionProps}
