@@ -1,5 +1,5 @@
 import { getImageUrl } from "../api/imageUpload";
-import { BasicTrait, NumberTrait, Trait, TraitOption, TraitOptionProps } from "../types/trait";
+import { BasicTrait, NumberTrait, Trait, TraitOptionProps } from "../types/trait";
 import { TraitCardProps } from "../types/trait";
 import { TraitType } from "../types/traitType";
 

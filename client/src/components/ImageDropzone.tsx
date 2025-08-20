@@ -13,6 +13,10 @@ export function ImageDropzone({file, onFileChange} : ImageDropzoneProps) {
         onFileChange(files[0] as File);
     }
 
+    const handleReject = () => {
+        console.log("file rejected, over 5mb")
+    }
+
     const imagePreview = () => { 
         console.log((file as File).name)
         console.log((file as File).type)
@@ -26,7 +30,14 @@ export function ImageDropzone({file, onFileChange} : ImageDropzoneProps) {
     )}
 
     return (
-        <Dropzone accept={IMAGE_MIME_TYPE} onDrop={handleDrop}>
+        <Dropzone 
+            accept={IMAGE_MIME_TYPE} 
+            onDrop={handleDrop} 
+            multiple={false}
+            maxSize={5 * 1024 * 1024}
+            onReject={handleReject}
+        >
+                
             <Group>
                 <IconPhoto/>
                 <Text>Select or drop image here</Text>
