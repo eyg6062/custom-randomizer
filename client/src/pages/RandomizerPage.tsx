@@ -6,7 +6,7 @@ import CustomGrid from "../components/CustomGrid";
 import { TraitCard } from "../components/TraitCard";
 import { Randomizer } from "../types/randomizer";
 import { getRandomizer } from "../api/randomizer";
-import { TraitCardProps } from "../types/traitCardProps";
+import { TraitCardProps } from "../types/trait";
 import { randomizeTrait } from "../Utils/traitRandomizer";
 import { Button, Group, Text } from "@mantine/core";
 //import { Button } from "@mantine/core";
@@ -36,25 +36,23 @@ function RandomizerPage () {
     
 
     // randomizes trait card on click 
-    const handleUpdateTraitCard = (traitId: number) => {
+    const handleUpdateTraitCard = async (traitId: number) => {
         const traitData = traitsData.find(trait => trait.id === traitId);
-        if (!traitData) {
+        const propData = traitPropData.find(trait => trait.id === traitId);
+
+        if (!traitData || !propData) {
             console.log("invalid trait id");
             return;
         }
 
-        setTraitPropData(prev =>
-            prev.map(trait => {
-                if (trait.id === traitId) {
-                    console.log(`Editing trait ${trait.id}`);
-                    return randomizeTrait(traitData, trait);
+        const updatedTrait = await randomizeTrait(traitData, propData);
 
-                } else {
-                    return trait;
-                }
-            })
-        )
-        console.log(traitPropData);
+        setTraitPropData(prev =>
+            prev.map(trait =>
+                trait.id === traitId ? updatedTrait : trait
+            )
+        );
+
     }
 
     useEffect(() => {
@@ -62,11 +60,13 @@ function RandomizerPage () {
             id: trait.id,
             name: trait.name,
             traitType: trait.traitType,
-            onCardClick: handleUpdateTraitCard
+            value: undefined,
+            imageUrl: undefined,
+            //onCardClick: handleUpdateTraitCard
         }));
         setTraitPropData(mappedTraitProps)
     }, [traitsData] );
-    
+
     // Clears all trait cards
     const clearAllCards = () => {
         setTraitPropData(prev =>
@@ -77,21 +77,22 @@ function RandomizerPage () {
     }
 
     // randomizes all trait cards
-    const randomizeAllCards = () => {
-        setTraitPropData(prev =>
-            prev.map(traitPropData => {
-                // todo: not efficient, find a better way to to this later
+    const randomizeAllCards = async () => {
+        const updatedTraits = await Promise.all(
+            traitPropData.map(async (traitPropData) => {
                 const traitData = traitsData.find(trait => trait.id === traitPropData.id);
                 if (!traitData) {
                     console.log("invalid trait id");
                     return traitPropData;
                 }
-                return randomizeTrait(traitData, traitPropData)
+                return await randomizeTrait(traitData, traitPropData);
             })
-        )
+        );
+
+        setTraitPropData(updatedTraits);
     }
-    
-    if (!randomizerData || !traitsData) {
+
+    if (!randomizerData || !traitsData ) {
         return null;
     }
 
@@ -105,16 +106,21 @@ function RandomizerPage () {
 
             <CustomGrid 
                 data={traitPropData}
-                Component={TraitCard}
+                Component={(props) => (
+                    <TraitCard
+                        {...props}
+                        onCardClick={handleUpdateTraitCard}
+                    />
+                )}
             />
 
             <Group justify="center">
-                <Button onClick={clearAllCards} variant="default">
-                    Clear All
-                </Button>
-                
                 <Button onClick={randomizeAllCards} variant="default">
                     Randomize All
+                </Button>
+
+                <Button onClick={clearAllCards} variant="default">
+                    Clear All
                 </Button>
             </Group>
             

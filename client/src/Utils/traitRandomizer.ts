@@ -1,13 +1,14 @@
-import { BasicTrait, NumberTrait, Trait, TraitOption } from "../types/trait";
-import { TraitCardProps } from "../types/traitCardProps";
+import { getImageUrl } from "../api/imageUpload";
+import { BasicTrait, NumberTrait, Trait, TraitOption, TraitOptionProps } from "../types/trait";
+import { TraitCardProps } from "../types/trait";
 import { TraitType } from "../types/traitType";
 
-function randomizeTrait(traitData: Trait, trait: TraitCardProps) : TraitCardProps {
+async function randomizeTrait(traitData: Trait, trait: TraitCardProps) : Promise<TraitCardProps> {
 
     switch (trait.traitType) {
         case TraitType.Basic:
-            const traitOption = randomizeBasicTrait(traitData as BasicTrait);
-            return {...trait, imageUrl: traitOption.imageUrl, value: traitOption.text};
+            const traitOptionProps = await randomizeBasicTrait(traitData as BasicTrait);
+            return {...trait, imageUrl: traitOptionProps.imageUrl, value: traitOptionProps.text};
         case TraitType.Number:
             const numVal = randomizeNumberTrait(traitData as NumberTrait);
             return {...trait, value: String(numVal)};
@@ -21,9 +22,19 @@ function randomizeTrait(traitData: Trait, trait: TraitCardProps) : TraitCardProp
 
 }
 
-function randomizeBasicTrait(trait: BasicTrait): TraitOption {
+async function randomizeBasicTrait(trait: BasicTrait): Promise<TraitOptionProps> {
     const traitOptions = trait.traitOptions;
-    return traitOptions[getRandomInt(0, traitOptions.length - 1)];
+    const option = traitOptions[getRandomInt(0, traitOptions.length - 1)];
+
+    // get image url
+    let imageUrl;
+    if (option.imageKey) {
+        const response = await getImageUrl(option.imageKey);
+        imageUrl = response.url;
+    }
+
+    const optionProps : TraitOptionProps = {...traitOptions, imageUrl: imageUrl}
+    return optionProps;
 }
 
 function randomizeNumberTrait(trait: NumberTrait) {
