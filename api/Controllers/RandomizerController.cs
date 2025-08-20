@@ -49,7 +49,7 @@ namespace custom_randomizer_api.Controllers
 						Name = randomizer.Name,
 						Description = randomizer.Description,
 						ImageKey = randomizer.ImageKey,
-						PreSignedUrl = preSignedUrl,
+						ImageUrl = preSignedUrl,
 					};
 				})
                 .ToList();

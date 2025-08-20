@@ -30,6 +30,6 @@ namespace Models.RandomizerModels
 
     public class GetRandomizerWithImageDto : GetRandomizerDto
     {
-        public string? PreSignedUrl { get; set; }
+        public string? ImageUrl { get; set; }
     }
 }

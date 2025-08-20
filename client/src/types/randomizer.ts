@@ -6,7 +6,7 @@ interface Randomizer {
 }   
 
 interface RandomizerCardProps extends Randomizer {
-    preSignedUrl?: string
+    imageUrl?: string
 }
 
 interface RandomizerCardEditProps extends RandomizerCardProps {

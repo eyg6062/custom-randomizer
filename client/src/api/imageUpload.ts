@@ -7,7 +7,7 @@ export async function uploadImage(file: File) {
     const response = await getPreSignedUrlPut(file);
     const presignedUrl = response.url;
 
-    return putImageInBucket(file, presignedUrl);
+    return await putImageInBucket(file, presignedUrl);
 }
 
 export async function putImageInBucket(file: File, presignedUrl: string) {

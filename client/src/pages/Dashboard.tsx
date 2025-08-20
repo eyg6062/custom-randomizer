@@ -8,7 +8,6 @@ import { ActionIcon, Button, Group, Modal, TextInput, Tooltip } from "@mantine/c
 import {IconPlus} from '@tabler/icons-react'
 import { useDisclosure } from "@mantine/hooks";
 import CreateRandomizerModal from "../components/CreateRandomizerModal";
-import { getImageUrl } from "../api/imageUpload";
 import EditImageModal from "../components/EditImageModal";
 
 function Dashboard () {
@@ -43,15 +42,15 @@ function Dashboard () {
             const response = await createRandomizer(data)
             
             let imageUrl;
-            if (response.imageKey) {
-                imageUrl = (await getImageUrl(response.imageKey)).url;
+            if (response.imageKey && image) {
+                imageUrl = URL.createObjectURL(image);
             }
 
             const newRand : RandomizerCardEditProps = {
                 id: response.id,
                 name: name,
                 imageKey: response.imageKey,
-                preSignedUrl: imageUrl,
+                imageUrl: imageUrl,
                 onRenameClick: handleRenameClick,
                 onDeleteClick: handleDeleteClick,
                 onEditThumbClick: handleEditThumbClick
@@ -138,13 +137,17 @@ function Dashboard () {
         
         try {
             const putResponse = await editRandomizerImage(selectedCardId, image as File);
-            const getResponse = await getImageUrl(putResponse.imageKey);
+            
+            let imageUrl: string;
+            if (putResponse.imageKey && image) {
+                imageUrl = URL.createObjectURL(image);
+            }
 
             setRandomizerPropData(prev => 
                 prev.map(randomizer => {
                     if (randomizer.id === putResponse.id) {
                         console.log("editing image key");
-                        return {...randomizer, imageKey: putResponse.imageKey, preSignedUrl: getResponse.url};
+                        return {...randomizer, imageKey: putResponse.imageKey, imageUrl: imageUrl};
                     }
                     else {
                         return randomizer;
@@ -170,7 +173,7 @@ function Dashboard () {
             id: randomizer.id,
             name: randomizer.name,
             imageKey: randomizer.imageKey,
-            preSignedUrl: randomizer.preSignedUrl,
+            imageUrl: randomizer.imageUrl,
             onRenameClick: handleRenameClick,
             onDeleteClick: handleDeleteClick,
             onEditThumbClick: handleEditThumbClick

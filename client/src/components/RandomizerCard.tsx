@@ -7,7 +7,7 @@ import {IconDotsVertical, IconEye} from '@tabler/icons-react'
 import CircleButton from "./CircleButton"
 
 function RandomizerCard (props: RandomizerCardProps, menu: ReactNode = null) {
-    const imageUrl = props.preSignedUrl;
+    const imageUrl = props.imageUrl;
 
     return (
         <Card padding="xs" radius="md" withBorder style={{ minWidth: 300, maxWidth: 300 }}>
