@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { CreateRandomizerDto, RandomizerCardEditProps, RandomizerCardProps } from "../types/randomizer";
+import { CreateRandomizerDto, RandomizerCardProps } from "../types/randomizer";
 import { apiDeleteRandomizer, getRandomizersWithImageUrl} from "../api/randomizer";
 import CustomGrid from "../components/CustomGrid";
 import { RandomizerCardEdit } from "../components/RandomizerCard";
@@ -12,7 +12,6 @@ import EditImageModal from "../components/EditImageModal";
 
 function Dashboard () {
     const [randomizerData, setRandomizerData] = useState<RandomizerCardProps[]>([]);
-    const [randomizerPropData, setRandomizerPropData] = useState<RandomizerCardEditProps[]>([]);
     const [selectedCardId, setSelectedCardId] = useState<string>();
 
     // delete confirmation modal
@@ -46,16 +45,13 @@ function Dashboard () {
                 imageUrl = URL.createObjectURL(image);
             }
 
-            const newRand : RandomizerCardEditProps = {
+            const newRand : RandomizerCardProps = {
                 id: response.id,
                 name: name,
                 imageKey: response.imageKey,
                 imageUrl: imageUrl,
-                onRenameClick: handleRenameClick,
-                onDeleteClick: handleDeleteClick,
-                onEditThumbClick: handleEditThumbClick
             }
-            setRandomizerPropData(prev => [...prev, newRand]);
+            setRandomizerData(prev => [...prev, newRand]);
 
         } catch (error) {
             console.error(`Failed to create randomizer:`, error);
@@ -103,7 +99,7 @@ function Dashboard () {
 
         try {
             await editRandomizerName(selectedCardId, renameInput);
-            setRandomizerPropData(prev => 
+            setRandomizerData(prev => 
                 prev.map(randomizer => {
                     if (randomizer.id === selectedCardId) {
                         console.log("editing name");
@@ -143,7 +139,7 @@ function Dashboard () {
                 imageUrl = URL.createObjectURL(image);
             }
 
-            setRandomizerPropData(prev => 
+            setRandomizerData(prev => 
                 prev.map(randomizer => {
                     if (randomizer.id === putResponse.id) {
                         console.log("editing image key");
@@ -168,19 +164,6 @@ function Dashboard () {
             .then(json => setRandomizerData(json))
     }, [] );
 
-    useEffect(() => {
-        const mappedRandProps: RandomizerCardEditProps[] = randomizerData.map(randomizer => ({
-            id: randomizer.id,
-            name: randomizer.name,
-            imageKey: randomizer.imageKey,
-            imageUrl: randomizer.imageUrl,
-            onRenameClick: handleRenameClick,
-            onDeleteClick: handleDeleteClick,
-            onEditThumbClick: handleEditThumbClick
-        }));
-        setRandomizerPropData(mappedRandProps)
-    }, [randomizerData] );
-
     return (
         <>
             <Group>
@@ -194,7 +177,12 @@ function Dashboard () {
             </Group>
             
             <CustomGrid
-                data={randomizerPropData}
+                data={randomizerData.map(randomizer => ({
+                    ...randomizer,
+                    onRenameClick: handleRenameClick,
+                    onDeleteClick: handleDeleteClick,
+                    onEditThumbClick: handleEditThumbClick,
+                }))}
                 Component={RandomizerCardEdit}
             />
 
