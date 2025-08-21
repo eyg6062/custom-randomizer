@@ -1,16 +1,16 @@
 import { getImageUrl } from "../api/imageUpload";
-import { BasicTrait, NumberTrait, Trait, TraitOptionProps } from "../types/trait";
+import { AnyTrait, BasicTrait, NumberTrait, TraitOptionProps } from "../types/trait";
 import { TraitCardProps } from "../types/trait";
 import { TraitType } from "../types/traitType";
 
-async function randomizeTrait(traitData: Trait, trait: TraitCardProps) : Promise<TraitCardProps> {
+async function randomizeTrait(trait: AnyTrait) : Promise<TraitCardProps> {
 
     switch (trait.traitType) {
         case TraitType.Basic:
-            const traitOptionProps = await randomizeBasicTrait(traitData as BasicTrait);
+            const traitOptionProps = await randomizeBasicTrait(trait as BasicTrait);
             return {...trait, imageUrl: traitOptionProps.imageUrl, value: traitOptionProps.text};
         case TraitType.Number:
-            const numVal = randomizeNumberTrait(traitData as NumberTrait);
+            const numVal = randomizeNumberTrait(trait as NumberTrait);
             return {...trait, value: String(numVal)};
         case TraitType.Color:
             // todo: add color in
@@ -33,7 +33,7 @@ async function randomizeBasicTrait(trait: BasicTrait): Promise<TraitOptionProps>
         imageUrl = response.url;
     }
 
-    const optionProps : TraitOptionProps = {...traitOptions, imageUrl: imageUrl}
+    const optionProps : TraitOptionProps = {...option, imageUrl: imageUrl}
     return optionProps;
 }
 

@@ -1,9 +1,18 @@
-import { Card, Group, Text, Center, Image, UnstyledButton, Flex } from "@mantine/core";
+import { Card, Group, Text, Center, Image, UnstyledButton, Flex, Menu } from "@mantine/core";
 import { TraitType } from "../types/traitType";
 import { TraitCardProps } from "../types/trait";
+import { ReactNode } from "react";
+import CircleButton from "./CircleButton";
+import { IconDotsVertical, IconPencil } from "@tabler/icons-react";
 
-interface TraitCardPropsWithFunction extends TraitCardProps {
-    onCardClick: (id: number) => void
+
+type TraitCardPropsWithFunction = TraitCardProps & {
+    onCardClick: (id: string) => void
+}
+
+type TraitCardEditPropsWithFunction = TraitCardPropsWithFunction & {
+    onRenameClick: (id: string, prevName: string) => void,
+    onDeleteClick: (id: string) => void,
 }
 
 function BasicContent(props: TraitCardProps) {
@@ -42,7 +51,7 @@ function ColorContent() {
 }
 
 
-export function TraitCard (props: TraitCardPropsWithFunction) {
+function TraitCard (props: TraitCardPropsWithFunction, menu: ReactNode = null) {
 
     let content;
     switch (props.traitType) {
@@ -68,9 +77,50 @@ export function TraitCard (props: TraitCardPropsWithFunction) {
                 </Card.Section>
                 <Group justify="space-between" p={0} mt="md">
                     <Text>{props.name}</Text>
+                    <>{menu}</>
                 </Group>
             </Card>
         
         </UnstyledButton>
     )
+}
+
+export function TraitCardEdit(props: TraitCardEditPropsWithFunction) {
+    
+    const handleEditClick = () => {
+        // todo: make this go to trait edit page
+        console.log("edit clicked");
+    }
+
+    const menu = (
+        <Group gap="xs">
+            <CircleButton 
+                icon={IconPencil}
+                onClick={handleEditClick}
+            />
+
+            <div onClick={(e) => {e.stopPropagation()}}>
+            <Menu shadow="xs" position="bottom-start" width="dropdown">
+                <Menu.Target>
+                    <CircleButton 
+                        icon={IconDotsVertical}
+                        
+                    />
+                </Menu.Target>
+
+                <Menu.Dropdown>
+                    <Menu.Item onClick={ () => props.onRenameClick(props.id, props.name) }>Rename</Menu.Item>
+                    <Menu.Item onClick={ () => props.onDeleteClick(props.id) }>Delete</Menu.Item>
+                </Menu.Dropdown>
+            </Menu>
+            </div>
+
+        </Group>
+    )
+
+    return TraitCard(props, menu);
+}
+
+export function TraitCardPublic(props: TraitCardPropsWithFunction) {
+    return TraitCard(props);
 }

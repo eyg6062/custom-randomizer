@@ -1,7 +1,7 @@
 import { TraitType } from "./traitType";
 
 interface Trait {
-    id: number,
+    id: string,
     name: string,
     traitType: TraitType,
 }
@@ -15,16 +15,17 @@ interface NumberTrait extends Trait {
     maxNum: number,
 }
 
+type AnyTrait = BasicTrait | NumberTrait;
+
 interface TraitOption {
     text?: string,
     imageKey?: string
 }
 
 
-interface TraitCardProps extends Trait {
+type TraitCardProps = (BasicTrait | NumberTrait) & {
     imageUrl?: string,
     value?: string,
-    ///onCardClick: (traitId: number) => void;
 }   
 
 interface TraitOptionProps extends TraitOption {
@@ -32,4 +33,4 @@ interface TraitOptionProps extends TraitOption {
 }
 
 
-export type {Trait, BasicTrait, NumberTrait, TraitOption, TraitCardProps, TraitOptionProps}
+export type {Trait, BasicTrait, NumberTrait, AnyTrait, TraitOption, TraitCardProps, TraitOptionProps}

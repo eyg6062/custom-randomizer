@@ -1,23 +1,21 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
-import { Trait } from "../types/trait";
+import { AnyTrait } from "../types/trait";
 import { getTraitsByRandomizer } from "../api/trait";
 import CustomGrid from "../components/CustomGrid";
-import { TraitCard } from "../components/TraitCard";
+import { TraitCardPublic } from "../components/TraitCard";
 import { Randomizer } from "../types/randomizer";
 import { getRandomizer } from "../api/randomizer";
 import { TraitCardProps } from "../types/trait";
 import { randomizeTrait } from "../Utils/traitRandomizer";
 import { Button, Group, Text } from "@mantine/core";
-//import { Button } from "@mantine/core";
 
 
 function RandomizerPage () {
     const {id} = useParams<{ id: string }>();
 
     const [randomizerData, setRandomizerData] = useState<Randomizer>();
-    const [traitsData, setTraitData] = useState<Trait[]>([]);
-    const [traitPropData, setTraitPropData] = useState<TraitCardProps[]>([]);
+    const [traitsData, setTraitData] = useState<TraitCardProps[]>([]);
 
     if (id === undefined) {
         throw new Error("Missing route parameter: id");
@@ -30,24 +28,28 @@ function RandomizerPage () {
 
     
     useEffect( () => {
-        getTraitsByRandomizer(id)
-            .then(json => setTraitData(json))
+        const setTraits = async () => {
+            const traits: AnyTrait[] = await getTraitsByRandomizer(id);
+            const traitsProps = traits.map((trait: TraitCardProps) => ({
+                ...trait,
+                imageUrl: undefined,
+                value: undefined
+            }))
+            setTraitData(traitsProps);
+        };
+
+        setTraits();
+        
     }, [] );
     
 
     // randomizes trait card on click 
-    const handleUpdateTraitCard = async (traitId: number) => {
+    const handleUpdateTraitCard = async (traitId: string) => {
         const traitData = traitsData.find(trait => trait.id === traitId);
-        const propData = traitPropData.find(trait => trait.id === traitId);
 
-        if (!traitData || !propData) {
-            console.log("invalid trait id");
-            return;
-        }
+        const updatedTrait: TraitCardProps = await randomizeTrait(traitData as AnyTrait);
 
-        const updatedTrait = await randomizeTrait(traitData, propData);
-
-        setTraitPropData(prev =>
+        setTraitData(prev =>
             prev.map(trait =>
                 trait.id === traitId ? updatedTrait : trait
             )
@@ -55,21 +57,10 @@ function RandomizerPage () {
 
     }
 
-    useEffect(() => {
-        const mappedTraitProps: TraitCardProps[] = traitsData.map(trait => ({
-            id: trait.id,
-            name: trait.name,
-            traitType: trait.traitType,
-            value: undefined,
-            imageUrl: undefined,
-            //onCardClick: handleUpdateTraitCard
-        }));
-        setTraitPropData(mappedTraitProps)
-    }, [traitsData] );
 
     // Clears all trait cards
     const clearAllCards = () => {
-        setTraitPropData(prev =>
+        setTraitData(prev =>
             prev.map(trait => {
                 return {...trait, imageUrl: undefined, value: undefined}
             })
@@ -79,17 +70,12 @@ function RandomizerPage () {
     // randomizes all trait cards
     const randomizeAllCards = async () => {
         const updatedTraits = await Promise.all(
-            traitPropData.map(async (traitPropData) => {
-                const traitData = traitsData.find(trait => trait.id === traitPropData.id);
-                if (!traitData) {
-                    console.log("invalid trait id");
-                    return traitPropData;
-                }
-                return await randomizeTrait(traitData, traitPropData);
+            traitsData.map(async (traitData) => {
+                return await randomizeTrait(traitData);
             })
         );
 
-        setTraitPropData(updatedTraits);
+        setTraitData(updatedTraits);
     }
 
     if (!randomizerData || !traitsData ) {
@@ -98,16 +84,16 @@ function RandomizerPage () {
 
     return (
         <>
-            <h1>{randomizerData.name} {`(id: ${id})`}</h1>
+            <h1>{randomizerData.name}</h1>
 
             <Text>
                 {randomizerData.description}
             </Text>
 
             <CustomGrid 
-                data={traitPropData}
+                data={traitsData}
                 Component={(props) => (
-                    <TraitCard
+                    <TraitCardPublic
                         {...props}
                         onCardClick={handleUpdateTraitCard}
                     />
