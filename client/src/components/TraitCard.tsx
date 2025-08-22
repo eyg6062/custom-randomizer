@@ -67,7 +67,8 @@ function TraitCard (props: TraitCardPropsWithFunction, menu: ReactNode = null) {
     }
     
     return (
-        <UnstyledButton onClick={ () => props.onCardClick(props.id) }  style={{ display: 'block', height: '100%' }}>
+        //<UnstyledButton onClick={ () => props.onCardClick(props.id) }  style={{ display: 'block', height: '100%' }}></UnstyledButton>
+        <div onClick={ () => props.onCardClick(props.id) } style={{cursor: "pointer"}}>
         
             <Card padding="xs" radius="md" withBorder style={{ minWidth: 300, maxWidth: 300 }}>
                 <Card.Section style={{ height: 160 }}>
@@ -81,7 +82,7 @@ function TraitCard (props: TraitCardPropsWithFunction, menu: ReactNode = null) {
                 </Group>
             </Card>
         
-        </UnstyledButton>
+        </div>
     )
 }
 
@@ -94,12 +95,13 @@ export function TraitCardEdit(props: TraitCardEditPropsWithFunction) {
 
     const menu = (
         <Group gap="xs">
+            <div onClick={(e) => {e.stopPropagation()}}>
             <CircleButton 
                 icon={IconPencil}
                 onClick={handleEditClick}
             />
 
-            <div onClick={(e) => {e.stopPropagation()}}>
+            
             <Menu shadow="xs" position="bottom-start" width="dropdown">
                 <Menu.Target>
                     <CircleButton 

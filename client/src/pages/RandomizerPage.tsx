@@ -15,7 +15,7 @@ function RandomizerPage () {
     const {id} = useParams<{ id: string }>();
 
     const [randomizerData, setRandomizerData] = useState<Randomizer>();
-    const [traitsData, setTraitData] = useState<TraitCardProps[]>([]);
+    const [traitData, setTraitData] = useState<TraitCardProps[]>([]);
 
     if (id === undefined) {
         throw new Error("Missing route parameter: id");
@@ -45,9 +45,9 @@ function RandomizerPage () {
 
     // randomizes trait card on click 
     const handleUpdateTraitCard = async (traitId: string) => {
-        const traitData = traitsData.find(trait => trait.id === traitId);
+        const selectedTrait = traitData.find(trait => trait.id === traitId);
 
-        const updatedTrait: TraitCardProps = await randomizeTrait(traitData as AnyTrait);
+        const updatedTrait: TraitCardProps = await randomizeTrait(selectedTrait as AnyTrait);
 
         setTraitData(prev =>
             prev.map(trait =>
@@ -70,15 +70,15 @@ function RandomizerPage () {
     // randomizes all trait cards
     const randomizeAllCards = async () => {
         const updatedTraits = await Promise.all(
-            traitsData.map(async (traitData) => {
-                return await randomizeTrait(traitData);
+            traitData.map(async (trait) => {
+                return await randomizeTrait(trait);
             })
         );
 
         setTraitData(updatedTraits);
     }
 
-    if (!randomizerData || !traitsData ) {
+    if (!randomizerData || !traitData ) {
         return null;
     }
 
@@ -91,7 +91,7 @@ function RandomizerPage () {
             </Text>
 
             <CustomGrid 
-                data={traitsData}
+                data={traitData}
                 Component={(props) => (
                     <TraitCardPublic
                         {...props}
