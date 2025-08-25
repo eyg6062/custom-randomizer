@@ -10,9 +10,9 @@ interface RandomizerCardProps extends Randomizer {
 }
 
 interface RandomizerCardEditProps extends RandomizerCardProps {
-    onRenameClick: (id: string, prevName: string) => void,
-    onEditThumbClick: (id: string) => void,
-    onDeleteClick: (id: string) => void,
+    onRenameClick: (randProps: RandomizerCardProps) => void,
+    onEditThumbClick: (randProps: RandomizerCardProps) => void,
+    onDeleteClick: (randProps: RandomizerCardProps) => void,
 }
 
 interface EditRandomizerDto {
