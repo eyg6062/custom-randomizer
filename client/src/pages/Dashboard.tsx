@@ -8,8 +8,8 @@ import { ActionIcon, Button, Group, Modal, Tooltip } from "@mantine/core";
 import {IconPlus} from '@tabler/icons-react'
 import CreateRandomizerModal from "../components/CreateRandomizerModal";
 import EditImageModal from "../components/EditImageModal";
-import RenameModal from "../components/RenameModal";
 import { useModal } from "../hooks/useModal";
+import { useRenameModal } from "../hooks/useRenameModal";
 
 function Dashboard () {
     const [randomizerData, setRandomizerData] = useState<RandomizerCardProps[]>([]);
@@ -17,7 +17,7 @@ function Dashboard () {
     // edit modals
     const createModal = useModal();
 
-    const renameModal = useModal<RandomizerCardProps>();
+    const renameModal = useRenameModal();
     const editThumbModal = useModal<RandomizerCardProps>();
     const deleteConfirmModal = useModal<RandomizerCardProps>();
 
@@ -169,12 +169,7 @@ function Dashboard () {
                 </Group> 
             </Modal>
 
-            <RenameModal
-                randProps={renameModal.data}
-                opened={renameModal.opened}
-                close={renameModal.close}
-                handleSubmit={handleSubmitRename}
-            />
+            {renameModal.modalNode(handleSubmitRename)}
 
             <EditImageModal
                 opened={editThumbModal.opened}

@@ -1,4 +1,4 @@
-import { Card, Group, Text, Center, Image, UnstyledButton, Flex, Menu } from "@mantine/core";
+import { Card, Group, Text, Center, Image, Flex, Menu } from "@mantine/core";
 import { TraitType } from "../types/traitType";
 import { TraitCardProps } from "../types/trait";
 import { ReactNode } from "react";

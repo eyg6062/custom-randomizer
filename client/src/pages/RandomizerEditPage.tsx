@@ -1,7 +1,11 @@
-import { Button, Group } from "@mantine/core";
+import { ActionIcon, Button, Group, Tooltip } from "@mantine/core";
 import CustomGrid from "../components/CustomGrid";
 import { TraitCardEdit } from "../components/TraitCard";
 import { useRandomizerPageData } from "../hooks/useRandomizerPageData";
+import { useModal } from "../hooks/useModal";
+import { AnyTrait } from "../types/trait";
+import { IconPencil, IconPlus } from "@tabler/icons-react";
+import CircleButton from "../components/CircleButton";
 
 function RandomizerEditPage () {
     const {
@@ -12,13 +16,13 @@ function RandomizerEditPage () {
         randomizeAllCards
     } = useRandomizerPageData();
 
-    const handleRenameClick = () => {
-        console.log("rename click")
-    }
+    // modals
+    const renameRandModal = useModal();
 
-    const handleDeleteClick = () => {
-        console.log("delete click")
-    }
+    const createModal = useModal();
+    const renameTraitModal = useModal<AnyTrait>();
+    const deleteConfirmModal = useModal<AnyTrait>();
+
 
     if (!randomizerData || !traitData ) {
         return null;
@@ -26,14 +30,28 @@ function RandomizerEditPage () {
 
     return (
         <>
-            <h1>{randomizerData.name} (edit view)</h1>
+            <p>(edit view)</p>
+            <Group>
+                <CircleButton
+                    icon={IconPencil}
+                    onClick={renameRandModal.open}
+                />
+                <h1>{randomizerData.name}</h1>
+            </Group>
+            
+
+            <Tooltip label="Create new trait" openDelay={500} withArrow arrowSize={8} position="bottom">
+                <ActionIcon onClick={createModal.open} variant="default" radius="xl" size="lg">
+                    <IconPlus size={24} />
+                </ActionIcon>
+            </Tooltip>
             
             <CustomGrid 
                 data={traitData.map(trait => ({
                     ...trait,
                     onCardClick: handleUpdateTraitCard,
-                    onRenameClick: handleRenameClick,
-                    onDeleteClick: handleDeleteClick,
+                    onRenameClick: renameTraitModal.open,
+                    onDeleteClick: deleteConfirmModal.open,
                 }))}
                 Component={TraitCardEdit}
             />
