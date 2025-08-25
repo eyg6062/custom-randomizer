@@ -1,14 +1,14 @@
 import { useModal } from "./useModal";
-import { RandomizerCardProps } from "../types/randomizer";
 import RenameModal from "../components/RenameModal";
+import { ItemType } from "../types/itemType";
 
-export function useRenameModal() {
-    const modal = useModal<RandomizerCardProps>();
+export function useRenameModal<T>() {
+    const modal = useModal<T>();
 
     const modalNode = (handleSubmit: (event: React.FormEvent<HTMLFormElement>, text: string) => Promise<void>) => {
         return (
             <RenameModal
-                randProps={modal.data}
+                props={modal.data as ItemType}
                 opened={modal.opened}
                 close={modal.close}
                 handleSubmit={handleSubmit}

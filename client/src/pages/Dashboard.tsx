@@ -69,7 +69,7 @@ function Dashboard () {
 
     const handleSubmitRename = async (event: React.FormEvent<HTMLFormElement>, renameInput: string) => {
         event.preventDefault();
-        const selectedCard = renameModal.data;
+        const selectedCard = renameModal.data as RandomizerCardProps;
 
         if (!selectedCard) {
             console.log("no randomizer id selected");

@@ -6,10 +6,14 @@ import { useModal } from "../hooks/useModal";
 import { AnyTrait } from "../types/trait";
 import { IconPencil, IconPlus } from "@tabler/icons-react";
 import CircleButton from "../components/CircleButton";
+import { useRenameModal } from "../hooks/useRenameModal";
+import { RandomizerCardProps } from "../types/randomizer";
+import { editRandomizerName } from "../Utils/randomizerEditor";
 
 function RandomizerEditPage () {
     const {
         randomizerData,
+        setRandomizerData,
         traitData,
         handleUpdateTraitCard,
         clearAllCards,
@@ -17,11 +21,32 @@ function RandomizerEditPage () {
     } = useRandomizerPageData();
 
     // modals
-    const renameRandModal = useModal();
+    const renameRandModal = useRenameModal<RandomizerCardProps>();
 
     const createModal = useModal();
-    const renameTraitModal = useModal<AnyTrait>();
+    const renameTraitModal = useRenameModal<AnyTrait>();
     const deleteConfirmModal = useModal<AnyTrait>();
+
+
+    const handleSubmitRename = async (event: React.FormEvent<HTMLFormElement>, renameInput: string) => {
+        event.preventDefault();
+
+        if (!randomizerData) {
+            console.log("no randomizer id selected");
+            return;
+        }
+
+        try {
+            await editRandomizerName(randomizerData.id, renameInput);
+            setRandomizerData({...randomizerData, name: renameInput});
+
+        } catch (error) {
+            console.error(`Failed to rename randomizer ${randomizerData.id}:`, error);
+        }
+
+        renameRandModal.close();
+    }
+
 
 
     if (!randomizerData || !traitData ) {
@@ -65,6 +90,8 @@ function RandomizerEditPage () {
                     Clear All
                 </Button>
             </Group>
+
+            {renameRandModal.modalNode(handleSubmitRename)}
 
         </>
     )
