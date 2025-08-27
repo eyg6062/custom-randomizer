@@ -23,6 +23,7 @@ interface TraitOption {
 }
 
 interface EditTraitDto {
+    traitType: TraitType,
     name?: string
 }
 

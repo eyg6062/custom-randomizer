@@ -2,7 +2,7 @@ import { ActionIcon, Button, Group, Tooltip } from "@mantine/core";
 import CustomGrid from "../components/CustomGrid";
 import { TraitCardEdit } from "../components/TraitCard";
 import { useRandomizerPageData } from "../hooks/useRandomizerPageData";
-import { AnyTrait, CreateAnyTraitDto } from "../types/trait";
+import { AnyTrait, CreateAnyTraitDto, EditTraitDto } from "../types/trait";
 import { IconPencil, IconPlus } from "@tabler/icons-react";
 import CircleButton from "../components/CircleButton";
 import { editRandomizerName } from "../Utils/randomizerEditor";
@@ -11,7 +11,7 @@ import RenameModal, { RenameModalProps } from "../components/RenameModal";
 import CreateTraitModal, { CreateTraitProps } from "../components/CreateTraitModal";
 import DeleteConfirmModal, { DeleteConfirmProps } from "../components/DeleteConfirmModal";
 import { RandomizerCardProps } from "../types/randomizer";
-import { deleteTrait, postTrait } from "../api/trait";
+import { deleteTrait, postTrait, putTrait } from "../api/trait";
 
 function RandomizerEditPage () {
     const {
@@ -68,7 +68,32 @@ function RandomizerEditPage () {
 
     const handleSubmitTraitRename = async (e: React.FormEvent<HTMLFormElement>, renameInput: string) => {
         e.preventDefault();
-        console.log("rename trait clicked");
+        
+        const selectedTrait = renameTraitModal.data;
+        if (!selectedTrait) {
+            console.log("no trait id selected");
+            return;
+        }
+
+        try {
+            const data: EditTraitDto = {traitType: selectedTrait.traitType, name: renameInput}
+            await putTrait(selectedTrait.id, data);
+
+            setTraitData(prev => 
+                prev.map(trait => {
+                    if (trait.id === selectedTrait.id) {
+                        console.log("editing name");
+                        return {...trait, name: renameInput};
+                    }
+                    else {
+                        return trait;
+                    }
+                })
+            );
+
+        } catch (error) {
+            console.error(`Failed to rename trait:`, error);
+        }
 
         renameTraitModal.close()
         return;
@@ -77,20 +102,19 @@ function RandomizerEditPage () {
     const handleDelete = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
         
-        const traitData = deleteConfirmModal.data;
-        if (!traitData) {
+        const selectedTrait = deleteConfirmModal.data;
+        if (!selectedTrait) {
             console.log("no trait id selected");
             return;
         }
 
         try {
-            await deleteTrait(traitData.id);
-            setTraitData(prev => prev.filter(trait => trait.id !== traitData.id));
+            await deleteTrait(selectedTrait.id);
+            setTraitData(prev => prev.filter(trait => trait.id !== selectedTrait.id));
 
         } catch (error) {
             console.error(`Failed to delete trait:`, error);
         }
-        
         return;
     }
 
