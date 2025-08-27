@@ -2,13 +2,16 @@ import { ActionIcon, Button, Group, Tooltip } from "@mantine/core";
 import CustomGrid from "../components/CustomGrid";
 import { TraitCardEdit } from "../components/TraitCard";
 import { useRandomizerPageData } from "../hooks/useRandomizerPageData";
-import { useModal } from "../hooks/useModal";
 import { AnyTrait } from "../types/trait";
 import { IconPencil, IconPlus } from "@tabler/icons-react";
 import CircleButton from "../components/CircleButton";
-import { useRenameModal } from "../hooks/useRenameModal";
-import { RandomizerCardProps } from "../types/randomizer";
 import { editRandomizerName } from "../Utils/randomizerEditor";
+import { useCustomModal } from "../hooks/useCustomModal";
+import RenameModal, { RenameModalProps } from "../components/RenameModal";
+import { TraitType } from "../types/traitType";
+import CreateTraitModal, { CreateTraitProps } from "../components/CreateTraitModal";
+import DeleteConfirmModal, { DeleteConfirmProps } from "../components/DeleteConfirmModal";
+import { RandomizerCardProps } from "../types/randomizer";
 
 function RandomizerEditPage () {
     const {
@@ -20,15 +23,8 @@ function RandomizerEditPage () {
         randomizeAllCards
     } = useRandomizerPageData();
 
-    // modals
-    const renameRandModal = useRenameModal<RandomizerCardProps>();
 
-    const createModal = useModal();
-    const renameTraitModal = useRenameModal<AnyTrait>();
-    const deleteConfirmModal = useModal<AnyTrait>();
-
-
-    const handleSubmitRename = async (event: React.FormEvent<HTMLFormElement>, renameInput: string) => {
+    const handleSubmitRandRename = async (event: React.FormEvent<HTMLFormElement>, renameInput: string) => {
         event.preventDefault();
 
         if (!randomizerData) {
@@ -47,6 +43,41 @@ function RandomizerEditPage () {
         renameRandModal.close();
     }
 
+    const handleSubmitCreate = async (e: React.FormEvent<HTMLFormElement>, name: string, traitType: TraitType) => {
+        console.log("create trait clicked");
+        return;
+    }
+
+    const handleSubmitTraitRename = async (e: React.FormEvent<HTMLFormElement>, renameInput: string) => {
+        console.log("rename trait clicked");
+        return;
+    }
+
+    const handleDelete = async () => {
+        console.log("delete trait clicked");
+        return;
+    }
+
+
+    const renameRandModal = useCustomModal<RandomizerCardProps, RenameModalProps>(
+        RenameModal,
+        {handleSubmit: handleSubmitRandRename}
+    )
+
+    const createModal =  useCustomModal<undefined, CreateTraitProps>(
+        CreateTraitModal,
+        {handleSubmit: handleSubmitCreate}
+    )
+
+    const renameTraitModal = useCustomModal<AnyTrait, RenameModalProps>(
+        RenameModal,
+        {handleSubmit: handleSubmitTraitRename}
+    )
+
+    const deleteConfirmModal = useCustomModal<AnyTrait, DeleteConfirmProps>(
+        DeleteConfirmModal,
+        {handleSubmit: handleDelete}
+    )
 
 
     if (!randomizerData || !traitData ) {
@@ -59,7 +90,7 @@ function RandomizerEditPage () {
             <Group>
                 <CircleButton
                     icon={IconPencil}
-                    onClick={renameRandModal.open}
+                    onClick={() => renameRandModal.openWithData(randomizerData)}
                 />
                 <h1>{randomizerData.name}</h1>
             </Group>
@@ -75,8 +106,8 @@ function RandomizerEditPage () {
                 data={traitData.map(trait => ({
                     ...trait,
                     onCardClick: handleUpdateTraitCard,
-                    onRenameClick: renameTraitModal.open,
-                    onDeleteClick: deleteConfirmModal.open,
+                    onRenameClick: renameTraitModal.openWithData,
+                    onDeleteClick: deleteConfirmModal.openWithData,
                 }))}
                 Component={TraitCardEdit}
             />
@@ -91,7 +122,13 @@ function RandomizerEditPage () {
                 </Button>
             </Group>
 
-            {renameRandModal.modalNode(handleSubmitRename)}
+            {renameRandModal.modalNode}
+
+            {createModal.modalNode}
+
+            {renameTraitModal.modalNode}
+
+            {deleteConfirmModal.modalNode}
 
         </>
     )

@@ -37,14 +37,13 @@ export function useRandomizerPageData () {
     }, [] );
 
     // randomizes trait card on click 
-    const handleUpdateTraitCard = async (traitId: string) => {
-        const selectedTrait = traitData.find(trait => trait.id === traitId);
+    const handleUpdateTraitCard = async (selectedTrait: AnyTrait) => {
 
         const updatedTrait: TraitCardProps = await randomizeTrait(selectedTrait as AnyTrait);
 
         setTraitData(prev =>
             prev.map(trait =>
-                trait.id === traitId ? updatedTrait : trait
+                trait.id === selectedTrait.id ? updatedTrait : trait
             )
         );
     }
