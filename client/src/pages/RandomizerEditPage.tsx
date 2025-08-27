@@ -11,7 +11,7 @@ import RenameModal, { RenameModalProps } from "../components/RenameModal";
 import CreateTraitModal, { CreateTraitProps } from "../components/CreateTraitModal";
 import DeleteConfirmModal, { DeleteConfirmProps } from "../components/DeleteConfirmModal";
 import { RandomizerCardProps } from "../types/randomizer";
-import { postTrait } from "../api/trait";
+import { deleteTrait, postTrait } from "../api/trait";
 
 function RandomizerEditPage () {
     const {
@@ -74,8 +74,23 @@ function RandomizerEditPage () {
         return;
     }
 
-    const handleDelete = async () => {
-        console.log("delete trait clicked");
+    const handleDelete = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault();
+        
+        const traitData = deleteConfirmModal.data;
+        if (!traitData) {
+            console.log("no trait id selected");
+            return;
+        }
+
+        try {
+            await deleteTrait(traitData.id);
+            setTraitData(prev => prev.filter(trait => trait.id !== traitData.id));
+
+        } catch (error) {
+            console.error(`Failed to delete trait:`, error);
+        }
+        
         return;
     }
 
