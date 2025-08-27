@@ -1,5 +1,4 @@
 ﻿using custom_randomizer_api.Models.Enums;
-using custom_randomizer_api.Models.TraitOptions;
 using System.Text.Json.Serialization;
 
 namespace Models.TraitModels
@@ -17,7 +16,6 @@ namespace Models.TraitModels
 
     public class CreateBasicTraitDto : CreateTraitDto
     {
-        public ICollection<TraitOption> TraitOptions { get; set; } = new List<TraitOption>();
     }
 
 

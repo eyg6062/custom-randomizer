@@ -2,22 +2,23 @@ import { ActionIcon, Button, Group, Tooltip } from "@mantine/core";
 import CustomGrid from "../components/CustomGrid";
 import { TraitCardEdit } from "../components/TraitCard";
 import { useRandomizerPageData } from "../hooks/useRandomizerPageData";
-import { AnyTrait } from "../types/trait";
+import { AnyTrait, CreateAnyTraitDto } from "../types/trait";
 import { IconPencil, IconPlus } from "@tabler/icons-react";
 import CircleButton from "../components/CircleButton";
 import { editRandomizerName } from "../Utils/randomizerEditor";
 import { useCustomModal } from "../hooks/useCustomModal";
 import RenameModal, { RenameModalProps } from "../components/RenameModal";
-import { TraitType } from "../types/traitType";
 import CreateTraitModal, { CreateTraitProps } from "../components/CreateTraitModal";
 import DeleteConfirmModal, { DeleteConfirmProps } from "../components/DeleteConfirmModal";
 import { RandomizerCardProps } from "../types/randomizer";
+import { postTrait } from "../api/trait";
 
 function RandomizerEditPage () {
     const {
         randomizerData,
         setRandomizerData,
         traitData,
+        setTraitData,
         handleUpdateTraitCard,
         clearAllCards,
         randomizeAllCards
@@ -43,13 +44,33 @@ function RandomizerEditPage () {
         renameRandModal.close();
     }
 
-    const handleSubmitCreate = async (e: React.FormEvent<HTMLFormElement>, name: string, traitType: TraitType) => {
-        console.log("create trait clicked");
+    const handleSubmitCreate = async (e: React.FormEvent<HTMLFormElement>, data: CreateAnyTraitDto) => {
+        e.preventDefault();
+        console.log(data)
+
+        if (!randomizerData) {
+            console.log("no randomizer id selected");
+            return;
+        }
+
+        try {
+            const response = await postTrait(randomizerData?.id, data);
+
+            setTraitData(prev => [...prev, response]);
+
+        } catch (error) {
+            console.error(`Failed to create new trait:`, error);
+        }
+
+        createModal.close();
         return;
     }
 
     const handleSubmitTraitRename = async (e: React.FormEvent<HTMLFormElement>, renameInput: string) => {
+        e.preventDefault();
         console.log("rename trait clicked");
+
+        renameTraitModal.close()
         return;
     }
 

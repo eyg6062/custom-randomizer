@@ -107,7 +107,7 @@ namespace custom_randomizer_api.Controllers
             _context.Traits.Add(trait);
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(TraitTypeMapper.MapTraitType(trait));
 		}
 
         [HttpPut("{id}")]

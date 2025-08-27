@@ -31,6 +31,9 @@ interface EditNumberTraitDto extends EditTraitDto {
     maxNum?: number,
 }
 
+type CreateTraitDto = Omit<Trait, 'id'>
+type CreateNumberTraitDto = Omit<CreateTraitDto & NumberTrait, 'id'>
+type CreateAnyTraitDto = CreateTraitDto | CreateNumberTraitDto
 
 type TraitCardProps = (BasicTrait | NumberTrait) & {
     imageUrl?: string,
@@ -42,4 +45,4 @@ interface TraitOptionProps extends TraitOption {
 }
 
 
-export type {Trait, BasicTrait, NumberTrait, AnyTrait, TraitOption, TraitCardProps, TraitOptionProps, EditTraitDto, EditNumberTraitDto}
+export type {Trait, BasicTrait, NumberTrait, AnyTrait, TraitOption, TraitCardProps, TraitOptionProps, EditTraitDto, EditNumberTraitDto, CreateTraitDto, CreateNumberTraitDto, CreateAnyTraitDto}

@@ -1,4 +1,4 @@
-import { AnyTrait, EditTraitDto } from "../types/trait";
+import { CreateAnyTraitDto, EditTraitDto } from "../types/trait";
 import { BASE_URL, apiFetch } from "./client";
 
 const REQUEST_URL : string = `${BASE_URL}Trait`
@@ -27,8 +27,12 @@ export async function putTrait(id: string, data: EditTraitDto) {
     return apiFetch(`${REQUEST_URL}/${id}`, options);
 }
 
-export async function postTrait(data: Omit<AnyTrait, 'id'>) {
+export async function postTrait(id: string, data: CreateAnyTraitDto) {
     // traitType must be first value in json
+
+    const params = new URLSearchParams({
+        randomizerId: id
+    });
 
     const options = {
         method: 'POST',
@@ -38,7 +42,7 @@ export async function postTrait(data: Omit<AnyTrait, 'id'>) {
         body: JSON.stringify(data),
     };
 
-    return apiFetch(REQUEST_URL, options);
+    return apiFetch(`${REQUEST_URL}?${params.toString()}`, options);
 }
 
 export async function deleteTrait(id: string) {
