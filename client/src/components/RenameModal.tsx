@@ -1,31 +1,28 @@
 import { Button, Modal, TextInput } from "@mantine/core"
 import { useEffect, useRef, useState } from "react";
-import { ItemType } from "../types/itemType";
+import { ItemType, ModalProps } from "../types/modalProps";
 
-interface RenameProps {
-    props: ItemType
-    opened: boolean,
-    close: () => void,
+export interface RenameModalProps {
     handleSubmit: (event: React.FormEvent<HTMLFormElement>, text: string) => Promise<void>
 }
 
-function RenameModal({props, opened, close, handleSubmit} : RenameProps) {
+function RenameModal({data, opened, close, handleSubmit} : ModalProps<ItemType> & RenameModalProps) {
     const [renameInput, setRenameInput] = useState('');
     const renameInputRef = useRef<HTMLInputElement>(null);
 
     // When modal opens, set input value and select text
     useEffect(() => {
         if (opened) {
-            if (!props) {
+            if (!data) {
                 return;
             }
-            setRenameInput(props.name);
+            setRenameInput(data.name);
 
             setTimeout(() => {
                 renameInputRef.current?.select();
             }, 0);
         }
-    }, [opened, props]);
+    }, [opened, data]);
 
     return (
         

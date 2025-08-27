@@ -4,22 +4,22 @@ import { apiDeleteRandomizer, getRandomizersWithImageUrl} from "../api/randomize
 import CustomGrid from "../components/CustomGrid";
 import { RandomizerCardEdit } from "../components/RandomizerCard";
 import { createRandomizer, editRandomizerImage, editRandomizerName } from "../Utils/randomizerEditor";
-import { ActionIcon, Button, Group, Modal, Tooltip } from "@mantine/core";
+import { ActionIcon, Group, Tooltip } from "@mantine/core";
 import {IconPlus} from '@tabler/icons-react'
-import CreateRandomizerModal from "../components/CreateRandomizerModal";
-import EditImageModal from "../components/EditImageModal";
-import { useModal } from "../hooks/useModal";
-import { useRenameModal } from "../hooks/useRenameModal";
+import CreateRandomizerModal, {CreateRandomizerProps} from "../components/CreateRandomizerModal";
+import EditImageModal, { EditImageProps } from "../components/EditImageModal";
+import { useCustomModal } from "../hooks/useCustomModal";
+import RenameModal, { RenameModalProps } from "../components/RenameModal";
+import DeleteConfirmModal, { DeleteConfirmProps } from "../components/DeleteConfirmModal";
 
 function Dashboard () {
     const [randomizerData, setRandomizerData] = useState<RandomizerCardProps[]>([]);
 
-    // edit modals
-    const createModal = useModal();
+    useEffect( () => {
+        getRandomizersWithImageUrl()
+            .then(json => setRandomizerData(json))
+    }, [] );
 
-    const renameModal = useRenameModal();
-    const editThumbModal = useModal<RandomizerCardProps>();
-    const deleteConfirmModal = useModal<RandomizerCardProps>();
 
     const handleCreateSubmit = async (event: React.FormEvent<HTMLFormElement>, name: string, description: string, image: File | undefined) => {
         event.preventDefault();
@@ -132,13 +132,30 @@ function Dashboard () {
         }
 
         editThumbModal.close()
-
     }
 
-    useEffect( () => {
-        getRandomizersWithImageUrl()
-            .then(json => setRandomizerData(json))
-    }, [] );
+    
+    // modals
+    const createModal = useCustomModal<undefined, CreateRandomizerProps>(
+        CreateRandomizerModal, 
+        {handleSubmit: handleCreateSubmit}
+    );
+
+    const renameModal = useCustomModal<RandomizerCardProps, RenameModalProps>(
+        RenameModal,
+        {handleSubmit: handleSubmitRename}
+    );
+
+    const editThumbModal = useCustomModal<RandomizerCardProps, EditImageProps>(
+        EditImageModal,
+        {handleSubmit: handleSubmitEditThumb}
+    );
+
+    const deleteConfirmModal = useCustomModal<RandomizerCardProps, DeleteConfirmProps>(
+        DeleteConfirmModal,
+        {handleSubmit: handleDelete}
+    )
+
 
     return (
         <>
@@ -162,26 +179,14 @@ function Dashboard () {
                 Component={RandomizerCardEdit}
             />
 
-            <Modal opened={deleteConfirmModal.opened} onClose={deleteConfirmModal.close} title={"Are you sure you want to delete?"} centered>
-                <Group>
-                    <Button onClick={deleteConfirmModal.close} variant="default">No</Button>
-                    <Button onClick={() => { handleDelete(); deleteConfirmModal.close()}} variant="default">Yes</Button>
-                </Group> 
-            </Modal>
+            {deleteConfirmModal.modalNode}
 
-            {renameModal.modalNode(handleSubmitRename)}
+            {renameModal.modalNode}
 
-            <EditImageModal
-                opened={editThumbModal.opened}
-                close={editThumbModal.close}
-                handleSubmit={handleSubmitEditThumb}
-            />
+            {editThumbModal.modalNode}
 
-            <CreateRandomizerModal
-                opened={createModal.opened}
-                close={createModal.close}
-                handleSubmit={handleCreateSubmit}
-            />
+            {createModal.modalNode}
+
         </>
     )
 }

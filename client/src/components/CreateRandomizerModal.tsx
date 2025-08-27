@@ -1,14 +1,13 @@
 import { Button, Modal, Textarea, TextInput } from "@mantine/core"
 import { useState } from "react";
 import { ImageDropzone } from "./ImageDropzone";
+import { ItemType, ModalProps } from "../types/modalProps";
 
-interface CreateRandomizerProps {
-    opened: boolean,
-    close: () => void,
+export interface CreateRandomizerProps {
     handleSubmit: (event: React.FormEvent<HTMLFormElement>, name: string, description: string, image: File | undefined) => Promise<void>
 }
 
-function CreateRandomizerModal({ opened, close, handleSubmit } : CreateRandomizerProps) {
+function CreateRandomizerModal({ opened, close, handleSubmit } : ModalProps<ItemType> & CreateRandomizerProps) {
     const [nameInput, setNameInput] = useState<string>('');
     const [descInput, setDescInput] = useState<string>('');
     const [imageInput, setImageInput] = useState<File>();
