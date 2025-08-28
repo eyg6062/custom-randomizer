@@ -21,6 +21,8 @@ function CreateTraitModal({ opened, close, handleSubmit } : ModalProps<ItemType>
     }
 
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
         const data: CreateTraitDto = {traitType: typeInput, name: nameInput};
 
         let result: CreateAnyTraitDto;
@@ -29,6 +31,10 @@ function CreateTraitModal({ opened, close, handleSubmit } : ModalProps<ItemType>
                 result = {...data};
                 break;
             case TraitType.Number:
+                if (minInput > maxInput) {
+                    console.log("minNum can't be greater than maxNum");
+                    return;
+                }
                 const dto: CreateNumberTraitDto = {...data, minNum: Number(minInput), maxNum: Number(maxInput)}
                 result = dto;
                 break;

@@ -24,6 +24,12 @@ async function randomizeTrait(trait: AnyTrait) : Promise<TraitCardProps> {
 
 async function randomizeBasicTrait(trait: BasicTrait): Promise<TraitOptionProps> {
     const traitOptions = trait.traitOptions;
+
+    if (traitOptions.length === 0) {
+        console.log("trait has no options")
+        return {};
+    } 
+
     const option = traitOptions[getRandomInt(0, traitOptions.length - 1)];
 
     // get image url
