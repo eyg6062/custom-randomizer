@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { ImageDropzone } from "./ImageDropzone";
 import { Button, Modal } from "@mantine/core";
+import { ItemType, ModalProps } from "../types/modalProps";
 
-interface EditImageProps {
-    opened: boolean,
-    close: () => void,
+export interface EditImageProps {
     handleSubmit: (event: React.FormEvent<HTMLFormElement>, image: File | undefined) => Promise<void>
 }
 
-function EditImageModal({opened, close, handleSubmit} : EditImageProps) {
+function EditImageModal({opened, close, handleSubmit} : ModalProps<ItemType> & EditImageProps) {
 
     const [imageInput, setImageInput] = useState<File>();
 

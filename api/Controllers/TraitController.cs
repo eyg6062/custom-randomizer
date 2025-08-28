@@ -1,12 +1,9 @@
 using custom_randomizer_api.Models;
 using custom_randomizer_api.Models.Enums;
 using custom_randomizer_api.Utils;
-using custom_randomizer_api.Models.TraitOptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Models.RandomizerModels;
 using Models.TraitModels;
-using System.Diagnostics;
 
 namespace custom_randomizer_api.Controllers
 {
@@ -39,23 +36,14 @@ namespace custom_randomizer_api.Controllers
         [HttpGet("{id}")]
 		public async Task<IActionResult> GetTrait(int id)
 		{
-			var trait = await _context.Traits
-                .Where(x => x.Id == id)
-				.Select(x => new TraitDto
-				{
-					Id = x.Id,
-					Name = x.Name,
-					TraitType = x.TraitType,
-                    RandomizerId = x.RandomizerId,
-
-                }).FirstOrDefaultAsync();
+            var trait = await _context.Traits.FindAsync(id);
 
             if (trait == null)
 			{
 				return NotFound();
 			}
 
-			return Ok(trait);
+			return Ok(TraitTypeMapper.MapTraitType(trait));
 		}
 
         [HttpGet("ByRandomizer/{randomizerId}")]
@@ -83,7 +71,7 @@ namespace custom_randomizer_api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateTrait(int randomizerId, [FromBody] CreateTraitDto traitDto)
 		{
-            // note: the first property in the json needs to be traitType
+            // note: the first property in the json needs to be $traitType
 
             var randomizer = await _context.Randomizers.FindAsync(randomizerId);
 
@@ -119,43 +107,53 @@ namespace custom_randomizer_api.Controllers
             _context.Traits.Add(trait);
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(TraitTypeMapper.MapTraitType(trait));
 		}
-
-        /*
 
         [HttpPut("{id}")]
-		public async Task<IActionResult> PutTrait(int id, string? name) {
-
+        public async Task<IActionResult> PutTrait(int id, [FromBody] PutTraitDto traitDto)
+        {
             var trait = await _context.Traits.FindAsync(id);
+            if (trait == null) return NotFound();
 
-            if (trait == null)
+            trait.Name = traitDto.Name ?? trait.Name;
+
+            switch (trait)
             {
-                return NotFound();
+                case BasicTrait basic:
+                    break;
+
+                case NumberTrait number:
+                    if (traitDto is PutNumberTraitDto numberTraitDto)
+                    {
+                        number.MinNum = numberTraitDto.MinNum ?? number.MinNum;
+                        number.MaxNum = numberTraitDto.MaxNum ?? number.MaxNum;
+                    } else
+                    {
+                        return BadRequest();
+                    }
+                    break;
+
+                case ColorTrait color:
+                    break;
             }
 
-			if (name != null) trait.Name = name;
+            await _context.SaveChangesAsync();
 
-            await _context.SaveChangesAsync(); 
-			return Ok(); 
-		}
+            return Ok(TraitTypeMapper.MapTraitType(trait));
+        }
 
-		*/
-
-		[HttpDelete("{id}")]
+        [HttpDelete("{id}")]
 		public async Task<IActionResult> DeleteTrait(int id)
 		{
 			var trait = await _context.Traits.FindAsync(id);
 
-            if (trait == null)
-            {
-                return NotFound();
-            }
+            if (trait == null) return NotFound();
 
 			_context.Traits.Remove(trait);
 			await _context.SaveChangesAsync();
 
-			return Ok(true);
+			return Ok();
 		}
 	}
 }

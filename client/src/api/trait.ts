@@ -1,8 +1,54 @@
+import { CreateAnyTraitDto, EditTraitDto } from "../types/trait";
 import { BASE_URL, apiFetch } from "./client";
-//import { Trait } from "../types/trait";
 
 const REQUEST_URL : string = `${BASE_URL}Trait`
 
 export async function getTraitsByRandomizer(randomizerId: string) { 
     return apiFetch(`${REQUEST_URL}/ByRandomizer/${randomizerId}`);
+}
+
+export async function getTrait(id: string) {
+    return apiFetch(`${REQUEST_URL}/${id}`);
+}
+
+export async function putTrait(id: string, data: EditTraitDto) {
+    // traitType must be first value in json
+
+    const options = {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    };
+
+    console.log(JSON.stringify(data))
+
+    return apiFetch(`${REQUEST_URL}/${id}`, options);
+}
+
+export async function postTrait(id: string, data: CreateAnyTraitDto) {
+    // traitType must be first value in json
+
+    const params = new URLSearchParams({
+        randomizerId: id
+    });
+
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    };
+
+    return apiFetch(`${REQUEST_URL}?${params.toString()}`, options);
+}
+
+export async function deleteTrait(id: string) {
+    const options = {
+        method: 'DELETE'
+    };
+
+    return apiFetch(`${REQUEST_URL}/${id}`, options);
 }

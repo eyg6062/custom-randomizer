@@ -1,31 +1,24 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect} from "react";
 import { CreateRandomizerDto, RandomizerCardProps } from "../types/randomizer";
 import { apiDeleteRandomizer, getRandomizersWithImageUrl} from "../api/randomizer";
 import CustomGrid from "../components/CustomGrid";
 import { RandomizerCardEdit } from "../components/RandomizerCard";
 import { createRandomizer, editRandomizerImage, editRandomizerName } from "../Utils/randomizerEditor";
-import { ActionIcon, Button, Group, Modal, TextInput, Tooltip } from "@mantine/core";
+import { ActionIcon, Group, Tooltip } from "@mantine/core";
 import {IconPlus} from '@tabler/icons-react'
-import { useDisclosure } from "@mantine/hooks";
-import CreateRandomizerModal from "../components/CreateRandomizerModal";
-import EditImageModal from "../components/EditImageModal";
+import CreateRandomizerModal, {CreateRandomizerProps} from "../components/CreateRandomizerModal";
+import EditImageModal, { EditImageProps } from "../components/EditImageModal";
+import { useCustomModal } from "../hooks/useCustomModal";
+import RenameModal, { RenameModalProps } from "../components/RenameModal";
+import DeleteConfirmModal, { DeleteConfirmProps } from "../components/DeleteConfirmModal";
 
 function Dashboard () {
     const [randomizerData, setRandomizerData] = useState<RandomizerCardProps[]>([]);
-    const [selectedCardId, setSelectedCardId] = useState<string>();
 
-    // delete confirmation modal
-    const [deleteConfirmOpened, { open: openDeleteConfirm, close: closeDeleteConfirm }] = useDisclosure(false);
-
-    // edit modals
-    const [editThumbOpened, { open: openEditThumb, close: closeEditThumb }] = useDisclosure(false);
-    const [renameOpened, { open: openRename, close: closeRename }] = useDisclosure(false);
-    const [createOpened, { open: openCreate, close: closeCreate }] = useDisclosure(false);
-
-    // rename input value
-    const [renameInput, setRenameInput] = useState('');
-
-    const renameInputRef = useRef<HTMLInputElement>(null);
+    useEffect( () => {
+        getRandomizersWithImageUrl()
+            .then(json => setRandomizerData(json))
+    }, [] );
 
 
     const handleCreateSubmit = async (event: React.FormEvent<HTMLFormElement>, name: string, description: string, image: File | undefined) => {
@@ -57,51 +50,37 @@ function Dashboard () {
             console.error(`Failed to create randomizer:`, error);
         }
 
-        closeCreate();
+        createModal.close();
     }
 
-    const handleDeleteClick = (id: string) => {
-        openDeleteConfirm();
-        setSelectedCardId(id);
-    }
-
-    const handleDelete = async (id?: string) => {
-        if (!id) {
+    const handleDelete = async () => {
+        const selectedCard = deleteConfirmModal.data;
+        if (!selectedCard) {
             console.log("no randomizer id selected");
             return;
         }
         try {
-            await apiDeleteRandomizer(id);
-            setRandomizerData(prev => prev.filter(randomizer => randomizer.id !== id));
+            await apiDeleteRandomizer(selectedCard.id);
+            setRandomizerData(prev => prev.filter(randomizer => randomizer.id !== selectedCard.id));
         } catch (error) {
-            console.error(`Failed to delete randomizer ${id}:`, error);
+            console.error(`Failed to delete randomizer ${selectedCard.id}:`, error);
         }
     }
 
-    const handleRenameClick = (id: string, prevName: string) => {
-        setSelectedCardId(id);
-        setRenameInput(prevName);
-        openRename();
-        setTimeout(() => {
-            if (renameInputRef.current) {
-            renameInputRef.current.select();
-            }
-        }, 0);
-    }
-
-    const handleSubmitRename = async (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmitRename = async (event: React.FormEvent<HTMLFormElement>, renameInput: string) => {
         event.preventDefault();
-        
-        if (!selectedCardId) {
+        const selectedCard = renameModal.data as RandomizerCardProps;
+
+        if (!selectedCard) {
             console.log("no randomizer id selected");
             return;
         }
 
         try {
-            await editRandomizerName(selectedCardId, renameInput);
+            await editRandomizerName(selectedCard.id, renameInput);
             setRandomizerData(prev => 
                 prev.map(randomizer => {
-                    if (randomizer.id === selectedCardId) {
+                    if (randomizer.id === selectedCard.id) {
                         console.log("editing name");
                         return {...randomizer, name: renameInput};
                     }
@@ -112,27 +91,24 @@ function Dashboard () {
             );
 
         } catch (error) {
-            console.error(`Failed to rename randomizer ${selectedCardId}:`, error);
+            console.error(`Failed to rename randomizer ${selectedCard.id}:`, error);
         }
 
-        closeRename();
-    }
-
-    const handleEditThumbClick = (id: string) => {
-        openEditThumb();
-        setSelectedCardId(id);
+        renameModal.close();
     }
 
     const handleSubmitEditThumb = async (event: React.FormEvent<HTMLFormElement>, image: File | undefined) => {
         event.preventDefault();
 
-        if (!selectedCardId) {
-            console.log("no randomizer id selected");
+        const selectedCard = editThumbModal.data;
+
+        if (!selectedCard) {
+            console.log("no randomizer selected");
             return;
         }
         
         try {
-            const putResponse = await editRandomizerImage(selectedCardId, image as File);
+            const putResponse = await editRandomizerImage(selectedCard.id, image as File);
             
             let imageUrl: string;
             if (putResponse.imageKey && image) {
@@ -152,24 +128,41 @@ function Dashboard () {
             );
 
         } catch (error) {
-            console.error(`Failed to edit randomizer thumbnail ${selectedCardId}:`, error);
+            console.error(`Failed to edit randomizer thumbnail ${selectedCard.id}:`, error);
         }
 
-        closeEditThumb();
-
+        editThumbModal.close()
     }
 
-    useEffect( () => {
-        getRandomizersWithImageUrl()
-            .then(json => setRandomizerData(json))
-    }, [] );
+    
+    // modals
+    const createModal = useCustomModal<undefined, CreateRandomizerProps>(
+        CreateRandomizerModal, 
+        {handleSubmit: handleCreateSubmit}
+    );
+
+    const renameModal = useCustomModal<RandomizerCardProps, RenameModalProps>(
+        RenameModal,
+        {handleSubmit: handleSubmitRename}
+    );
+
+    const editThumbModal = useCustomModal<RandomizerCardProps, EditImageProps>(
+        EditImageModal,
+        {handleSubmit: handleSubmitEditThumb}
+    );
+
+    const deleteConfirmModal = useCustomModal<RandomizerCardProps, DeleteConfirmProps>(
+        DeleteConfirmModal,
+        {handleSubmit: handleDelete}
+    )
+
 
     return (
         <>
             <Group>
                 <h1>Dashboard</h1>
                 <Tooltip label="Create new randomizer" openDelay={500} withArrow arrowSize={8} position="bottom">
-                    <ActionIcon onClick={openCreate} variant="default" radius="xl" size="lg">
+                    <ActionIcon onClick={createModal.open} variant="default" radius="xl" size="lg">
                         <IconPlus size={24} />
                     </ActionIcon>
                 </Tooltip>
@@ -179,43 +172,21 @@ function Dashboard () {
             <CustomGrid
                 data={randomizerData.map(randomizer => ({
                     ...randomizer,
-                    onRenameClick: handleRenameClick,
-                    onDeleteClick: handleDeleteClick,
-                    onEditThumbClick: handleEditThumbClick,
+                    onRenameClick: renameModal.openWithData,
+                    onDeleteClick: deleteConfirmModal.openWithData,
+                    onEditThumbClick: editThumbModal.openWithData,
                 }))}
                 Component={RandomizerCardEdit}
             />
 
-            <Modal opened={deleteConfirmOpened} onClose={closeDeleteConfirm} title={"Are you sure you want to delete?"} centered>
-                <Group>
-                    <Button onClick={closeDeleteConfirm} variant="default">No</Button>
-                    <Button onClick={() => { handleDelete(selectedCardId); closeDeleteConfirm()}} variant="default">Yes</Button>
-                </Group> 
-            </Modal>
+            {deleteConfirmModal.modalNode}
 
-            <Modal opened={renameOpened} onClose={closeRename} title={"Enter a new name:"} centered>
-                <form onSubmit={handleSubmitRename}>
-                    <TextInput
-                        ref={renameInputRef}
-                        value={renameInput}
-                        onChange={(event) => setRenameInput(event.currentTarget.value)}
-                        data-autofocus
-                    />
-                    <Button type="submit" variant="default">Submit</Button>
-                </form>
-            </Modal>
+            {renameModal.modalNode}
 
-            <EditImageModal
-                opened={editThumbOpened}
-                close={closeEditThumb}
-                handleSubmit={handleSubmitEditThumb}
-            />
+            {editThumbModal.modalNode}
 
-            <CreateRandomizerModal
-                opened={createOpened}
-                close={closeCreate}
-                handleSubmit={handleCreateSubmit}
-            />
+            {createModal.modalNode}
+
         </>
     )
 }

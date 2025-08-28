@@ -1,9 +1,9 @@
 import { TraitType } from "./traitType";
 
 interface Trait {
+    traitType: TraitType,
     id: string,
     name: string,
-    traitType: TraitType,
 }
 
 interface BasicTrait extends Trait {
@@ -22,6 +22,19 @@ interface TraitOption {
     imageKey?: string
 }
 
+interface EditTraitDto {
+    traitType: TraitType,
+    name?: string
+}
+
+interface EditNumberTraitDto extends EditTraitDto {
+    minNum?: number,
+    maxNum?: number,
+}
+
+type CreateTraitDto = Omit<Trait, 'id'>
+type CreateNumberTraitDto = Omit<CreateTraitDto & NumberTrait, 'id'>
+type CreateAnyTraitDto = CreateTraitDto | CreateNumberTraitDto
 
 type TraitCardProps = (BasicTrait | NumberTrait) & {
     imageUrl?: string,
@@ -33,4 +46,4 @@ interface TraitOptionProps extends TraitOption {
 }
 
 
-export type {Trait, BasicTrait, NumberTrait, AnyTrait, TraitOption, TraitCardProps, TraitOptionProps}
+export type {Trait, BasicTrait, NumberTrait, AnyTrait, TraitOption, TraitCardProps, TraitOptionProps, EditTraitDto, EditNumberTraitDto, CreateTraitDto, CreateNumberTraitDto, CreateAnyTraitDto}
