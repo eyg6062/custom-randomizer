@@ -12,7 +12,7 @@ import CreateTraitModal, { CreateTraitProps } from "../components/CreateTraitMod
 import DeleteConfirmModal, { DeleteConfirmProps } from "../components/DeleteConfirmModal";
 import { RandomizerCardProps } from "../types/randomizer";
 import { deleteTrait, postTrait, putTrait } from "../api/trait";
-import EditDescModal, { EditDescModalProps } from "../components/editDescModal";
+import EditDescModal, { EditDescModalProps } from "../components/EditDescModal";
 
 function RandomizerEditPage () {
     const {
