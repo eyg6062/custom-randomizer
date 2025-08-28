@@ -5,13 +5,14 @@ import { useRandomizerPageData } from "../hooks/useRandomizerPageData";
 import { AnyTrait, CreateAnyTraitDto, EditTraitDto } from "../types/trait";
 import { IconPencil, IconPlus } from "@tabler/icons-react";
 import CircleButton from "../components/CircleButton";
-import { editRandomizerName } from "../Utils/randomizerEditor";
+import { editRandomizerDescription, editRandomizerName } from "../Utils/randomizerEditor";
 import { useCustomModal } from "../hooks/useCustomModal";
 import RenameModal, { RenameModalProps } from "../components/RenameModal";
 import CreateTraitModal, { CreateTraitProps } from "../components/CreateTraitModal";
 import DeleteConfirmModal, { DeleteConfirmProps } from "../components/DeleteConfirmModal";
 import { RandomizerCardProps } from "../types/randomizer";
 import { deleteTrait, postTrait, putTrait } from "../api/trait";
+import EditDescModal, { EditDescModalProps } from "../components/editDescModal";
 
 function RandomizerEditPage () {
     const {
@@ -39,6 +40,25 @@ function RandomizerEditPage () {
 
         } catch (error) {
             console.error(`Failed to rename randomizer ${randomizerData.id}:`, error);
+        }
+
+        renameRandModal.close();
+    }
+
+    const handleSubmitEditDesc = async (e: React.FormEvent<HTMLFormElement>, text: string) => {
+        e.preventDefault();
+
+        if (!randomizerData) {
+            console.log("no randomizer id selected");
+            return;
+        }
+
+        try {
+            await editRandomizerDescription(randomizerData.id, text);
+            setRandomizerData({...randomizerData, description: text});
+
+        } catch (error) {
+            console.error(`Failed to edit description ${randomizerData.id}:`, error);
         }
 
         renameRandModal.close();
@@ -124,6 +144,11 @@ function RandomizerEditPage () {
         {handleSubmit: handleSubmitRandRename}
     )
 
+    const editDescModal = useCustomModal<RandomizerCardProps, EditDescModalProps>(
+        EditDescModal,
+        {handleSubmit: handleSubmitEditDesc}
+    )
+
     const createModal =  useCustomModal<undefined, CreateTraitProps>(
         CreateTraitModal,
         {handleSubmit: handleSubmitCreate}
@@ -154,6 +179,14 @@ function RandomizerEditPage () {
                 />
                 <h1>{randomizerData.name}</h1>
             </Group>
+
+            <Group>
+                <CircleButton
+                    icon={IconPencil}
+                    onClick={() => editDescModal.openWithData(randomizerData)}
+                />
+                <p>{randomizerData.description || "(description)"}</p>
+            </Group>
             
 
             <Tooltip label="Create new trait" openDelay={500} withArrow arrowSize={8} position="bottom">
@@ -183,6 +216,8 @@ function RandomizerEditPage () {
             </Group>
 
             {renameRandModal.modalNode}
+
+            {editDescModal.modalNode}
 
             {createModal.modalNode}
 
