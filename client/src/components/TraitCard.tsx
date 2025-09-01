@@ -4,6 +4,7 @@ import { AnyTrait, TraitCardProps } from "../types/trait";
 import { ReactNode } from "react";
 import CircleButton from "./CircleButton";
 import { IconDotsVertical, IconPencil } from "@tabler/icons-react";
+import { useNavigate } from "react-router";
 
 
 type TraitCardPropsWithFunction = TraitCardProps & {
@@ -87,10 +88,10 @@ function TraitCard (props: TraitCardPropsWithFunction, menu: ReactNode = null) {
 }
 
 export function TraitCardEdit(props: TraitCardEditPropsWithFunction) {
-    
+    const navigate = useNavigate();
+
     const handleEditClick = () => {
-        // todo: make this go to trait edit page
-        console.log("edit clicked");
+        navigate(`/trait/${props.id}/edit`);
     }
 
     const menu = (
@@ -100,7 +101,6 @@ export function TraitCardEdit(props: TraitCardEditPropsWithFunction) {
                 icon={IconPencil}
                 onClick={handleEditClick}
             />
-
             
             <Menu shadow="xs" position="bottom-start" width="dropdown">
                 <Menu.Target>
