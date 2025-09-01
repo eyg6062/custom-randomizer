@@ -25,6 +25,11 @@ namespace Models.TraitModels
         public ICollection<TraitOptionDto> TraitOptions { get; set; } = new List<TraitOptionDto>();
     }
 
+    public class BasicTraitWithImageDto : TraitDto
+    {
+        public ICollection<TraitOptionWithImageDto> TraitOptions { get; set; } = new List<TraitOptionWithImageDto>();
+    }
+
     public class NumberTraitDto : TraitDto 
     {
         public int MinNum { get; set; }

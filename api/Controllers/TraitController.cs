@@ -1,8 +1,11 @@
 using custom_randomizer_api.Models;
 using custom_randomizer_api.Models.Enums;
+using custom_randomizer_api.Models.TraitOptions;
+using custom_randomizer_api.Services;
 using custom_randomizer_api.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Models.RandomizerModels;
 using Models.TraitModels;
 
 namespace custom_randomizer_api.Controllers
@@ -12,10 +15,12 @@ namespace custom_randomizer_api.Controllers
 	public class TraitController : ControllerBase
 	{
 		private readonly AppDbContext _context;
+        private readonly S3Service _s3Service;
 
-		public TraitController(AppDbContext context)
+        public TraitController(AppDbContext context, S3Service s3Service)
 		{
 			_context = context;
+            _s3Service = s3Service;
 		}
 
         [HttpGet]
@@ -36,14 +41,17 @@ namespace custom_randomizer_api.Controllers
         [HttpGet("{id}")]
 		public async Task<IActionResult> GetTrait(int id)
 		{
-            var trait = await _context.Traits.FindAsync(id);
+            var trait = await _context.Traits
+                .Include(x => ((BasicTrait)x).TraitOptions)
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (trait == null)
 			{
 				return NotFound();
 			}
 
-			return Ok(TraitTypeMapper.MapTraitType(trait));
+            var result = TraitTypeMapper.MapTraitType(trait);
+            return Ok(result);
 		}
 
         [HttpGet("ByRandomizer/{randomizerId}")]
@@ -63,6 +71,51 @@ namespace custom_randomizer_api.Controllers
 				.AsParallel()
 				.Select(TraitTypeMapper.MapTraitType)
 				.ToList();
+
+            return Ok(result);
+        }
+
+        [HttpGet("WithOptionImageUrls/{id}")]
+        public async Task<IActionResult> GetTraitWithOptionImageUrls(int id)
+        {
+            var trait = await _context.Traits
+                .Include(x => ((BasicTrait)x).TraitOptions)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (trait == null) return NotFound();
+            if (trait is not BasicTrait) return BadRequest();
+
+            var options = ((BasicTrait)trait).TraitOptions;
+
+            var optionsWithImage = options
+                .AsParallel()
+                .Select(option =>
+                {
+                    string? preSignedUrl = null;
+                    if (option.ImageKey != null)
+                    {
+                        preSignedUrl = _s3Service.GeneratePresignedURL(option.ImageKey, Amazon.S3.HttpVerb.GET);
+                    }
+
+                    return new TraitOptionWithImageDto
+                    {
+                        Id = option.Id,
+                        Text = option.Text,
+                        ImageKey = option.ImageKey,
+                        TraitId = option.TraitId,
+                        ImageUrl = preSignedUrl
+                    };
+                })
+                .ToList();
+
+            var result = new BasicTraitWithImageDto
+            {
+                Id = trait.Id,
+                Name = trait.Name,
+                TraitType = trait.TraitType,
+                RandomizerId = trait.RandomizerId,
+                TraitOptions = optionsWithImage
+            };
 
             return Ok(result);
         }

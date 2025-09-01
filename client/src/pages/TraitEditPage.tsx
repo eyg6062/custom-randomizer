@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { AnyTrait, BasicTrait, TraitCardProps } from "../types/trait";
+import { AnyTrait, BasicTrait } from "../types/trait";
 import { Group } from "@mantine/core";
 import CircleButton from "../components/CircleButton";
 import { IconPencil } from "@tabler/icons-react";
@@ -16,11 +16,13 @@ export function TraitEditPage () {
     }
 
     const [traitData, setTraitData] = useState<BasicTrait>();
-    //const [optionsData, setOptionsData] = useState<TraitCardProps>();
 
     useEffect( () => {
         getTrait(id)
-            .then(json => setTraitData(json))
+            .then(json => {
+                console.log(json)
+                setTraitData(json)
+            })
     }, []);
 
     // submit functions

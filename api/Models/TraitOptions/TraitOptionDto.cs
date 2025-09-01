@@ -34,6 +34,12 @@ namespace custom_randomizer_api.Models.TraitOptions
 
     }
 
+    public class TraitOptionWithImageDto : TraitOptionDto
+    {
+        public string? ImageUrl { get; set; }
+
+    }
+
     public class CreateTraitOptionDto
     {
         public string? Text { get; set; }
