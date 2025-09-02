@@ -6,7 +6,7 @@ import CircleButton from "../components/CircleButton";
 import { IconPencil } from "@tabler/icons-react";
 import { useCustomModal } from "../hooks/useCustomModal";
 import RenameModal, { RenameModalProps } from "../components/RenameModal";
-import { getTrait } from "../api/trait";
+import { getBasicTraitWithOptionImage, getTrait } from "../api/trait";
 
 export function TraitEditPage () {
     
@@ -18,7 +18,7 @@ export function TraitEditPage () {
     const [traitData, setTraitData] = useState<BasicTrait>();
 
     useEffect( () => {
-        getTrait(id)
+        getBasicTraitWithOptionImage(id)
             .then(json => {
                 console.log(json)
                 setTraitData(json)
@@ -45,13 +45,13 @@ export function TraitEditPage () {
         
         <p>(Trait option edit view)</p>
 
-            <Group>
-                <CircleButton
-                    icon={IconPencil}
-                    onClick={() => renameTraitModal.openWithData(traitData)}
-                />
-                <h1>{traitData.name}</h1>
-            </Group>
+        <Group>
+            <CircleButton
+                icon={IconPencil}
+                onClick={() => renameTraitModal.openWithData(traitData)}
+            />
+            <h1>{traitData.name}</h1>
+        </Group>
 
         </>
     )
