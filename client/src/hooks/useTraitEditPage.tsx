@@ -1,12 +1,11 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { AnyTrait } from "../types/trait";
-import { getTrait } from "../api/trait";
+import { AnyTrait, EditTraitDto } from "../types/trait";
+import { getTrait, putTrait } from "../api/trait";
 import { Group } from "@mantine/core";
 import CircleButton from "../components/CircleButton";
 import { IconPencil } from "@tabler/icons-react";
 import { useCustomModal } from "./useCustomModal";
-import { RandomizerCardProps } from "../types/randomizer";
 import RenameModal, { RenameModalProps } from "../components/RenameModal";
 
 export function useTraitEditPage () {
@@ -23,41 +22,36 @@ export function useTraitEditPage () {
     }, [] );
 
 
-    const handleSubmitRename = async (event: FormEvent<HTMLFormElement>, text: string) => {
+    const handleSubmitRename = async (event: FormEvent<HTMLFormElement>, renameInput: string) => {
         event.preventDefault();
+
+        if (!traitData) {
+            console.log("no trait data");
+            return;
+        }
+
         const save = traitData;
 
-        setTraitData()
+        setTraitData({...traitData, name: renameInput})
 
         try {
-            await editRandomizerName(selectedCard.id, renameInput);
-            setRandomizerData(prev => 
-                prev.map(randomizer => {
-                    if (randomizer.id === selectedCard.id) {
-                        console.log("editing name");
-                        return {...randomizer, name: renameInput};
-                    }
-                    else {
-                        return randomizer;
-                    }
-                })
-            );
+            const data: EditTraitDto = {traitType: traitData.traitType, name: renameInput}
+            await putTrait(traitData.id, data);
 
         } catch (error) {
-            console.error(`Failed to rename randomizer ${selectedCard.id}:`, error);
+            setTraitData(save)
+            console.error(`Failed to rename trait:`, error);
         }
 
         renameModal.close();
-    }
+    };
 
     const renameModal = useCustomModal<AnyTrait, RenameModalProps>(
         RenameModal,
         {handleSubmit: handleSubmitRename}
     );
 
-    if (!traitData) return null;
-
-    const pageNode = (
+    const traitPageNode = (
         <>
         
         <p>(Trait option edit view)</p>
@@ -65,13 +59,21 @@ export function useTraitEditPage () {
         <Group>
             <CircleButton
                 icon={IconPencil}
-                onClick={() => renameModal.openWithData}
+                onClick={() => {
+                    traitData ? renameModal.openWithData(traitData) : console.log("no trait data");
+                }}
             />
-            <h1>{traitData.name}</h1>
+            <h1>{traitData ? traitData.name : null}</h1>
         </Group>
+
+        {renameModal.modalNode}
 
         </>
     )
 
-    return {traitData, pageNode}
+    return {
+        traitData, 
+        setTraitData, 
+        traitPageNode
+    };
 }

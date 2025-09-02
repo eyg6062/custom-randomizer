@@ -1,57 +1,36 @@
-import { FormEvent, useEffect, useState } from "react";
-import { useParams } from "react-router";
-import { AnyTrait, BasicTrait } from "../types/trait";
-import { Group } from "@mantine/core";
-import CircleButton from "../components/CircleButton";
-import { IconPencil } from "@tabler/icons-react";
-import { useCustomModal } from "../hooks/useCustomModal";
-import RenameModal, { RenameModalProps } from "../components/RenameModal";
-import { getBasicTraitWithOptionImage, getTrait } from "../api/trait";
+import BasicEditSection from "../components/BasicEditSection";
+import NumberEditSection from "../components/NumberEditSection";
+import { useTraitEditPage } from "../hooks/useTraitEditPage";
+import { NumberTrait } from "../types/trait";
+import { TraitType } from "../types/traitType";
 
 export function TraitEditPage () {
     
-    const {id} = useParams<{ id: string }>();
-    if (id === undefined) {
-        throw new Error("Missing route parameter: id");
-    }
+    const {
+        traitData,
+        //setTraitData,
+        traitPageNode
+    } = useTraitEditPage();
+    
+    
+    if (!traitData) return null;
 
-    const [traitData, setTraitData] = useState<BasicTrait>();
-
-    useEffect( () => {
-        getBasicTraitWithOptionImage(id)
-            .then(json => {
-                console.log(json)
-                setTraitData(json)
-            })
-    }, []);
-
-    // submit functions
-    const handleSubmitTraitRename = async (event: FormEvent<HTMLFormElement>, text: string) => {
-        console.log("clicked rename trait");
-    }
-
-    // modals
-    const renameTraitModal = useCustomModal<AnyTrait, RenameModalProps>(
-        RenameModal,
-        {handleSubmit: handleSubmitTraitRename}
-    )
-
-    if (!traitData) {
-        return null;
+    const renderTraitSection = () => {
+        switch (traitData.traitType) {
+            case TraitType.Number:
+                return <NumberEditSection trait={traitData as NumberTrait} />;
+            case TraitType.Basic:
+                return <BasicEditSection />;
+            default:
+                return null;
+        }
     }
 
     return (
         <>
-        
-        <p>(Trait option edit view)</p>
+        {traitPageNode}
 
-        <Group>
-            <CircleButton
-                icon={IconPencil}
-                onClick={() => renameTraitModal.openWithData(traitData)}
-            />
-            <h1>{traitData.name}</h1>
-        </Group>
+        {renderTraitSection()}
 
         </>
     )
