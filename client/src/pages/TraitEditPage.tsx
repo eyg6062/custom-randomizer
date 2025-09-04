@@ -1,7 +1,7 @@
 import BasicEditSection from "../components/BasicEditSection";
 import NumberEditSection from "../components/NumberEditSection";
 import { useTraitEditPage } from "../hooks/useTraitEditPage";
-import { NumberTrait } from "../types/trait";
+import { BasicTrait, NumberTrait } from "../types/trait";
 import { TraitType } from "../types/traitType";
 
 export function TraitEditPage () {
@@ -12,7 +12,7 @@ export function TraitEditPage () {
         traitPageNode
     } = useTraitEditPage();
     
-    
+
     if (!traitData) return null;
 
     const renderTraitSection = () => {
@@ -20,7 +20,7 @@ export function TraitEditPage () {
             case TraitType.Number:
                 return <NumberEditSection trait={traitData as NumberTrait} />;
             case TraitType.Basic:
-                return <BasicEditSection />;
+                return <BasicEditSection trait={traitData as BasicTrait}/>;
             default:
                 return null;
         }

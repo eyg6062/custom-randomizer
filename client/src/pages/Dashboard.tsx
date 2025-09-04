@@ -4,13 +4,13 @@ import { apiDeleteRandomizer, getRandomizersWithImageUrl} from "../api/randomize
 import CustomGrid from "../components/CustomGrid";
 import { RandomizerCardEdit } from "../components/RandomizerCard";
 import { createRandomizer, editRandomizerImage, editRandomizerName } from "../Utils/randomizerEditor";
-import { ActionIcon, Group, Tooltip } from "@mantine/core";
-import {IconPlus} from '@tabler/icons-react'
+import { Group } from "@mantine/core";
 import CreateRandomizerModal, {CreateRandomizerProps} from "../components/CreateRandomizerModal";
 import EditImageModal, { EditImageProps } from "../components/EditImageModal";
 import { useCustomModal } from "../hooks/useCustomModal";
 import RenameModal, { RenameModalProps } from "../components/RenameModal";
 import DeleteConfirmModal, { DeleteConfirmProps } from "../components/DeleteConfirmModal";
+import CreateItemButton from "../components/CreateItemButton";
 
 function Dashboard () {
     const [randomizerData, setRandomizerData] = useState<RandomizerCardProps[]>([]);
@@ -161,11 +161,11 @@ function Dashboard () {
         <>
             <Group>
                 <h1>Dashboard</h1>
-                <Tooltip label="Create new randomizer" openDelay={500} withArrow arrowSize={8} position="bottom">
-                    <ActionIcon onClick={createModal.open} variant="default" radius="xl" size="lg">
-                        <IconPlus size={24} />
-                    </ActionIcon>
-                </Tooltip>
+
+                <CreateItemButton
+                    onClick={createModal.open}
+                    toolTipLabel="Create new randomizer"
+                />
                 
             </Group>
             

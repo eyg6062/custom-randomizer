@@ -12,7 +12,7 @@ export async function getTrait(id: string) {
 }
 
 export async function getBasicTraitWithOptionImage(id: string) {
-    return apiFetch(`${BASE_URL}/WithOptionImageUrls/${id}`)
+    return apiFetch(`${REQUEST_URL}/WithOptionImageUrls/${id}`)
 }
 
 export async function putTrait(id: string, data: EditTraitDto) {
