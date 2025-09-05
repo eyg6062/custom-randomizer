@@ -17,7 +17,6 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
 
     const getTempId = () : string => {
         const result = `tempId:${tempId}`;
-        console.log(result)
         setTempId(prev => prev + 1);
         return result;
     }
@@ -40,7 +39,7 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
     }
 
     const handleCreateOption = () => {
-        const newOption: TraitOptionEditProps = {id: getTempId(), text: "(add text)", editStatus: EditStatus.New}
+        const newOption: TraitOptionEditProps = {id: getTempId(), text: "(Enter text)", editStatus: EditStatus.New}
         setOptionData(prev => [...prev, newOption]);
     }
 

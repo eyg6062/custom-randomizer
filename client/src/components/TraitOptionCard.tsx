@@ -1,8 +1,9 @@
-import { Card, Image, Text } from "@mantine/core"
+import { Card, Image } from "@mantine/core"
 import { TraitOptionProps } from "../types/traitOption"
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from "@mantine/dropzone"
 import { IconPhoto, IconTrash } from "@tabler/icons-react"
 import CircleButton from "./CircleButton"
+import InlineTextEditor from "./InlineTextEditor"
 
 
 interface TraitOptionCardProps extends TraitOptionProps {
@@ -13,12 +14,17 @@ interface TraitOptionCardProps extends TraitOptionProps {
 
 export function TraitOptionCard (props: TraitOptionCardProps) {
 
+
     const handleDrop = (files: FileWithPath[]) => {
         props.handleDropImage(files[0] as File, props)
     }
 
     const handleReject = () => {
         console.log("file rejected, over 5mb")
+    }
+
+    const handleEnterText = (text: string) => {
+        props.handleEditText(text, props);
     }
 
     return (
@@ -45,7 +51,10 @@ export function TraitOptionCard (props: TraitOptionCardProps) {
                 
             </Dropzone>
 
-            <Text ta='center'>{props.text}</Text>
+            <InlineTextEditor
+                initialText={props.text}
+                handleEnterText={handleEnterText}
+            />
 
             <div style={{display:"flex", justifyContent:"flex-end", alignItems:"flex-end", height:"100%"}}>
             <CircleButton
