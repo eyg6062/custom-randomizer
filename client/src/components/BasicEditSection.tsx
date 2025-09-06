@@ -6,6 +6,9 @@ import { useEffect, useState } from "react"
 import { getBasicTraitWithOptionImage } from "../api/trait"
 import { TraitOptionCard } from "./TraitOptionCard"
 import CreateItemButton from "./CreateItemButton"
+import { getPreSignedUrlPutBatch, putImageInBucket } from "../api/imageUpload"
+import { PreSignedUrlResponse } from "../types/imageUpload"
+import { putTraitOptions } from "../api/traitOption"
 
 interface BasicEditSectionProps {
     trait: BasicTrait
@@ -35,7 +38,52 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
 
 
     const handleSave = async () => {
+        let editedOptionData = optionData;
 
+        const newImageOptions = [];
+        for (const option of optionData) {
+            if (option.file) newImageOptions.push(option) 
+        };
+
+        if (newImageOptions.length) {
+            // get presigned urls for options with new files
+            const preSignedUrlRes: PreSignedUrlResponse[] = await getPreSignedUrlPutBatch(newImageOptions);
+            const preSignedUrlDict = new Map(preSignedUrlRes.map(urlRes => [String(urlRes.itemId), urlRes]));
+
+            // upload images
+            Promise.all(newImageOptions.map(imgOption => {
+                const url = preSignedUrlDict.get(String(imgOption.id))?.url;
+                putImageInBucket(imgOption.file as File, url as string)
+            }));
+
+            // set image keys to corresponding option
+            editedOptionData = editedOptionData.map(option => {
+                if (preSignedUrlDict.has(String(option.id))) {
+                    return {...option, imageKey: preSignedUrlDict.get(String(option.id))?.imageKey}
+                }
+                return option;
+            })
+        }
+        
+        const editedOptions = []
+        const newOptions = []
+        const deletedOptions = []
+
+        for (const option of editedOptionData) {
+            if (option.editStatus === EditStatus.Edited) {
+                editedOptions.push(option);
+            } 
+            else if (option.editStatus === EditStatus.New) {
+                newOptions.push(option);
+            }
+            else if (option.editStatus === EditStatus.Deleted) {
+                deletedOptions.push(option);
+            }
+        }
+        
+        const putResponse = await putTraitOptions(editedOptions);
+        
+        console.log("Saved!")
     }
 
     const handleCreateOption = () => {
@@ -44,7 +92,15 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
     }
 
     const handleDelete = (selectedOption: TraitOptionProps) => {
-        setOptionData(prev => prev.filter(option => option.id !== selectedOption.id));
+        setOptionData(prev =>
+            prev
+            .filter(option => !(option.id === selectedOption.id && option.editStatus === EditStatus.New))
+            .map(option =>
+                option.id === selectedOption.id
+                ? { ...option, editStatus: EditStatus.Deleted }
+                : option
+            )
+        );
     }
 
     const handleDropImage = (file: File, selectedOption: TraitOptionProps) => {
@@ -52,7 +108,7 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
             prev.map(option => {
                 if (option.id === selectedOption.id) {
                     const newStatus = option.editStatus === EditStatus.Original ? EditStatus.Edited : option.editStatus;
-                    const newOption = {...option, imageUrl: URL.createObjectURL(file), editStatus: newStatus}
+                    const newOption = {...option, imageUrl: URL.createObjectURL(file), file: file, editStatus: newStatus}
 
                     return newOption;
                 }
@@ -84,11 +140,12 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
         />
     
         <CustomGrid
-            data={optionData.map(option => ({
-                ...option,
-                handleDropImage,
-                handleEditText,
-                handleDelete
+            data={optionData.filter(option => option.editStatus !== EditStatus.Deleted)
+                .map(option => ({
+                    ...option,
+                    handleDropImage,
+                    handleEditText,
+                    handleDelete
             }))}
             Component={TraitOptionCard}
         />
@@ -97,7 +154,6 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
             <Button type="button" onClick={() => window.location.reload()} variant="default">Cancel</Button>
             <Button type="button" onClick={handleSave} variant="default">Save</Button>
         </Group>
-        
         
         </>
     )

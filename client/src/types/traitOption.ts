@@ -9,13 +9,15 @@ interface TraitOptionProps extends TraitOption {
 }
 
 interface TraitOptionEditProps extends TraitOptionProps {
-    editStatus: EditStatus
+    editStatus: EditStatus,
+    file?: File
 }
 
 export enum EditStatus {
     Original,
     Edited,
-    New
+    New,
+    Deleted
 }
 
 export type {TraitOption, TraitOptionProps, TraitOptionEditProps}
