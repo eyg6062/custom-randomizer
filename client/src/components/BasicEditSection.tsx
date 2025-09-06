@@ -23,22 +23,23 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
         setTempId(prev => prev + 1);
         return result;
     }
-    
+
+     const fetchTraitOptions = async () => {
+        const json = await getBasicTraitWithOptionImage(trait.id);
+        const options: TraitOption[] = json.traitOptions;
+        const result: TraitOptionEditProps[] = options.map(option => ({
+            ...option,
+            editStatus: EditStatus.Original,
+        }));
+        setOptionData(result);
+    };
+
     useEffect(() => {
-        console.log("getting trait options");
-        getBasicTraitWithOptionImage(trait.id)
-            .then(json => {
-                const options: TraitOption[] = json.traitOptions;
-                const result: TraitOptionEditProps[] = options.map(option => {
-                    return {...option, editStatus: EditStatus.Original};
-                })
-                setOptionData(result);
-            })
+        fetchTraitOptions();
     }, [trait.id]);
 
-
-    const handleSave = async () => {
-        let editedOptionData = optionData;
+    const save = async () => {
+        let updatedOptions = optionData;
 
         const newImageOptions = [];
         for (const option of optionData) {
@@ -51,13 +52,13 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
             const preSignedUrlDict = new Map(preSignedUrlRes.map(urlRes => [String(urlRes.itemId), urlRes]));
 
             // upload images
-            Promise.all(newImageOptions.map(imgOption => {
+            await Promise.all(newImageOptions.map(imgOption => {
                 const url = preSignedUrlDict.get(String(imgOption.id))?.url;
                 putImageInBucket(imgOption.file as File, url as string)
             }));
 
             // set image keys to corresponding option
-            editedOptionData = editedOptionData.map(option => {
+            updatedOptions = updatedOptions.map(option => {
                 if (preSignedUrlDict.has(String(option.id))) {
                     return {...option, imageKey: preSignedUrlDict.get(String(option.id))?.imageKey}
                 }
@@ -65,27 +66,36 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
             })
         }
         
-        const editedOptions = []
-        const newOptions = []
-        const deletedOptions = []
+        const edited = []
+        const created = []
+        const deleted = []
 
-        for (const option of editedOptionData) {
-            if (option.editStatus === EditStatus.Edited) {
-                editedOptions.push(option);
-            } 
-            else if (option.editStatus === EditStatus.New) {
-                newOptions.push(option);
+        for (const option of updatedOptions) {
+            switch (option.editStatus) {
+                case EditStatus.Edited:
+                    edited.push(option);
+                    break;
+                case EditStatus.New:
+                    created.push(option);
+                    break;
+                case EditStatus.Deleted:
+                    deleted.push(option);
             }
-            else if (option.editStatus === EditStatus.Deleted) {
-                deletedOptions.push(option);
-            }
+        };
+        
+        if (edited.length) await putTraitOptions(edited);
+        if (created.length)await postTraitOptions(trait.id, created);
+        if (deleted.length) await deleteTraitOptions(deleted);
+    }
+
+    const handleSave = async () => {
+        try {
+            await save();
+            console.log("Saved!")
+            await fetchTraitOptions();
+        } catch (error) {
+            console.log("Save failed: ", error)
         }
-        
-        await putTraitOptions(editedOptions);
-        await postTraitOptions(trait.id, newOptions);
-        await deleteTraitOptions(deletedOptions);
-        
-        console.log("Saved!")
     }
 
     const handleCreateOption = () => {
@@ -133,6 +143,10 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
         );
     }
 
+    const handleCancel = async () => {
+        await fetchTraitOptions();
+    }
+
     return (
         <>
 
@@ -153,7 +167,7 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
         />
 
         <Group>
-            <Button type="button" onClick={() => window.location.reload()} variant="default">Cancel</Button>
+            <Button type="button" onClick={handleCancel} variant="default">Cancel</Button>
             <Button type="button" onClick={handleSave} variant="default">Save</Button>
         </Group>
 
