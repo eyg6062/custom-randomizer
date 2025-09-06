@@ -1,7 +1,7 @@
 import { Button, Group, Modal, NativeSelect, NumberInput, TextInput } from "@mantine/core"
 import { useState } from "react";
 import { ItemType, ModalProps } from "../types/modalProps";
-import { TraitType } from "../types/traitType";
+import { reverseTypeLabelMap, TraitType, typeLabelMap } from "../types/traitType";
 import { CreateAnyTraitDto, CreateNumberTraitDto, CreateTraitDto } from "../types/trait";
 
 export interface CreateTraitProps {
@@ -45,16 +45,6 @@ function CreateTraitModal({ opened, close, handleSubmit } : ModalProps<ItemType>
 
         handleSubmit(e, result);
     }
-
-    const typeLabelMap: Record<string, TraitType> = {
-        ["Basic"]: TraitType.Basic,
-        ["Number"]: TraitType.Number,
-        //["Color"]: TraitType.Color,
-    };
-
-    const reverseTypeLabelMap: Record<string, string> = Object.fromEntries(
-        Object.entries(typeLabelMap).map(([key, value]) => [value, key])
-    );
 
     const selectTypeInput = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectValue = e.currentTarget.value;

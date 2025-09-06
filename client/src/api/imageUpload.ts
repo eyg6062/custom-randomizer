@@ -1,3 +1,5 @@
+import { PreSignedUrlPutBatchDto } from "../types/imageUpload";
+import { TraitOptionEditProps } from "../types/traitOption";
 import { BASE_URL, apiFetch } from "./client";
 
 const REQUEST_URL : string = `${BASE_URL}ImageUpload`
@@ -18,6 +20,7 @@ export async function putImageInBucket(file: File, presignedUrl: string) {
         },
         body: file
     };
+    console.log("putImageInBucket")
 
     return apiFetch(presignedUrl, options);
 }
@@ -38,5 +41,24 @@ export async function getPreSignedUrlPut(file: File) {
     });
 
     return apiFetch(`${REQUEST_URL}/PreSignedUrlPut?${params.toString()}`)
+}
+
+export async function getPreSignedUrlPutBatch(traitOptions: TraitOptionEditProps[]) {
+    
+    var data: PreSignedUrlPutBatchDto[] = traitOptions.map(option => ({
+        itemId: String(option.id), 
+        fileName: option.file?.name, 
+        contentType: option.file?.type
+    }));
+
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    };
+
+    return apiFetch(`${REQUEST_URL}/PreSignedUrlPut/Batch`, options)
 }
 

@@ -1,4 +1,5 @@
 
+using custom_randomizer_api.Models.Enums;
 using Models.RandomizerModels;
 using Models.TraitModels;
 using System.Linq.Expressions;
@@ -34,6 +35,12 @@ namespace custom_randomizer_api.Models.TraitOptions
 
     }
 
+    public class TraitOptionWithImageDto : TraitOptionDto
+    {
+        public string? ImageUrl { get; set; }
+
+    }
+
     public class CreateTraitOptionDto
     {
         public string? Text { get; set; }
@@ -48,5 +55,17 @@ namespace custom_randomizer_api.Models.TraitOptions
                 BasicTrait = trait
             };
         }
+    }
+
+    public class PutTraitOptionDto
+    {
+        public int Id { get; set; }
+        public string? Text { get; set; }
+        public string? ImageKey { get; set; }
+    }
+
+    public class PutTraitOptionDtoWithStatus : PutTraitOptionDto
+    {
+        public required string RequestStatus { get; set; }
     }
 }

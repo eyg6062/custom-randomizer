@@ -11,6 +11,10 @@ export async function getTrait(id: string) {
     return apiFetch(`${REQUEST_URL}/${id}`);
 }
 
+export async function getBasicTraitWithOptionImage(id: string) {
+    return apiFetch(`${REQUEST_URL}/WithOptionImageUrls/${id}`)
+}
+
 export async function putTrait(id: string, data: EditTraitDto) {
     // traitType must be first value in json
 

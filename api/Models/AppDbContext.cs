@@ -119,12 +119,15 @@ namespace custom_randomizer_api.Models
 
             foreach (var entity in deletedEntities)
             {
-                entity.Property("DeletedAt").CurrentValue = SystemClock.Instance.GetCurrentInstant();
-                entity.Property("IsDeleted").CurrentValue = true;
+                var isDeletedProperty = entity.Properties.FirstOrDefault(p => p.Metadata.Name == "IsDeleted");
+                if (isDeletedProperty != null)
+                {
+                    entity.Property("IsDeleted").CurrentValue = true;
+                    entity.Property("DeletedAt").CurrentValue = SystemClock.Instance.GetCurrentInstant();
 
-                entity.State = EntityState.Modified;
+                    entity.State = EntityState.Modified;
+                }
             }
-
             return base.SaveChangesAsync(cancellationToken);
         }
     }

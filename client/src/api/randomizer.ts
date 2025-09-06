@@ -24,8 +24,6 @@ export async function putRandomizer(id: string, data: EditRandomizerDto) {
         body: JSON.stringify(data),
     };
 
-    console.log(JSON.stringify(data))
-
     return apiFetch(`${REQUEST_URL}/${id}`, options);
 }
 

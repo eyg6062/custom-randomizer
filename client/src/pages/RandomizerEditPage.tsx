@@ -1,9 +1,9 @@
-import { ActionIcon, Button, Group, Tooltip } from "@mantine/core";
+import { Button, Group } from "@mantine/core";
 import CustomGrid from "../components/CustomGrid";
 import { TraitCardEdit } from "../components/TraitCard";
 import { useRandomizerPageData } from "../hooks/useRandomizerPageData";
 import { AnyTrait, CreateAnyTraitDto, EditTraitDto } from "../types/trait";
-import { IconPencil, IconPlus } from "@tabler/icons-react";
+import { IconPencil } from "@tabler/icons-react";
 import CircleButton from "../components/CircleButton";
 import { editRandomizerDescription, editRandomizerName } from "../Utils/randomizerEditor";
 import { useCustomModal } from "../hooks/useCustomModal";
@@ -13,6 +13,7 @@ import DeleteConfirmModal, { DeleteConfirmProps } from "../components/DeleteConf
 import { RandomizerCardProps } from "../types/randomizer";
 import { deleteTrait, postTrait, putTrait } from "../api/trait";
 import EditDescModal, { EditDescModalProps } from "../components/EditDescModal";
+import CreateItemButton from "../components/CreateItemButton";
 
 function RandomizerEditPage () {
     const {
@@ -188,12 +189,10 @@ function RandomizerEditPage () {
                 <p>{randomizerData.description || "(description)"}</p>
             </Group>
             
-
-            <Tooltip label="Create new trait" openDelay={500} withArrow arrowSize={8} position="bottom">
-                <ActionIcon onClick={createModal.open} variant="default" radius="xl" size="lg">
-                    <IconPlus size={24} />
-                </ActionIcon>
-            </Tooltip>
+            <CreateItemButton
+                onClick={createModal.open}
+                toolTipLabel="Create new trait"
+            />
             
             <CustomGrid 
                 data={traitData.map(trait => ({

@@ -18,15 +18,34 @@ namespace custom_randomizer_api.Controllers
         }
 
         [HttpGet("PreSignedUrlPut")]
-        public ActionResult GetPreSignedUrl(string fileName, string contentType)
+        public ActionResult GetPreSignedUrlPut(string fileName, string contentType)
         {
             var key = _s3Service.GenerateUniqueKey(fileName);
             var url = _s3Service.GeneratePresignedURL(key, Amazon.S3.HttpVerb.PUT, contentType);
             return Ok(new PreSignedUrlResponse { Url = url, ImageKey = key });
         }
 
+        [HttpPost("PreSignedUrlPut/Batch")]
+        public ActionResult GetPreSignedUrlPutBatch([FromBody] List<PreSignedUrlPutBatchDto> dtos)
+        {
+            var result = dtos
+                .Select(dto =>
+                {
+                    var key = _s3Service.GenerateUniqueKey(dto.FileName);
+                    return new PreSignedUrlBatchResponse
+                    {
+                        ItemId = dto.ItemId,
+                        ImageKey = key,
+                        Url = _s3Service.GeneratePresignedURL(key, Amazon.S3.HttpVerb.PUT, dto.ContentType)
+                    };
+                })
+                .ToList();
+
+            return Ok(result);
+        }
+
         [HttpGet("PreSignedUrlGet")]
-        public ActionResult GetPreSignedUrl(string imageKey)
+        public ActionResult GetPreSignedUrlGet(string imageKey)
         {
             var url = _s3Service.GeneratePresignedURL(imageKey, Amazon.S3.HttpVerb.GET);
             return Ok(new PreSignedUrlResponse { Url = url, ImageKey = imageKey });
