@@ -21,7 +21,6 @@ export async function putImageInBucket(file: File, presignedUrl: string) {
         body: file
     };
     console.log("putImageInBucket")
-    console.log(presignedUrl)
 
     return apiFetch(presignedUrl, options);
 }
@@ -52,7 +51,6 @@ export async function getPreSignedUrlPutBatch(traitOptions: TraitOptionEditProps
         contentType: option.file?.type
     }));
 
-    console.log(data);
     const options = {
         method: 'POST',
         headers: {
@@ -60,8 +58,6 @@ export async function getPreSignedUrlPutBatch(traitOptions: TraitOptionEditProps
         },
         body: JSON.stringify(data),
     };
-
-    console.log(typeof data[0].itemId, data[0].itemId);
 
     return apiFetch(`${REQUEST_URL}/PreSignedUrlPut/Batch`, options)
 }

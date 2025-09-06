@@ -8,7 +8,7 @@ import { TraitOptionCard } from "./TraitOptionCard"
 import CreateItemButton from "./CreateItemButton"
 import { getPreSignedUrlPutBatch, putImageInBucket } from "../api/imageUpload"
 import { PreSignedUrlResponse } from "../types/imageUpload"
-import { putTraitOptions } from "../api/traitOption"
+import { deleteTraitOptions, postTraitOptions, putTraitOptions } from "../api/traitOption"
 
 interface BasicEditSectionProps {
     trait: BasicTrait
@@ -81,7 +81,9 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
             }
         }
         
-        const putResponse = await putTraitOptions(editedOptions);
+        await putTraitOptions(editedOptions);
+        await postTraitOptions(trait.id, newOptions);
+        await deleteTraitOptions(deletedOptions);
         
         console.log("Saved!")
     }
@@ -154,7 +156,7 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
             <Button type="button" onClick={() => window.location.reload()} variant="default">Cancel</Button>
             <Button type="button" onClick={handleSave} variant="default">Save</Button>
         </Group>
-        
+
         </>
     )
 }

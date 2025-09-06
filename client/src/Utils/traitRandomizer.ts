@@ -1,5 +1,6 @@
 import { getImageUrl } from "../api/imageUpload";
-import { AnyTrait, BasicTrait, NumberTrait, TraitOptionProps } from "../types/trait";
+import { AnyTrait, BasicTrait, NumberTrait } from "../types/trait";
+import { TraitOptionProps } from "../types/traitOption";
 import { TraitCardProps } from "../types/trait";
 import { TraitType } from "../types/traitType";
 
@@ -22,7 +23,7 @@ async function randomizeTrait(trait: AnyTrait) : Promise<TraitCardProps> {
 
 }
 
-async function randomizeBasicTrait(trait: BasicTrait): Promise<TraitOptionProps> {
+async function randomizeBasicTrait(trait: BasicTrait): Promise<Omit<TraitOptionProps, "id">> {
     const traitOptions = trait.traitOptions;
 
     if (traitOptions.length === 0) {
