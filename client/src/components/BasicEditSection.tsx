@@ -92,7 +92,7 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
         try {
             await save();
             console.log("Saved!")
-            await fetchTraitOptions();
+            
         } catch (error) {
             console.log("Save failed: ", error)
         }
