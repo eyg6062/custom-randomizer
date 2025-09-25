@@ -1,5 +1,5 @@
 import Header from './components/Header'
-import { Route, Routes } from 'react-router'
+import { createBrowserRouter, Outlet, RouterProvider } from 'react-router'
 import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
 import About from './pages/About'
@@ -7,20 +7,37 @@ import './App.css'
 import RandomizerPage from './pages/RandomizerPage'
 import RandomizerEditPage from './pages/RandomizerEditPage'
 import { TraitEditPage } from './pages/TraitEditPage'
+import ErrorFallbackPage from './pages/ErrorFallbackPage'
+
+const router = createBrowserRouter([
+    {
+        path: "/",
+        element: <Layout />,
+        children: [
+            { index: true, element: <Home />, errorElement: <ErrorFallbackPage /> },
+            { path: "dashboard", element: <Dashboard />, errorElement: <ErrorFallbackPage /> },
+            { path: "about", element: <About />, errorElement: <ErrorFallbackPage />},
+            { path: "randomizer/:id", element: <RandomizerPage />, errorElement: <ErrorFallbackPage />},
+            { path: "randomizer/:id/edit", element: <RandomizerEditPage />, errorElement: <ErrorFallbackPage />},
+            { path: "trait/:id/edit", element: <TraitEditPage />, errorElement: <ErrorFallbackPage />},
+        ]
+    },
+])
+
+function Layout() {
+    return (
+        <main>
+            <Header />
+            <Outlet />
+        </main>
+    )
+}
 
 function TestApp() {
     return(
-        <main>
-            <Header />
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="dashboard" element={<Dashboard />} />
-                <Route path="about" element={<About />} />
-                <Route path="randomizer/:id" element={<RandomizerPage />} />
-                <Route path="randomizer/:id/edit" element={<RandomizerEditPage />} />
-                <Route path="trait/:id/edit" element={<TraitEditPage />} />
-            </Routes>
-        </main>
+        <>
+            <RouterProvider router={router} />
+        </>
     )
 }
 

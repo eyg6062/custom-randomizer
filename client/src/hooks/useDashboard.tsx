@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRandomizersData } from "./useRandomizersData";
 import { apiDeleteRandomizer } from "../api/randomizer";
 import { CreateRandomizerDto, RandomizerCardProps } from "../types/randomizer";
-import { showErrorNotification } from "../Utils/showErrorNotification";
+import { showErrorNotification } from "../Utils/showNotifications";
 import { createRandomizer, editRandomizerImage, editRandomizerName } from "../Utils/randomizerEditor";
 
 export function useDashboard() {
