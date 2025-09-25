@@ -4,16 +4,22 @@ import { Button, Modal } from "@mantine/core";
 import { ItemType, ModalProps } from "../types/modalProps";
 
 export interface EditImageProps {
-    handleSubmit: (event: React.FormEvent<HTMLFormElement>, image: File | undefined) => Promise<void>
+    handleSubmit: (data: ItemType, image: File | undefined) => Promise<void>
 }
 
-function EditImageModal({opened, close, handleSubmit} : ModalProps<ItemType> & EditImageProps) {
+function EditImageModal({data, opened, close, handleSubmit} : ModalProps<ItemType> & EditImageProps) {
 
     const [imageInput, setImageInput] = useState<File>();
 
+    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        handleSubmit(data, imageInput);
+        close();
+    }
+
     return (
         <Modal opened={opened} onExitTransitionEnd={() => setImageInput(undefined)} onClose={close} title={"Edit Thumbnail"} centered>
-            <form onSubmit={(e) => {handleSubmit(e, imageInput)}}>
+            <form onSubmit={onSubmit}>
                 <ImageDropzone
                     file={imageInput}
                     onFileChange={setImageInput}

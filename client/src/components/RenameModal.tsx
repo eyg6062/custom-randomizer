@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { ItemType, ModalProps } from "../types/modalProps";
 
 export interface RenameModalProps {
-    handleSubmit: (event: React.FormEvent<HTMLFormElement>, text: string) => Promise<void>
+    handleSubmit: (data: ItemType, text: string) => Promise<void>
 }
 
 function RenameModal({data, opened, close, handleSubmit} : ModalProps<ItemType> & RenameModalProps) {
@@ -24,10 +24,16 @@ function RenameModal({data, opened, close, handleSubmit} : ModalProps<ItemType> 
         }
     }, [opened, data]);
 
+    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        handleSubmit(data, renameInput);
+        close();
+    }
+
     return (
         
         <Modal opened={opened} onClose={close} title={"Enter a new name:"} centered>
-            <form onSubmit={(e) => {handleSubmit(e, renameInput)}}>
+            <form onSubmit={onSubmit}>
                 <TextInput
                     ref={renameInputRef}
                     value={renameInput}

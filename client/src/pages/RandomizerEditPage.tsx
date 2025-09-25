@@ -14,6 +14,7 @@ import { RandomizerCardProps } from "../types/randomizer";
 import { deleteTrait, postTrait, putTrait } from "../api/trait";
 import EditDescModal, { EditDescModalProps } from "../components/EditDescModal";
 import CreateItemButton from "../components/CreateItemButton";
+import { ItemType } from "../types/modalProps";
 
 function RandomizerEditPage () {
     const {
@@ -27,9 +28,7 @@ function RandomizerEditPage () {
     } = useRandomizerPageData();
 
 
-    const handleSubmitRandRename = async (event: React.FormEvent<HTMLFormElement>, renameInput: string) => {
-        event.preventDefault();
-
+    const handleSubmitRandRename = async (_: ItemType, renameInput: string) => {
         if (!randomizerData) {
             console.log("no randomizer id selected");
             return;
@@ -42,13 +41,9 @@ function RandomizerEditPage () {
         } catch (error) {
             console.error(`Failed to rename randomizer ${randomizerData.id}:`, error);
         }
-
-        renameRandModal.close();
     }
 
-    const handleSubmitEditDesc = async (e: React.FormEvent<HTMLFormElement>, text: string) => {
-        e.preventDefault();
-
+    const handleSubmitEditDesc = async (_: ItemType, text: string) => {
         if (!randomizerData) {
             console.log("no randomizer id selected");
             return;
@@ -61,8 +56,6 @@ function RandomizerEditPage () {
         } catch (error) {
             console.error(`Failed to edit description ${randomizerData.id}:`, error);
         }
-
-        renameRandModal.close();
     }
 
     const handleSubmitCreate = async (e: React.FormEvent<HTMLFormElement>, data: CreateAnyTraitDto) => {
@@ -87,14 +80,8 @@ function RandomizerEditPage () {
         return;
     }
 
-    const handleSubmitTraitRename = async (e: React.FormEvent<HTMLFormElement>, renameInput: string) => {
-        e.preventDefault();
-        
-        const selectedTrait = renameTraitModal.data;
-        if (!selectedTrait) {
-            console.log("no trait id selected");
-            return;
-        }
+    const handleSubmitTraitRename = async (item: ItemType, renameInput: string) => {        
+        const selectedTrait = item as AnyTrait;
 
         try {
             const data: EditTraitDto = {traitType: selectedTrait.traitType, name: renameInput}
@@ -120,9 +107,7 @@ function RandomizerEditPage () {
         return;
     }
 
-    const handleDelete = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        e.preventDefault();
-        
+    const handleDelete = async (_: ItemType) => {
         const selectedTrait = deleteConfirmModal.data;
         if (!selectedTrait) {
             console.log("no trait id selected");

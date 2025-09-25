@@ -4,7 +4,7 @@ import { ItemType, ModalProps } from "../types/modalProps";
 import { RandomizerCardProps } from "../types/randomizer";
 
 export interface EditDescModalProps {
-    handleSubmit: (event: React.FormEvent<HTMLFormElement>, text: string) => Promise<void>
+    handleSubmit: (item: ItemType, text: string) => Promise<void>
 }
 
 function EditDescModal({data, opened, close, handleSubmit} : ModalProps<ItemType> & EditDescModalProps) {
@@ -27,11 +27,16 @@ function EditDescModal({data, opened, close, handleSubmit} : ModalProps<ItemType
         }
     }, [opened, data]);
     
+    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        handleSubmit(data, descInput);
+        close();
+    }
 
     return (
         
         <Modal opened={opened} onClose={close} title={"Enter description:"} centered>
-            <form onSubmit={(e) => { handleSubmit(e, descInput); close() }}>
+            <form onSubmit={onSubmit}>
                 <Textarea
                     ref={descInputRef}
                     value={descInput}

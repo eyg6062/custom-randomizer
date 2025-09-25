@@ -4,7 +4,7 @@ import { ImageDropzone } from "./ImageDropzone";
 import { ItemType, ModalProps } from "../types/modalProps";
 
 export interface CreateRandomizerProps {
-    handleSubmit: (event: React.FormEvent<HTMLFormElement>, name: string, description: string, image: File | undefined) => Promise<void>
+    handleSubmit: (name: string, description: string, image: File | undefined) => Promise<void>
 }
 
 function CreateRandomizerModal({ opened, close, handleSubmit } : ModalProps<ItemType> & CreateRandomizerProps) {
@@ -18,10 +18,16 @@ function CreateRandomizerModal({ opened, close, handleSubmit } : ModalProps<Item
         setImageInput(undefined);
     }
 
+    const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        handleSubmit(nameInput, descInput, imageInput);
+        close();
+    }
+
     return (
         <>
             <Modal opened={opened} onExitTransitionEnd={resetValues} onClose={close} title={"Create a new randomizer"} centered>
-                <form onSubmit={(e) => {handleSubmit(e, nameInput, descInput, imageInput)}}>
+                <form onSubmit={onSubmit}>
                     <TextInput
                         label="Name"
                         value={nameInput}
