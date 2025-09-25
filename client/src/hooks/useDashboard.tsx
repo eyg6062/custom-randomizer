@@ -27,8 +27,8 @@ export function useDashboard() {
             }
 
             queryClient.setQueryData<RandomizerCardProps[]>(["randomizerData"], (old = []) => [...old, newRand])
-
-        }
+        },
+        onError: () => showErrorNotification(new Error('failed to create'))
     })
 
     const deleteMutation = useMutation({
@@ -47,7 +47,8 @@ export function useDashboard() {
             queryClient.setQueryData<RandomizerCardProps[]>(["randomizerData"], (old = []) => 
                 old.map(rand => rand.id === data.id ? { ...rand, name: renameValue} : rand)
             )
-        }
+        },
+        onError: () => showErrorNotification(new Error('failed to rename'))
     })
 
     const editThumbMutation = useMutation({
@@ -60,7 +61,8 @@ export function useDashboard() {
             queryClient.setQueryData<RandomizerCardProps[]>(["randomizerData"], (old = []) => 
                 old.map(rand => rand.id === data.id ? { ...rand, imageKey: response.imageKey, imageUrl: imageUrl} : rand)
             )
-        }
+        },
+        onError: () => showErrorNotification(new Error('failed to edit thumbnail'))
     })
     
 
