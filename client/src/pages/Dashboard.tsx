@@ -11,9 +11,11 @@ import { ItemType } from "../types/modalProps";
 import RenameModal, { RenameModalProps } from "../components/modals/RenameModal";
 import EditImageModal, { EditImageProps } from "../components/modals/EditImageModal";
 import { LoadingIndicator } from "../components/LoadingIndicator";
+import { useRandomizerEditor } from "../hooks/useRandomizerEditor";
 
 function Dashboard () {
-    const {isFetching, isLoading, error, randomizerData, createMutation, deleteMutation, renameMutation, editThumbMutation} = useDashboard();
+    const {isFetching, isLoading, error, randomizerData, createMutation, deleteMutation, editThumbMutation} = useDashboard();
+    const {editRandName} = useRandomizerEditor("randomizerData", false);
 
     const handleCreateSubmit = async (name: string, description: string, image: File | undefined) => {
         const data : CreateRandomizerDto = {
@@ -30,7 +32,7 @@ function Dashboard () {
     }
 
     const handleSubmitRename = async (item: ItemType, renameInput: string) => {
-        renameMutation.mutate({data: item as RandomizerCardProps, renameValue: renameInput});
+        await editRandName(item as RandomizerCardProps, renameInput);
     }
 
     const handleSubmitEditThumb = async (item: ItemType, imageFile: File | undefined) => {

@@ -4,11 +4,15 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { randomizeTrait } from "../Utils/traitRandomizer";
 
-export function useRandomizerPageData () {
+export function useRandomizerPageTraitData () {
     const {id} = useParams<{ id: string }>();
     if (id === undefined) throw new Error("Missing route parameter: id");
 
     const [traitData, setTraitData] = useState<TraitCardProps[]>([]);
+
+    const getTraitCardPropData = () => {
+
+    }
 
     useEffect( () => {
         const setTraits = async () => {

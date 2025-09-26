@@ -5,9 +5,9 @@ import { getRandomizer } from "../api/randomizer"
 export function useSingleRandomizerData(id: string) {
     
     const { isFetching, isLoading, error, data: randomizerData } = useQuery<Randomizer>({
-        queryKey: ['singleRandomizerData', id],
+        queryKey: ['singleRandomizerData'],
         queryFn: () => getRandomizer(id),
     })
     
-    return { isFetching, isLoading, error, data: randomizerData }
+    return { isFetching, isLoading, error, randomizerData }
 }

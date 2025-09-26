@@ -8,29 +8,38 @@ import { useCustomModal } from "../hooks/useCustomModal";
 import RenameModal, { RenameModalProps } from "../components/modals/RenameModal";
 import CreateTraitModal, { CreateTraitProps } from "../components/modals/CreateTraitModal";
 import DeleteConfirmModal, { DeleteConfirmProps } from "../components/modals/DeleteConfirmModal";
-import { RandomizerCardProps } from "../types/randomizer";
+import { Randomizer, RandomizerCardProps } from "../types/randomizer";
 import { deleteTrait, postTrait, putTrait } from "../api/trait";
 import EditDescModal, { EditDescModalProps } from "../components/modals/EditDescModal";
 import CreateItemButton from "../components/CreateItemButton";
 import { ItemType } from "../types/modalProps";
-import { useRandomizerEditPage } from "../hooks/useRandomizerEditPage";
-import { useRandomizerPageData } from "../hooks/useRandomizerPageData";
+import { useRandomizerPageTraitData } from "../hooks/useRandomizerPageTraitData";
+import { useSingleRandomizerData } from "../hooks/useSingleRandomizerData";
+import { useParams } from "react-router";
+import { useRandomizerEditor } from "../hooks/useRandomizerEditor";
 
 function RandomizerEditPage () {
+    const {id} = useParams<{ id: string }>();
+    if (id === undefined) throw new Error("Missing route parameter: id");
+
     const {
         traitData,
         handleUpdateTraitCard,
         clearAllCards,
         randomizeAllCards,
         setTraitData,
-    } = useRandomizerPageData();
+    } = useRandomizerPageTraitData();
     
-    const {
-        randomizerData,
-        handleSubmitRandRename,
-        handleSubmitEditDesc,
-    } = useRandomizerEditPage();
+    const {randomizerData} = useSingleRandomizerData(id);
+    const {editRandName, editRandDesc} = useRandomizerEditor("singleRandomizerData", true);
 
+    const handleSubmitRandRename = async (item: ItemType, renameValue: string) => {
+        editRandName(item as Randomizer, renameValue);
+    }
+
+    const handleSubmitEditDesc = async (item: ItemType, descValue: string) => {
+        editRandDesc(item as Randomizer, descValue);
+    }
 
     const handleSubmitCreate = async (e: React.FormEvent<HTMLFormElement>, data: CreateAnyTraitDto) => {
         e.preventDefault();
