@@ -1,11 +1,9 @@
 import { Button, Group } from "@mantine/core";
 import CustomGrid from "../components/CustomGrid";
 import { TraitCardEdit } from "../components/TraitCard";
-import { useRandomizerPageData } from "../hooks/useRandomizerPageData";
 import { AnyTrait, CreateAnyTraitDto, EditTraitDto } from "../types/trait";
 import { IconPencil } from "@tabler/icons-react";
 import CircleButton from "../components/CircleButton";
-import { editRandomizerDescription, editRandomizerName } from "../Utils/randomizerEditor";
 import { useCustomModal } from "../hooks/useCustomModal";
 import RenameModal, { RenameModalProps } from "../components/modals/RenameModal";
 import CreateTraitModal, { CreateTraitProps } from "../components/modals/CreateTraitModal";
@@ -15,48 +13,24 @@ import { deleteTrait, postTrait, putTrait } from "../api/trait";
 import EditDescModal, { EditDescModalProps } from "../components/modals/EditDescModal";
 import CreateItemButton from "../components/CreateItemButton";
 import { ItemType } from "../types/modalProps";
+import { useRandomizerEditPage } from "../hooks/useRandomizerEditPage";
+import { useRandomizerPageData } from "../hooks/useRandomizerPageData";
 
 function RandomizerEditPage () {
     const {
-        randomizerData,
-        setRandomizerData,
         traitData,
-        setTraitData,
         handleUpdateTraitCard,
         clearAllCards,
-        randomizeAllCards
+        randomizeAllCards,
+        setTraitData,
     } = useRandomizerPageData();
+    
+    const {
+        randomizerData,
+        handleSubmitRandRename,
+        handleSubmitEditDesc,
+    } = useRandomizerEditPage();
 
-
-    const handleSubmitRandRename = async (_: ItemType, renameInput: string) => {
-        if (!randomizerData) {
-            console.log("no randomizer id selected");
-            return;
-        }
-
-        try {
-            await editRandomizerName(randomizerData.id, renameInput);
-            setRandomizerData({...randomizerData, name: renameInput});
-
-        } catch (error) {
-            console.error(`Failed to rename randomizer ${randomizerData.id}:`, error);
-        }
-    }
-
-    const handleSubmitEditDesc = async (_: ItemType, text: string) => {
-        if (!randomizerData) {
-            console.log("no randomizer id selected");
-            return;
-        }
-
-        try {
-            await editRandomizerDescription(randomizerData.id, text);
-            setRandomizerData({...randomizerData, description: text});
-
-        } catch (error) {
-            console.error(`Failed to edit description ${randomizerData.id}:`, error);
-        }
-    }
 
     const handleSubmitCreate = async (e: React.FormEvent<HTMLFormElement>, data: CreateAnyTraitDto) => {
         e.preventDefault();
@@ -151,9 +125,7 @@ function RandomizerEditPage () {
     )
 
 
-    if (!randomizerData || !traitData ) {
-        return null;
-    }
+    if (!randomizerData || !traitData ) return null;
 
     return (
         <>
@@ -200,13 +172,9 @@ function RandomizerEditPage () {
             </Group>
 
             {renameRandModal.modalNode}
-
             {editDescModal.modalNode}
-
             {createModal.modalNode}
-
             {renameTraitModal.modalNode}
-
             {deleteConfirmModal.modalNode}
 
         </>

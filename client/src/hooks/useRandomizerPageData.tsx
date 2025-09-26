@@ -1,6 +1,4 @@
-import { getRandomizer } from "../api/randomizer";
 import { getTraitsByRandomizer } from "../api/trait";
-import { Randomizer } from "../types/randomizer";
 import { AnyTrait, TraitCardProps } from "../types/trait";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
@@ -8,18 +6,9 @@ import { randomizeTrait } from "../Utils/traitRandomizer";
 
 export function useRandomizerPageData () {
     const {id} = useParams<{ id: string }>();
-    if (id === undefined) {
-        throw new Error("Missing route parameter: id");
-    }
+    if (id === undefined) throw new Error("Missing route parameter: id");
 
-    const [randomizerData, setRandomizerData] = useState<Randomizer>();
-    const [traitData, setTraitData] = useState<AnyTrait[]>([]);
-
-
-    useEffect( () => {
-        getRandomizer(id)
-            .then(json => setRandomizerData(json))
-    }, [] );
+    const [traitData, setTraitData] = useState<TraitCardProps[]>([]);
 
     useEffect( () => {
         const setTraits = async () => {
@@ -69,12 +58,10 @@ export function useRandomizerPageData () {
     }
 
     return {
-        randomizerData,
         traitData,
         handleUpdateTraitCard,
         clearAllCards,
         randomizeAllCards,
-        setRandomizerData,
         setTraitData
     };
 

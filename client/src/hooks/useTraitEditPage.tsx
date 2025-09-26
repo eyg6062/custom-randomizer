@@ -31,8 +31,7 @@ export function useTraitEditPage () {
 
     const handleSubmitRename = async (item: ItemType, renameInput: string) => {
         const traitItem = item as AnyTrait;
-        const editDto: EditTraitDto = {...traitItem, name: renameInput};
-        renameMutation.mutate({data: item as AnyTrait, editedTrait: editDto});
+        renameMutation.mutate({data: item as AnyTrait, editedTrait: {...traitItem, name: renameInput}});
     };
 
     const renameModal = useCustomModal<AnyTrait, RenameModalProps>(
