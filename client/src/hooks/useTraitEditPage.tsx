@@ -5,7 +5,7 @@ import { Group } from "@mantine/core";
 import CircleButton from "../components/CircleButton";
 import { IconPencil } from "@tabler/icons-react";
 import { useCustomModal } from "./useCustomModal";
-import RenameModal, { RenameModalProps } from "../components/RenameModal";
+import RenameModal, { RenameModalProps } from "../components/modals/RenameModal";
 import { ItemType } from "../types/modalProps";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { showErrorNotification } from "../Utils/showNotifications";

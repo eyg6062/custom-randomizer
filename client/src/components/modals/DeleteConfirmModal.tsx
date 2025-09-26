@@ -1,5 +1,5 @@
 import { Button, Group, Modal } from "@mantine/core";
-import { ItemType, ModalProps } from "../types/modalProps";
+import { ItemType, ModalProps } from "../../types/modalProps";
 
 export interface DeleteConfirmProps {
     handleSubmit: (item: ItemType) => Promise<void>

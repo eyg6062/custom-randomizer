@@ -1,8 +1,8 @@
 import { Button, Group, Modal, NativeSelect, NumberInput, TextInput } from "@mantine/core"
 import { useState } from "react";
-import { ItemType, ModalProps } from "../types/modalProps";
-import { reverseTypeLabelMap, TraitType, typeLabelMap } from "../types/traitType";
-import { CreateAnyTraitDto, CreateNumberTraitDto, CreateTraitDto } from "../types/trait";
+import { ItemType, ModalProps } from "../../types/modalProps";
+import { reverseTypeLabelMap, TraitType, typeLabelMap } from "../../types/traitType";
+import { CreateAnyTraitDto, CreateNumberTraitDto, CreateTraitDto } from "../../types/trait";
 
 export interface CreateTraitProps {
     handleSubmit: (event: React.FormEvent<HTMLFormElement>, data: CreateAnyTraitDto) => Promise<void>

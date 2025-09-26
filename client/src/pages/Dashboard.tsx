@@ -2,14 +2,14 @@ import { CreateRandomizerDto, RandomizerCardProps } from "../types/randomizer";
 import CustomGrid from "../components/CustomGrid";
 import { RandomizerCardEdit } from "../components/RandomizerCard";
 import { Group } from "@mantine/core";
-import CreateRandomizerModal, {CreateRandomizerProps} from "../components/CreateRandomizerModal";
+import CreateRandomizerModal, {CreateRandomizerProps} from "../components/modals/CreateRandomizerModal";
 import { useCustomModal } from "../hooks/useCustomModal";
-import DeleteConfirmModal, { DeleteConfirmProps } from "../components/DeleteConfirmModal";
+import DeleteConfirmModal, { DeleteConfirmProps } from "../components/modals/DeleteConfirmModal";
 import CreateItemButton from "../components/CreateItemButton";
 import { useDashboard } from "../hooks/useDashboard";
 import { ItemType } from "../types/modalProps";
-import RenameModal, { RenameModalProps } from "../components/RenameModal";
-import EditImageModal, { EditImageProps } from "../components/EditImageModal";
+import RenameModal, { RenameModalProps } from "../components/modals/RenameModal";
+import EditImageModal, { EditImageProps } from "../components/modals/EditImageModal";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 
 function Dashboard () {

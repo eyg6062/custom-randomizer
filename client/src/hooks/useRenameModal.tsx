@@ -1,5 +1,5 @@
 import { useModal } from "./useModal";
-import RenameModal from "../components/RenameModal";
+import RenameModal from "../components/modals/RenameModal";
 import { ItemType } from "../types/modalProps";
 
 export function useRenameModal<T extends ItemType>() {

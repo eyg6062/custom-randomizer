@@ -7,12 +7,12 @@ import { IconPencil } from "@tabler/icons-react";
 import CircleButton from "../components/CircleButton";
 import { editRandomizerDescription, editRandomizerName } from "../Utils/randomizerEditor";
 import { useCustomModal } from "../hooks/useCustomModal";
-import RenameModal, { RenameModalProps } from "../components/RenameModal";
-import CreateTraitModal, { CreateTraitProps } from "../components/CreateTraitModal";
-import DeleteConfirmModal, { DeleteConfirmProps } from "../components/DeleteConfirmModal";
+import RenameModal, { RenameModalProps } from "../components/modals/RenameModal";
+import CreateTraitModal, { CreateTraitProps } from "../components/modals/CreateTraitModal";
+import DeleteConfirmModal, { DeleteConfirmProps } from "../components/modals/DeleteConfirmModal";
 import { RandomizerCardProps } from "../types/randomizer";
 import { deleteTrait, postTrait, putTrait } from "../api/trait";
-import EditDescModal, { EditDescModalProps } from "../components/EditDescModal";
+import EditDescModal, { EditDescModalProps } from "../components/modals/EditDescModal";
 import CreateItemButton from "../components/CreateItemButton";
 import { ItemType } from "../types/modalProps";
 

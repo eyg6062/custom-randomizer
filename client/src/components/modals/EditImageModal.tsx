@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { ImageDropzone } from "./ImageDropzone";
+import { ImageDropzone } from "../ImageDropzone";
 import { Button, Modal } from "@mantine/core";
-import { ItemType, ModalProps } from "../types/modalProps";
+import { ItemType, ModalProps } from "../../types/modalProps";
 
 export interface EditImageProps {
     handleSubmit: (data: ItemType, image: File | undefined) => Promise<void>

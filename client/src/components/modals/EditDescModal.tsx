@@ -1,7 +1,7 @@
 import { Button, Modal, Textarea } from "@mantine/core"
 import { useEffect, useRef, useState } from "react";
-import { ItemType, ModalProps } from "../types/modalProps";
-import { RandomizerCardProps } from "../types/randomizer";
+import { ItemType, ModalProps } from "../../types/modalProps";
+import { RandomizerCardProps } from "../../types/randomizer";
 
 export interface EditDescModalProps {
     handleSubmit: (item: ItemType, text: string) => Promise<void>
