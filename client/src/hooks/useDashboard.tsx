@@ -8,7 +8,7 @@ import { createRandomizer, editRandomizerImage, editRandomizerName } from "../Ut
 export function useDashboard() {
     const queryClient = useQueryClient();
 
-    const {isPending, error, randomizerData} = useRandomizersData();
+    const {isFetching, isLoading, error, randomizerData} = useRandomizersData();
 
     const createMutation = useMutation({
         mutationFn: (data: CreateRandomizerDto) => createRandomizer(data),
@@ -65,6 +65,5 @@ export function useDashboard() {
         onError: () => showErrorNotification(new Error('failed to edit thumbnail'))
     })
     
-
-    return {isPending, error, randomizerData, createMutation, deleteMutation, renameMutation, editThumbMutation};
+    return {isFetching, isLoading, error, randomizerData, createMutation, deleteMutation, renameMutation, editThumbMutation};
 }

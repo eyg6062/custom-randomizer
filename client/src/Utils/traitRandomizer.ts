@@ -3,6 +3,7 @@ import { AnyTrait, BasicTrait, NumberTrait } from "../types/trait";
 import { TraitOptionProps } from "../types/traitOption";
 import { TraitCardProps } from "../types/trait";
 import { TraitType } from "../types/traitType";
+import { showErrorNotification } from "./showNotifications";
 
 async function randomizeTrait(trait: AnyTrait) : Promise<TraitCardProps> {
 
@@ -28,6 +29,7 @@ async function randomizeBasicTrait(trait: BasicTrait): Promise<Omit<TraitOptionP
 
     if (traitOptions.length === 0) {
         console.log("trait has no options")
+        showErrorNotification(new Error(`Trait "${trait.name}" has no options`));
         return {};
     } 
 

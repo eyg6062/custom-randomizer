@@ -1,4 +1,3 @@
-import { FormEvent, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { AnyTrait, EditTraitDto } from "../types/trait";
 import { getTrait, putTrait } from "../api/trait";
@@ -7,43 +6,33 @@ import CircleButton from "../components/CircleButton";
 import { IconPencil } from "@tabler/icons-react";
 import { useCustomModal } from "./useCustomModal";
 import RenameModal, { RenameModalProps } from "../components/RenameModal";
+import { ItemType } from "../types/modalProps";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { showErrorNotification } from "../Utils/showNotifications";
 
 export function useTraitEditPage () {
     const {id} = useParams<{ id: string }>();
-    if (id === undefined) {
-        throw new Error("Missing route parameter: id");
-    }
+    if (id === undefined) throw new Error("Missing route parameter: id");
 
-    const [traitData, setTraitData] = useState<AnyTrait>();
+    const queryClient = useQueryClient();
 
-    useEffect( () => {
-        getTrait(id)
-            .then(json => setTraitData(json))
-    }, [] );
+    const { isPending, error, data: traitData } = useQuery<AnyTrait>({
+        queryKey: ['singleTraitData', id],
+        queryFn: () => getTrait(id),
+    })
 
+    const renameMutation = useMutation({
+        mutationFn: ({ data, editedTrait }: { data: AnyTrait; editedTrait: EditTraitDto }) => putTrait(data.id, editedTrait),
+        onSuccess: (_, {data, editedTrait}) => {
+            queryClient.setQueryData<AnyTrait>(["singleTraitData"], {...data, name: editedTrait.name as string} )
+        },
+        onError: () => showErrorNotification(new Error('failed to rename')),
+    })
 
-    const handleSubmitRename = async (event: FormEvent<HTMLFormElement>, renameInput: string) => {
-        event.preventDefault();
-
-        if (!traitData) {
-            console.log("no trait data");
-            return;
-        }
-
-        const save = traitData;
-
-        setTraitData({...traitData, name: renameInput})
-
-        try {
-            const data: EditTraitDto = {traitType: traitData.traitType, name: renameInput}
-            await putTrait(traitData.id, data);
-
-        } catch (error) {
-            setTraitData(save)
-            console.error(`Failed to rename trait:`, error);
-        }
-
-        renameModal.close();
+    const handleSubmitRename = async (item: ItemType, renameInput: string) => {
+        const traitItem = item as AnyTrait;
+        const editDto: EditTraitDto = {...traitItem, name: renameInput};
+        renameMutation.mutate({data: item as AnyTrait, editedTrait: editDto});
     };
 
     const renameModal = useCustomModal<AnyTrait, RenameModalProps>(
@@ -73,7 +62,8 @@ export function useTraitEditPage () {
 
     return {
         traitData, 
-        setTraitData, 
-        traitPageNode
+        traitPageNode,
+        isPending,
+        error
     };
 }

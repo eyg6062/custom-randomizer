@@ -10,9 +10,10 @@ import { useDashboard } from "../hooks/useDashboard";
 import { ItemType } from "../types/modalProps";
 import RenameModal, { RenameModalProps } from "../components/RenameModal";
 import EditImageModal, { EditImageProps } from "../components/EditImageModal";
+import { LoadingIndicator } from "../components/LoadingIndicator";
 
 function Dashboard () {
-    const {isPending, error, randomizerData, createMutation, deleteMutation, renameMutation, editThumbMutation} = useDashboard();
+    const {isFetching, isLoading, error, randomizerData, createMutation, deleteMutation, renameMutation, editThumbMutation} = useDashboard();
 
     const handleCreateSubmit = async (name: string, description: string, image: File | undefined) => {
         const data : CreateRandomizerDto = {
@@ -59,34 +60,47 @@ function Dashboard () {
     )
 
     if (error) return <p>error loading dashboard</p>; 
-    if (isPending) return <p>loading...</p>; 
+
+    const pageContent = (
+        <>
+        <CustomGrid
+            data={randomizerData.map(randomizer => ({
+                ...randomizer,
+                onRenameClick: renameModal.openWithData,
+                onDeleteClick: deleteConfirmModal.openWithData,
+                onEditThumbClick: editThumbModal.openWithData,
+            }))}
+            Component={RandomizerCardEdit}
+        />
+
+        {deleteConfirmModal.modalNode}
+        {renameModal.modalNode}
+        {editThumbModal.modalNode}
+        {createModal.modalNode}
+        </>
+    )
 
     return (
         <>
             <Group>
                 <h1>Dashboard</h1>
 
-                <CreateItemButton
-                    onClick={createModal.open}
-                    toolTipLabel="Create new randomizer"
-                />
+                { !(isFetching || isLoading) ? 
+                    <CreateItemButton
+                        onClick={createModal.open}
+                        toolTipLabel="Create new randomizer"
+                    />
+                    : null
+                }
+                
                 
             </Group>
             
-            <CustomGrid
-                data={randomizerData.map(randomizer => ({
-                    ...randomizer,
-                    onRenameClick: renameModal.openWithData,
-                    onDeleteClick: deleteConfirmModal.openWithData,
-                    onEditThumbClick: editThumbModal.openWithData,
-                }))}
-                Component={RandomizerCardEdit}
-            />
-
-            {deleteConfirmModal.modalNode}
-            {renameModal.modalNode}
-            {editThumbModal.modalNode}
-            {createModal.modalNode}
+            {
+                (isFetching || isLoading) ? 
+                    <LoadingIndicator /> : 
+                    pageContent
+            }
 
         </>
     )

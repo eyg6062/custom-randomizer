@@ -8,8 +8,9 @@ export function TraitEditPage () {
     
     const {
         traitData,
-        //setTraitData,
-        traitPageNode
+        traitPageNode,
+        isPending,
+        error
     } = useTraitEditPage();
     
 
@@ -25,6 +26,9 @@ export function TraitEditPage () {
                 return null;
         }
     }
+
+    if (isPending) return <p>Loading...</p>;
+    if (error) return <p>Error</p>
 
     return (
         <>
