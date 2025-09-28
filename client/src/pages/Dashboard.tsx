@@ -6,29 +6,24 @@ import CreateRandomizerModal, {CreateRandomizerProps} from "../components/modals
 import { useCustomModal } from "../hooks/useCustomModal";
 import DeleteConfirmModal, { DeleteConfirmProps } from "../components/modals/DeleteConfirmModal";
 import CreateItemButton from "../components/CreateItemButton";
-import { useDashboard } from "../hooks/useDashboard";
 import { ItemType } from "../types/modalProps";
 import RenameModal, { RenameModalProps } from "../components/modals/RenameModal";
 import EditImageModal, { EditImageProps } from "../components/modals/EditImageModal";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { useRandomizerEditor } from "../hooks/useRandomizerEditor";
+import { useRandomizersData } from "../hooks/useRandomizersData";
 
 function Dashboard () {
-    const {isFetching, isLoading, error, randomizerData, createMutation, deleteMutation, editThumbMutation} = useDashboard();
-    const {editRandName} = useRandomizerEditor("randomizerData", false);
+    const {isFetching, isLoading, error, randomizerData} = useRandomizersData();
+    const {createRand, deleteRand, editRandName, editRandImage} = useRandomizerEditor("randomizerData", false);
 
     const handleCreateSubmit = async (name: string, description: string, image: File | undefined) => {
-        const data : CreateRandomizerDto = {
-            name: name,
-            imageFile: image,
-            description: description
-        }
-
-        createMutation.mutate(data)
+        const dto: CreateRandomizerDto = {name: name, imageFile: image, description: description};
+        await createRand(dto);
     }
 
     const handleDelete = async (item: ItemType) => {
-        deleteMutation.mutate(item as RandomizerCardProps);
+        await deleteRand(item as RandomizerCardProps);
     }
 
     const handleSubmitRename = async (item: ItemType, renameInput: string) => {
@@ -36,7 +31,7 @@ function Dashboard () {
     }
 
     const handleSubmitEditThumb = async (item: ItemType, imageFile: File | undefined) => {
-        editThumbMutation.mutate({data: item as RandomizerCardProps, imageFile: imageFile as File})
+        await editRandImage(item as RandomizerCardProps, imageFile as File);
     }
 
     

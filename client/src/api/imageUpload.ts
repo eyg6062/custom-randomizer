@@ -6,10 +6,11 @@ const REQUEST_URL : string = `${BASE_URL}ImageUpload`
 
 export async function uploadImage(file: File) {
     // get presigned url from server
-    const response = await getPreSignedUrlPut(file);
-    const presignedUrl = response.url;
+    const urlResponse = await getPreSignedUrlPut(file);
+    const presignedUrl = urlResponse.url;
 
-    return await putImageInBucket(file, presignedUrl);
+    const bucketResponse = await putImageInBucket(file, presignedUrl);
+    return {urlResponse, bucketResponse}
 }
 
 export async function putImageInBucket(file: File, presignedUrl: string) {
