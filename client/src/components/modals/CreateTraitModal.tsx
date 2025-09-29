@@ -5,8 +5,10 @@ import { reverseTypeLabelMap, TraitType, typeLabelMap } from "../../types/traitT
 import { CreateAnyTraitDto, CreateNumberTraitDto, CreateTraitDto } from "../../types/trait";
 
 export interface CreateTraitProps {
-    handleSubmit: (event: React.FormEvent<HTMLFormElement>, data: CreateAnyTraitDto) => Promise<void>
+    handleSubmit: (event: React.FormEvent<HTMLFormElement>, data: ModalCreateAnyTraitDto) => Promise<void>
 }
+
+export type ModalCreateAnyTraitDto = Omit<CreateAnyTraitDto, "randomizerId">
 
 function CreateTraitModal({ opened, close, handleSubmit } : ModalProps<ItemType> & CreateTraitProps) {
     const [nameInput, setNameInput] = useState<string>('');
@@ -23,9 +25,9 @@ function CreateTraitModal({ opened, close, handleSubmit } : ModalProps<ItemType>
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const data: CreateTraitDto = {traitType: typeInput, name: nameInput};
+        const data: ModalCreateAnyTraitDto = {traitType: typeInput, name: nameInput};
 
-        let result: CreateAnyTraitDto;
+        let result: ModalCreateAnyTraitDto;
         switch (typeInput) {
             case TraitType.Basic:
                 result = {...data};
@@ -35,7 +37,7 @@ function CreateTraitModal({ opened, close, handleSubmit } : ModalProps<ItemType>
                     console.log("minNum can't be greater than maxNum");
                     return;
                 }
-                const dto: CreateNumberTraitDto = {...data, minNum: Number(minInput), maxNum: Number(maxInput)}
+                const dto = {...data, minNum: Number(minInput), maxNum: Number(maxInput)}
                 result = dto;
                 break;
             default:

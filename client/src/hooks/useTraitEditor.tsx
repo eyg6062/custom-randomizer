@@ -1,33 +1,24 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { putRandomizer } from "../api/randomizer";
-import { editDtoOverride } from "../Utils/dtoMapping";
-import { showErrorNotification } from "../Utils/showNotifications";
-import { AnyTrait, EditTraitDto } from "../types/trait";
+import { AnyTrait, CreateAnyTraitDto, EditTraitDto } from "../types/trait";
+import { apiDeleteTrait, postTrait, putTrait } from "../api/trait";
+import { useDeleteMutation, useEditMutation, useCreateMutation } from "./itemMutations";
 
 export function useTraitEditor(queryKey: string, single: boolean) {
-    const queryClient = useQueryClient();
-
-    const editMutation = useMutation({
-        mutationFn: ({ data, editDto }: { data: AnyTrait; editDto: EditTraitDto }) => putRandomizer(data.id, editDto),
-        onSuccess: (_, {data, editDto}) => {
-            // if it's a single object vs. an array of objects
-            if (single) {
-                queryClient.setQueryData<AnyTrait>([queryKey], (old) => editDtoOverride(old, editDto) );
-            }
-            else
-                queryClient.setQueryData<AnyTrait[]>([queryKey], (old = []) => 
-                    old.map(oldItem => oldItem.id === data.id ? editDtoOverride<AnyTrait>(oldItem, editDto) : oldItem)
-                )
-        },
-        onError: () => showErrorNotification(new Error("failed to edit randomizer")),
-    })
+    const editMutation = useEditMutation<AnyTrait, EditTraitDto>(queryKey, single, putTrait);
+    const deleteMutation = useDeleteMutation<AnyTrait>(queryKey, single, apiDeleteTrait);
+    const createMutation = useCreateMutation<AnyTrait, CreateAnyTraitDto>(queryKey, single, postTrait);
 
     const editTraitName = async (data: AnyTrait, renameValue: string) => {
-        const editDto: EditTraitDto = {traitType: data.traitType, name: renameValue};
-        await editMutation.mutate({data, editDto: editDto});
+        const editDto: EditTraitDto = {traitType: data.traitType, randomizerId: data.randomizerId, name: renameValue};
+        await editMutation.mutateAsync({data, editDto: editDto});
     }
 
+    const deleteTrait = async (data: AnyTrait) => {
+        await deleteMutation.mutateAsync({data});
+    }
 
+    const createTrait = async (data: CreateAnyTraitDto) => {
+        await createMutation.mutateAsync({dto: data});
+    }
 
-    return {editTraitName}
+    return {editTraitName, deleteTrait, createTrait}
 }

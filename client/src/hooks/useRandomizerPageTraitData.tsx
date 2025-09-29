@@ -10,10 +10,6 @@ export function useRandomizerPageTraitData () {
 
     const [traitData, setTraitData] = useState<TraitCardProps[]>([]);
 
-    const getTraitCardPropData = () => {
-
-    }
-
     useEffect( () => {
         const setTraits = async () => {
             const traits: AnyTrait[] = await getTraitsByRandomizer(id);

@@ -6,10 +6,10 @@ import { IconPencil } from "@tabler/icons-react";
 import CircleButton from "../components/CircleButton";
 import { useCustomModal } from "../hooks/useCustomModal";
 import RenameModal, { RenameModalProps } from "../components/modals/RenameModal";
-import CreateTraitModal, { CreateTraitProps } from "../components/modals/CreateTraitModal";
+import CreateTraitModal, { CreateTraitProps, ModalCreateAnyTraitDto } from "../components/modals/CreateTraitModal";
 import DeleteConfirmModal, { DeleteConfirmProps } from "../components/modals/DeleteConfirmModal";
 import { Randomizer, RandomizerCardProps } from "../types/randomizer";
-import { deleteTrait, postTrait, putTrait } from "../api/trait";
+import { apiDeleteTrait, postTrait, putTrait } from "../api/trait";
 import EditDescModal, { EditDescModalProps } from "../components/modals/EditDescModal";
 import CreateItemButton from "../components/CreateItemButton";
 import { ItemType } from "../types/modalProps";
@@ -41,7 +41,7 @@ function RandomizerEditPage () {
         editRandDesc(item as Randomizer, descValue);
     }
 
-    const handleSubmitCreate = async (e: React.FormEvent<HTMLFormElement>, data: CreateAnyTraitDto) => {
+    const handleSubmitCreate = async (e: React.FormEvent<HTMLFormElement>, data: ModalCreateAnyTraitDto) => {
         e.preventDefault();
         console.log(data)
 
@@ -50,8 +50,9 @@ function RandomizerEditPage () {
             return;
         }
 
+        const createData = {...data, randomizerId: id}
         try {
-            const response = await postTrait(randomizerData?.id, data);
+            const response = await postTrait(createData);
 
             setTraitData(prev => [...prev, response]);
 
@@ -67,7 +68,7 @@ function RandomizerEditPage () {
         const selectedTrait = item as AnyTrait;
 
         try {
-            const data: EditTraitDto = {traitType: selectedTrait.traitType, name: renameInput}
+            const data: EditTraitDto = {traitType: selectedTrait.traitType, randomizerId: selectedTrait.randomizerId, name: renameInput}
             await putTrait(selectedTrait.id, data);
 
             setTraitData(prev => 
@@ -98,7 +99,7 @@ function RandomizerEditPage () {
         }
 
         try {
-            await deleteTrait(selectedTrait.id);
+            await apiDeleteTrait(selectedTrait.id);
             setTraitData(prev => prev.filter(trait => trait.id !== selectedTrait.id));
 
         } catch (error) {

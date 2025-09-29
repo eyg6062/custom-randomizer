@@ -5,6 +5,7 @@ interface Trait {
     traitType: TraitType,
     id: string,
     name: string,
+    randomizerId: string
 }
 
 interface BasicTrait extends Trait {
@@ -20,7 +21,8 @@ type AnyTrait = BasicTrait | NumberTrait;
 
 interface EditTraitDto {
     traitType: TraitType,
-    name?: string
+    name?: string,
+    randomizerId: string
 }
 
 interface EditNumberTraitDto extends EditTraitDto {
@@ -29,6 +31,7 @@ interface EditNumberTraitDto extends EditTraitDto {
 }
 
 type CreateTraitDto = Omit<Trait, 'id'>
+
 type CreateNumberTraitDto = Omit<CreateTraitDto & NumberTrait, 'id'>
 type CreateAnyTraitDto = CreateTraitDto | CreateNumberTraitDto
 
