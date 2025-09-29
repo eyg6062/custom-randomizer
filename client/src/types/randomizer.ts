@@ -27,8 +27,12 @@ interface EditRandomizerCardDto extends EditRandomizerDto {
 
 interface CreateRandomizerDto {
     name: string,
-    imageFile?: File,
     description?: string,
 }
 
-export type {Randomizer, RandomizerCardProps, RandomizerCardEditProps, EditRandomizerDto, EditRandomizerCardDto, CreateRandomizerDto }
+interface CreateRandomizerCardDto extends CreateRandomizerDto {
+    imageUrl?: string,
+    imageKey?: string
+}
+
+export type {Randomizer, RandomizerCardProps, RandomizerCardEditProps, EditRandomizerDto, EditRandomizerCardDto, CreateRandomizerDto, CreateRandomizerCardDto }

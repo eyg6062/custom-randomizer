@@ -1,4 +1,4 @@
-export function editDtoOverride<T>(original: T, dto: any) : T {
+function editDtoOverride<T>(original: T, dto: any) : T {
     return {
         ...original,
         ...Object.fromEntries(
@@ -6,3 +6,5 @@ export function editDtoOverride<T>(original: T, dto: any) : T {
         )
     }
 }
+
+export {editDtoOverride}

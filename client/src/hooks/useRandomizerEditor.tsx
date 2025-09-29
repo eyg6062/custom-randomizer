@@ -1,65 +1,36 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { CreateRandomizerDto, EditRandomizerCardDto, Randomizer, RandomizerCardProps } from "../types/randomizer";
-import { apiDeleteRandomizer, putRandomizer } from "../api/randomizer";
-import { showErrorNotification } from "../Utils/showNotifications";
-import { createRandomizer } from "../Utils/randomizerEditor";
+import { CreateRandomizerCardDto, CreateRandomizerDto, EditRandomizerCardDto, Randomizer, RandomizerCardProps } from "../types/randomizer";
+import { apiDeleteRandomizer, postRandomizer, putRandomizer } from "../api/randomizer";
 import { uploadImage } from "../api/imageUpload";
-import { useEditMutation } from "./itemMutations";
+import { useCreateMutation, useDeleteMutation, useEditMutation } from "./itemMutations";
 
 export function useRandomizerEditor(queryKey: string, single: boolean) {
-    const queryClient = useQueryClient();
-
     const editMutation = useEditMutation<RandomizerCardProps, EditRandomizerCardDto>(queryKey, single, putRandomizer);
-
-    const createMutation = useMutation({
-        mutationFn: (data: CreateRandomizerDto) => createRandomizer(data),
-        onSuccess: (response, dtoVars) => {
-
-            let imageUrl;
-            if (response.imageKey && dtoVars.imageFile) {
-                imageUrl = URL.createObjectURL(dtoVars.imageFile);
-            }
-
-            const newRand : RandomizerCardProps = {
-                id: response.id,
-                name: dtoVars.name,
-                imageKey: response.imageKey,
-                imageUrl: imageUrl,
-            }
-
-            queryClient.setQueryData<RandomizerCardProps[]>([queryKey], (old = []) => [...old, newRand])
-        },
-        onError: () => showErrorNotification(new Error('failed to create'))
-    })
-
-    const deleteMutation = useMutation({
-        mutationFn: (data: Randomizer) => apiDeleteRandomizer(data.id),
-        onSuccess: (_, data) => {
-            if (!single)
-                queryClient.setQueryData<Randomizer[]>([queryKey], (old = []) => 
-                    old.filter((rand) => rand.id !== data.id)
-            );
-        },
-        onError: () => showErrorNotification(new Error('failed to delete'))
-    })
+    const deleteMutation = useDeleteMutation<Randomizer>(queryKey, single, apiDeleteRandomizer);
+    const createMutation = useCreateMutation<RandomizerCardProps, CreateRandomizerCardDto>(queryKey, single, postRandomizer);
 
     const editRandName = async (data: Randomizer, renameValue: string) => {
         await editMutation.mutateAsync({data, editDto: {name: renameValue}});
-        
     }
 
     const editRandDesc = async (data: Randomizer, descValue: string) => {
         await editMutation.mutateAsync({data, editDto: {description: descValue}})
     }
 
-    const createRand = async (data: CreateRandomizerDto) => {
+    const createRand = async (data: CreateRandomizerDto, imageFile: File | undefined) => {
         if (single) {console.log("data is single randomizer"); return;}
-        await createMutation.mutate(data);
+        let dto: CreateRandomizerCardDto = {...data};
+
+        if (imageFile) {
+            const {urlResponse} = await uploadImage(imageFile);
+            dto = {...dto, imageUrl: URL.createObjectURL(imageFile), imageKey: urlResponse.imageKey}
+        }
+        
+        await createMutation.mutate({dto});
     }
 
     const deleteRand = async (data: Randomizer) => {
         if (single) {console.log("data is single randomizer"); return;}
-        await deleteMutation.mutate(data);
+        await deleteMutation.mutateAsync({data});
     }
 
     const editRandImage = async (data: RandomizerCardProps, file: File) => {

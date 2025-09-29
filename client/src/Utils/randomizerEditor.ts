@@ -1,21 +1,6 @@
 import { getPreSignedUrlPut, putImageInBucket} from "../api/imageUpload";
-import { postRandomizer, putRandomizer } from "../api/randomizer";
-import { EditRandomizerDto, CreateRandomizerDto } from "../types/randomizer";
-
-async function createRandomizer({name, imageFile, description} : CreateRandomizerDto) {
-    // upload image
-    let imageKey;
-    if (imageFile) {
-        const response = await getPreSignedUrlPut(imageFile);
-        imageKey = response.imageKey;
-
-        putImageInBucket(imageFile, response.url);
-    }
-
-    // post randomizer
-    const data = {name: name, imageKey: imageKey, description: description};
-    return await postRandomizer(data);
-}
+import { putRandomizer } from "../api/randomizer";
+import { EditRandomizerDto } from "../types/randomizer";
 
 async function editRandomizerName(id: string, name: string) {
     const data : EditRandomizerDto = {name: name}
@@ -38,4 +23,4 @@ async function editRandomizerImage(id: string, file: File) {
     return await putRandomizer(id, data);
 }
 
-export {editRandomizerName, editRandomizerDescription, editRandomizerImage, createRandomizer}
+export {editRandomizerName, editRandomizerDescription, editRandomizerImage}

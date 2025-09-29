@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { putRandomizer } from "../api/randomizer";
-import { editDtoOverride } from "../Utils/dtoOverride";
+import { editDtoOverride } from "../Utils/dtoMapping";
 import { showErrorNotification } from "../Utils/showNotifications";
 import { AnyTrait, EditTraitDto } from "../types/trait";
 

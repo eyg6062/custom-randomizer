@@ -18,8 +18,8 @@ function Dashboard () {
     const {createRand, deleteRand, editRandName, editRandImage} = useRandomizerEditor("randomizerData", false);
 
     const handleCreateSubmit = async (name: string, description: string, image: File | undefined) => {
-        const dto: CreateRandomizerDto = {name: name, imageFile: image, description: description};
-        await createRand(dto);
+        const dto: CreateRandomizerDto = {name: name, description: description};
+        await createRand(dto, image);
     }
 
     const handleDelete = async (item: ItemType) => {
