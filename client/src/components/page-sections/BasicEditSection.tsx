@@ -1,22 +1,27 @@
 import { Button, Group } from "@mantine/core"
 import { BasicTrait } from "../../types/trait"
-import { TraitOption, TraitOptionEditProps, EditStatus, TraitOptionProps } from "../../types/traitOption"
+import { TraitOptionEditProps, EditStatus, TraitOptionProps } from "../../types/traitOption"
 import CustomGrid from "../CustomGrid"
-import { useEffect, useState } from "react"
-import { getBasicTraitWithOptionImage } from "../../api/trait"
+import { useState } from "react"
 import { TraitOptionCard } from "../TraitOptionCard"
 import CreateItemButton from "../CreateItemButton"
 import { getPreSignedUrlPutBatch, putImageInBucket } from "../../api/imageUpload"
 import { PreSignedUrlResponse } from "../../types/imageUpload"
 import { deleteTraitOptions, postTraitOptions, putTraitOptions } from "../../api/traitOption"
+import { useTraitOptionData } from "../../hooks/data/useTraitOptionData"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { showErrorNotification, showSavedNotification } from "../../Utils/showNotifications"
+import { QueryKey } from "../../types/queryKeys"
 
 interface BasicEditSectionProps {
     trait: BasicTrait
 }
 
 function BasicEditSection({trait}: BasicEditSectionProps) {
-    const [optionData, setOptionData] = useState<TraitOptionEditProps[]>([]);
     const [tempId, setTempId] = useState<number>(0);
+
+    const {optionData, setOptionData} = useTraitOptionData(trait.id);
+    const queryClient = useQueryClient();
 
     const getTempId = () : string => {
         const result = `tempId:${tempId}`;
@@ -24,27 +29,10 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
         return result;
     }
 
-     const fetchTraitOptions = async () => {
-        const json = await getBasicTraitWithOptionImage(trait.id);
-        const options: TraitOption[] = json.traitOptions;
-        const result: TraitOptionEditProps[] = options.map(option => ({
-            ...option,
-            editStatus: EditStatus.Original,
-        }));
-        setOptionData(result);
-    };
-
-    useEffect(() => {
-        fetchTraitOptions();
-    }, [trait.id]);
-
-    const save = async () => {
+    const saveFn = async () => {
         let updatedOptions = optionData;
 
-        const newImageOptions = [];
-        for (const option of optionData) {
-            if (option.file) newImageOptions.push(option) 
-        };
+        const newImageOptions = updatedOptions.filter((option) => option.file)
 
         if (newImageOptions.length) {
             // get presigned urls for options with new files
@@ -84,18 +72,18 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
         };
         
         if (edited.length) await putTraitOptions(edited);
-        if (created.length)await postTraitOptions(trait.id, created);
+        if (created.length) await postTraitOptions(trait.id, created);
         if (deleted.length) await deleteTraitOptions(deleted);
     }
 
+    const saveMutation = useMutation({
+        mutationFn: saveFn,
+        onSuccess: showSavedNotification,
+        onError: () => showErrorNotification(Error("failed to save"))
+    })
+
     const handleSave = async () => {
-        try {
-            await save();
-            console.log("Saved!")
-            
-        } catch (error) {
-            console.log("Save failed: ", error)
-        }
+        saveMutation.mutateAsync();
     }
 
     const handleCreateOption = () => {
@@ -144,7 +132,7 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
     }
 
     const handleCancel = async () => {
-        await fetchTraitOptions();
+        await queryClient.invalidateQueries({ queryKey: [QueryKey.TraitOptionData] })
     }
 
     return (

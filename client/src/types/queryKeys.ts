@@ -3,4 +3,5 @@ export enum QueryKey {
     SingleRandomizerData = "singleRandomizerData",
     TraitData = "traitData",
     SingleTraitData = "singleTraitData",
+    TraitOptionData = "traitOptionData",
 }
