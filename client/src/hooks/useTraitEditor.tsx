@@ -20,5 +20,5 @@ export function useTraitEditor(queryKey: string, single: boolean) {
         await createMutation.mutateAsync({dto: data});
     }
 
-    return {editTraitName, deleteTrait, createTrait}
+    return {editMutation, editTraitName, deleteTrait, createTrait}
 }

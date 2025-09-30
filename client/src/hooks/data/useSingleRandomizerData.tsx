@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
-import { Randomizer } from "../types/randomizer"
-import { getRandomizer } from "../api/randomizer"
+import { Randomizer } from "../../types/randomizer"
+import { getRandomizer } from "../../api/randomizer"
 
 export function useSingleRandomizerData(id: string) {
     

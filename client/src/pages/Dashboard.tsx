@@ -11,7 +11,7 @@ import RenameModal, { RenameModalProps } from "../components/modals/RenameModal"
 import EditImageModal, { EditImageProps } from "../components/modals/EditImageModal";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { useRandomizerEditor } from "../hooks/useRandomizerEditor";
-import { useRandomizersData } from "../hooks/useRandomizersData";
+import { useRandomizersData } from "../hooks/data/useRandomizersData";
 
 function Dashboard () {
     const {isFetching, isLoading, error, randomizerData} = useRandomizersData();

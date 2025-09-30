@@ -1,7 +1,9 @@
 import { Button, Fieldset, Group, NumberInput } from "@mantine/core"
 import { FormEvent, useState } from "react";
-import { EditNumberTraitDto, NumberTrait } from "../types/trait";
-import { putTrait } from "../api/trait";
+import { EditNumberTraitDto, NumberTrait } from "../../types/trait";
+import { putTrait } from "../../api/trait";
+import { QueryKey } from "../../types/queryKeys";
+import { useEditMutation } from "../../hooks/itemMutations";
 
 interface NumberEditSectionProps {
     trait: NumberTrait
@@ -11,18 +13,19 @@ function NumberEditSection({trait}: NumberEditSectionProps) {
     const [minInput, setMinInput] = useState<string | number>(trait.minNum);
     const [maxInput, setMaxInput] = useState<string | number>(trait.maxNum);
 
+    const editMutation = useEditMutation<NumberTrait, EditNumberTraitDto>(QueryKey.SingleTraitData, true, putTrait);
+
     const handleSubmit = async (e: FormEvent<HTMLFormElement> ) => {
         e.preventDefault();
 
-        try {
-            const data: EditNumberTraitDto = {traitType: trait.traitType, minNum: minInput as number, maxNum: maxInput as number}
-            await putTrait(trait.id, data);
-
-            console.log('updated trait');
+        const dto: EditNumberTraitDto = {
+            traitType: trait.traitType, 
+            randomizerId: trait.randomizerId, 
+            minNum: minInput as number, 
+            maxNum: maxInput as number
         }
-        catch (error) {
-            console.error(`Failed to update trait:`, error);
-        }
+        await editMutation.mutateAsync({data: trait, editDto: dto})
+        console.log('updated trait');
     }
 
     return (

@@ -12,13 +12,13 @@ import { Randomizer, RandomizerCardProps } from "../types/randomizer";
 import EditDescModal, { EditDescModalProps } from "../components/modals/EditDescModal";
 import CreateItemButton from "../components/CreateItemButton";
 import { ItemType } from "../types/modalProps";
-import { useTraitRandomizer } from "../hooks/useRandomizerPageTraitData";
-import { useSingleRandomizerData } from "../hooks/useSingleRandomizerData";
+import { useTraitRandomizer } from "../hooks/useTraitRandomizer";
+import { useSingleRandomizerData } from "../hooks/data/useSingleRandomizerData";
 import { useParams } from "react-router";
 import { useRandomizerEditor } from "../hooks/useRandomizerEditor";
 import { useTraitEditor } from "../hooks/useTraitEditor";
 import { QueryKey } from "../types/queryKeys";
-import { useTraitData } from "../hooks/useTraitData";
+import { useTraitData } from "../hooks/data/useTraitData";
 
 function RandomizerEditPage () {
     const {id} = useParams<{ id: string }>();

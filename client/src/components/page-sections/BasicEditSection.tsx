@@ -1,14 +1,14 @@
 import { Button, Group } from "@mantine/core"
-import { BasicTrait } from "../types/trait"
-import { TraitOption, TraitOptionEditProps, EditStatus, TraitOptionProps } from "../types/traitOption"
-import CustomGrid from "./CustomGrid"
+import { BasicTrait } from "../../types/trait"
+import { TraitOption, TraitOptionEditProps, EditStatus, TraitOptionProps } from "../../types/traitOption"
+import CustomGrid from "../CustomGrid"
 import { useEffect, useState } from "react"
-import { getBasicTraitWithOptionImage } from "../api/trait"
-import { TraitOptionCard } from "./TraitOptionCard"
-import CreateItemButton from "./CreateItemButton"
-import { getPreSignedUrlPutBatch, putImageInBucket } from "../api/imageUpload"
-import { PreSignedUrlResponse } from "../types/imageUpload"
-import { deleteTraitOptions, postTraitOptions, putTraitOptions } from "../api/traitOption"
+import { getBasicTraitWithOptionImage } from "../../api/trait"
+import { TraitOptionCard } from "../TraitOptionCard"
+import CreateItemButton from "../CreateItemButton"
+import { getPreSignedUrlPutBatch, putImageInBucket } from "../../api/imageUpload"
+import { PreSignedUrlResponse } from "../../types/imageUpload"
+import { deleteTraitOptions, postTraitOptions, putTraitOptions } from "../../api/traitOption"
 
 interface BasicEditSectionProps {
     trait: BasicTrait

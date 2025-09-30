@@ -1,6 +1,6 @@
 import { RandomizerCardPublic } from "../components/RandomizerCard"
 import CustomGrid from "../components/CustomGrid"
-import { useRandomizersData } from "../hooks/useRandomizersData";
+import { useRandomizersData } from "../hooks/data/useRandomizersData";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 
 function Home () {

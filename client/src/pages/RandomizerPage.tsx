@@ -1,19 +1,19 @@
 import CustomGrid from "../components/CustomGrid";
 import { TraitCardPublic } from "../components/TraitCard";
 import { Button, Group, Text } from "@mantine/core";
-import { useTraitRandomizer } from "../hooks/useRandomizerPageTraitData";
-import { useSingleRandomizerData } from "../hooks/useSingleRandomizerData";
+import { useTraitRandomizer } from "../hooks/useTraitRandomizer";
+import { useSingleRandomizerData } from "../hooks/data/useSingleRandomizerData";
 import { useParams } from "react-router";
-
+import { useTraitData } from "../hooks/data/useTraitData";
 
 function RandomizerPage () {
     const {id} = useParams<{ id: string }>();
     if (id === undefined) throw new Error("Missing route parameter: id");
 
     const {randomizerData} = useSingleRandomizerData(id);
+    const {traitData} = useTraitData(id);
 
     const {
-        traitData,
         handleUpdateTraitCard,
         clearAllCards,
         randomizeAllCards,
