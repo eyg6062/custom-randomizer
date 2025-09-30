@@ -1,7 +1,7 @@
 import CustomGrid from "../components/CustomGrid";
 import { TraitCardPublic } from "../components/TraitCard";
 import { Button, Group, Text } from "@mantine/core";
-import { useRandomizerPageTraitData } from "../hooks/useRandomizerPageTraitData";
+import { useTraitRandomizer } from "../hooks/useRandomizerPageTraitData";
 import { useSingleRandomizerData } from "../hooks/useSingleRandomizerData";
 import { useParams } from "react-router";
 
@@ -17,7 +17,7 @@ function RandomizerPage () {
         handleUpdateTraitCard,
         clearAllCards,
         randomizeAllCards,
-    } = useRandomizerPageTraitData();
+    } = useTraitRandomizer();
 
     if (!randomizerData || !traitData ) {
         return null;

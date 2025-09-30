@@ -2,10 +2,10 @@ import { Button, Group, Modal, NativeSelect, NumberInput, TextInput } from "@man
 import { useState } from "react";
 import { ItemType, ModalProps } from "../../types/modalProps";
 import { reverseTypeLabelMap, TraitType, typeLabelMap } from "../../types/traitType";
-import { CreateAnyTraitDto, CreateNumberTraitDto, CreateTraitDto } from "../../types/trait";
+import { CreateAnyTraitDto } from "../../types/trait";
 
 export interface CreateTraitProps {
-    handleSubmit: (event: React.FormEvent<HTMLFormElement>, data: ModalCreateAnyTraitDto) => Promise<void>
+    handleSubmit: (data: ModalCreateAnyTraitDto) => Promise<void>
 }
 
 export type ModalCreateAnyTraitDto = Omit<CreateAnyTraitDto, "randomizerId">
@@ -45,7 +45,8 @@ function CreateTraitModal({ opened, close, handleSubmit } : ModalProps<ItemType>
                 return;
         }
 
-        handleSubmit(e, result);
+        handleSubmit(result);
+        close();
     }
 
     const selectTypeInput = (e: React.ChangeEvent<HTMLSelectElement>) => {
