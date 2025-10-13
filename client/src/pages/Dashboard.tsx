@@ -14,7 +14,7 @@ import { useRandomizerEditor } from "../hooks/useRandomizerEditor";
 import { useRandomizersData } from "../hooks/data/useRandomizersData";
 
 function Dashboard () {
-    const {isFetching, isLoading, error, randomizerData} = useRandomizersData();
+    const {isFetching, error, randomizerData} = useRandomizersData();
     const {createRand, deleteRand, editRandName, editRandImage} = useRandomizerEditor("randomizerData", false);
 
     const handleCreateSubmit = async (name: string, description: string, image: File | undefined) => {
@@ -58,10 +58,10 @@ function Dashboard () {
 
     if (error) return <p>error loading dashboard</p>; 
 
-    const pageContent = (
+    const showPageContent = () => (
         <>
         <CustomGrid
-            data={randomizerData.map(randomizer => ({
+            data={(randomizerData as RandomizerCardProps[]).map(randomizer => ({
                 ...randomizer,
                 onRenameClick: renameModal.openWithData,
                 onDeleteClick: deleteConfirmModal.openWithData,
@@ -82,7 +82,7 @@ function Dashboard () {
             <Group>
                 <h1>Dashboard</h1>
 
-                { !(isFetching || isLoading) ? 
+                { !(isFetching) ? 
                     <CreateItemButton
                         onClick={createModal.open}
                         toolTipLabel="Create new randomizer"
@@ -94,9 +94,9 @@ function Dashboard () {
             </Group>
             
             {
-                (isFetching || isLoading) ? 
+                (isFetching) ? 
                     <LoadingIndicator /> : 
-                    pageContent
+                    showPageContent()
             }
 
         </>

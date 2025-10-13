@@ -1,5 +1,6 @@
 import { Button } from "@mantine/core"
 import { useMutation } from "@tanstack/react-query";
+import { LoadingIndicator } from "../components/LoadingIndicator";
 
 function About () {
 
@@ -12,6 +13,7 @@ function About () {
             <h1>About</h1>
 
             <Button onClick={() => testMutations.mutate()}>Error Test</Button>
+            <LoadingIndicator/>
         </>
     )
 }

@@ -2,13 +2,14 @@ import { RandomizerCardPublic } from "../components/RandomizerCard"
 import CustomGrid from "../components/CustomGrid"
 import { useRandomizersData } from "../hooks/data/useRandomizersData";
 import { LoadingIndicator } from "../components/LoadingIndicator";
+import { RandomizerCardProps } from "../types/randomizer";
 
 function Home () {
-    const {isFetching, isLoading, error, randomizerData} = useRandomizersData();
+    const {isFetching, error, randomizerData} = useRandomizersData();
 
     const pageContent = 
         <CustomGrid
-            data={randomizerData}
+            data={randomizerData as RandomizerCardProps[]}
             Component={RandomizerCardPublic}
         />
 
@@ -16,7 +17,7 @@ function Home () {
     return (
         <>
             <h1>Home</h1>
-            { (isFetching || isLoading) ? <LoadingIndicator /> : pageContent }
+            { (isFetching) ? <LoadingIndicator /> : pageContent }
         </>
     )
 }

@@ -4,11 +4,10 @@ import { RandomizerCardProps } from "../../types/randomizer";
 import { QueryKey } from "../../types/queryKeys";
 
 export function useRandomizersData () {
-    const { isFetching, isLoading, error, data: randomizerData } = useQuery<RandomizerCardProps[]>({
+    const { isFetching, error, data: randomizerData } = useQuery<RandomizerCardProps[]>({
         queryKey: [QueryKey.RandomizerData],
-        queryFn: getRandomizersWithImageUrl,
-        initialData: [],
+        queryFn: getRandomizersWithImageUrl
     })
 
-    return {isFetching, isLoading, error, randomizerData};
+    return {isFetching, error, randomizerData};
 }

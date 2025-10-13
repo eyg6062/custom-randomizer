@@ -19,6 +19,7 @@ import { useRandomizerEditor } from "../hooks/useRandomizerEditor";
 import { useTraitEditor } from "../hooks/useTraitEditor";
 import { QueryKey } from "../types/queryKeys";
 import { useTraitData } from "../hooks/data/useTraitData";
+import { LoadingIndicator } from "../components/LoadingIndicator";
 
 function RandomizerEditPage () {
     const {id} = useParams<{ id: string }>();
@@ -30,8 +31,8 @@ function RandomizerEditPage () {
         randomizeAllCards,
     } = useTraitRandomizer();
     
-    const {randomizerData} = useSingleRandomizerData(id);
-    const {traitData} = useTraitData(id);
+    const {isFetching: isFetchingRand, error: randError, randomizerData} = useSingleRandomizerData(id);
+    const {isFetching: isFetchingTraits, error, traitData} = useTraitData(id);
     const {editRandName, editRandDesc} = useRandomizerEditor(QueryKey.SingleRandomizerData, true);
     const {createTrait, editTraitName, deleteTrait} = useTraitEditor(QueryKey.TraitData, false)
 
@@ -85,10 +86,10 @@ function RandomizerEditPage () {
         {handleSubmit: handleDelete}
     )
 
+    if (randError || error) throw new Error("error loading randomizer edit page");
+    if (!randomizerData || !traitData ) {return null;}
 
-    if (!randomizerData || !traitData ) return null;
-
-    return (
+    const showRandContent = () => (
         <>
             <p>(edit view)</p>
             <Group>
@@ -106,12 +107,16 @@ function RandomizerEditPage () {
                 />
                 <p>{randomizerData.description || "(description)"}</p>
             </Group>
-            
+        </>
+    )
+
+    const showTraitContent = () => (
+        <>
             <CreateItemButton
                 onClick={createModal.open}
                 toolTipLabel="Create new trait"
             />
-            
+
             <CustomGrid 
                 data={traitData.map(trait => ({
                     ...trait,
@@ -131,13 +136,24 @@ function RandomizerEditPage () {
                     Clear All
                 </Button>
             </Group>
+        </>
+    )
+
+    return (
+        <>
+            { isFetchingRand ? <LoadingIndicator/> :
+                showRandContent()
+            }
+
+            { isFetchingTraits ? <LoadingIndicator/> :
+                showTraitContent()
+            }
 
             {renameRandModal.modalNode}
             {editDescModal.modalNode}
             {createModal.modalNode}
             {renameTraitModal.modalNode}
             {deleteConfirmModal.modalNode}
-
         </>
     )
 }
