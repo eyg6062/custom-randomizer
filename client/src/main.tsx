@@ -14,6 +14,9 @@ import { showErrorNotification } from './Utils/showNotifications.ts'
 
 const queryClient = new QueryClient({
   defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
     mutations: {
       onError: (error) => showErrorNotification(error)
     }

@@ -26,7 +26,6 @@ export function useTraitOptionData (traitId: string) {
     useEffect(() => {
         if (fetchData) {
             setOptionData(fetchData)
-            console.log(fetchData);
         }
     }, [fetchData])
 

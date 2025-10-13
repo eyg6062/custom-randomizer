@@ -94,6 +94,7 @@ function CreateTraitModal({ opened, close, handleSubmit } : ModalProps<ItemType>
                         value={reverseTypeLabelMap[typeInput]}
                         onChange={selectTypeInput}
                         data={Object.keys(typeLabelMap)}
+                        label="Trait Type"
                     />
 
                     {renderTraitTypeForm()}
