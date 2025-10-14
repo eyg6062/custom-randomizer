@@ -1,0 +1,33 @@
+import { useQuery } from "@tanstack/react-query";
+import { getBasicTraitWithOptionImage } from "../../api/trait";
+import { QueryKey } from "../../types/queryKeys";
+import { EditStatus, TraitOption, TraitOptionEditProps } from "../../types/traitOption";
+import { useEffect, useState } from "react";
+
+export function useTraitOptionData (traitId: string) {
+    const [optionData, setOptionData] = useState<TraitOptionEditProps[]>([]);
+
+    const fetchTraitOptions = async () => {
+        const response = await getBasicTraitWithOptionImage(traitId);
+        const options: TraitOption[] = response.traitOptions;
+        const result: TraitOptionEditProps[] = options.map(option => ({
+            ...option,
+            editStatus: EditStatus.Original,
+        }));
+        return result;
+    }
+
+    const {isPending, isFetching, error, data: fetchData } = useQuery<TraitOptionEditProps[]>({
+        queryKey: [QueryKey.TraitOptionData],
+        queryFn: fetchTraitOptions,
+        placeholderData: [],
+    })
+
+    useEffect(() => {
+        if (fetchData) {
+            setOptionData(fetchData)
+        }
+    }, [fetchData])
+
+    return {isPending, isFetching, error, optionData, setOptionData};
+}

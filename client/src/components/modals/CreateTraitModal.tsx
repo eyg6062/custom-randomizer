@@ -1,12 +1,14 @@
 import { Button, Group, Modal, NativeSelect, NumberInput, TextInput } from "@mantine/core"
 import { useState } from "react";
-import { ItemType, ModalProps } from "../types/modalProps";
-import { reverseTypeLabelMap, TraitType, typeLabelMap } from "../types/traitType";
-import { CreateAnyTraitDto, CreateNumberTraitDto, CreateTraitDto } from "../types/trait";
+import { ItemType, ModalProps } from "../../types/modalProps";
+import { reverseTypeLabelMap, TraitType, typeLabelMap } from "../../types/traitType";
+import { CreateAnyTraitDto } from "../../types/trait";
 
 export interface CreateTraitProps {
-    handleSubmit: (event: React.FormEvent<HTMLFormElement>, data: CreateAnyTraitDto) => Promise<void>
+    handleSubmit: (data: ModalCreateAnyTraitDto) => Promise<void>
 }
+
+export type ModalCreateAnyTraitDto = Omit<CreateAnyTraitDto, "randomizerId">
 
 function CreateTraitModal({ opened, close, handleSubmit } : ModalProps<ItemType> & CreateTraitProps) {
     const [nameInput, setNameInput] = useState<string>('');
@@ -23,9 +25,9 @@ function CreateTraitModal({ opened, close, handleSubmit } : ModalProps<ItemType>
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        const data: CreateTraitDto = {traitType: typeInput, name: nameInput};
+        const data: ModalCreateAnyTraitDto = {traitType: typeInput, name: nameInput};
 
-        let result: CreateAnyTraitDto;
+        let result: ModalCreateAnyTraitDto;
         switch (typeInput) {
             case TraitType.Basic:
                 result = {...data};
@@ -35,7 +37,7 @@ function CreateTraitModal({ opened, close, handleSubmit } : ModalProps<ItemType>
                     console.log("minNum can't be greater than maxNum");
                     return;
                 }
-                const dto: CreateNumberTraitDto = {...data, minNum: Number(minInput), maxNum: Number(maxInput)}
+                const dto = {...data, minNum: Number(minInput), maxNum: Number(maxInput)}
                 result = dto;
                 break;
             default:
@@ -43,7 +45,8 @@ function CreateTraitModal({ opened, close, handleSubmit } : ModalProps<ItemType>
                 return;
         }
 
-        handleSubmit(e, result);
+        handleSubmit(result);
+        close();
     }
 
     const selectTypeInput = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -91,6 +94,7 @@ function CreateTraitModal({ opened, close, handleSubmit } : ModalProps<ItemType>
                         value={reverseTypeLabelMap[typeInput]}
                         onChange={selectTypeInput}
                         data={Object.keys(typeLabelMap)}
+                        label="Trait Type"
                     />
 
                     {renderTraitTypeForm()}

@@ -31,11 +31,11 @@ export async function putTrait(id: string, data: EditTraitDto) {
     return apiFetch(`${REQUEST_URL}/${id}`, options);
 }
 
-export async function postTrait(id: string, data: CreateAnyTraitDto) {
+export async function postTrait(data: CreateAnyTraitDto) {
     // traitType must be first value in json
 
     const params = new URLSearchParams({
-        randomizerId: id
+        randomizerId: data.randomizerId
     });
 
     const options = {
@@ -49,7 +49,7 @@ export async function postTrait(id: string, data: CreateAnyTraitDto) {
     return apiFetch(`${REQUEST_URL}?${params.toString()}`, options);
 }
 
-export async function deleteTrait(id: string) {
+export async function apiDeleteTrait(id: string) {
     const options = {
         method: 'DELETE'
     };

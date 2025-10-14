@@ -1,137 +1,37 @@
-import { useState, useEffect} from "react";
 import { CreateRandomizerDto, RandomizerCardProps } from "../types/randomizer";
-import { apiDeleteRandomizer, getRandomizersWithImageUrl} from "../api/randomizer";
 import CustomGrid from "../components/CustomGrid";
 import { RandomizerCardEdit } from "../components/RandomizerCard";
-import { createRandomizer, editRandomizerImage, editRandomizerName } from "../Utils/randomizerEditor";
 import { Group } from "@mantine/core";
-import CreateRandomizerModal, {CreateRandomizerProps} from "../components/CreateRandomizerModal";
-import EditImageModal, { EditImageProps } from "../components/EditImageModal";
+import CreateRandomizerModal, {CreateRandomizerProps} from "../components/modals/CreateRandomizerModal";
 import { useCustomModal } from "../hooks/useCustomModal";
-import RenameModal, { RenameModalProps } from "../components/RenameModal";
-import DeleteConfirmModal, { DeleteConfirmProps } from "../components/DeleteConfirmModal";
+import DeleteConfirmModal, { DeleteConfirmProps } from "../components/modals/DeleteConfirmModal";
 import CreateItemButton from "../components/CreateItemButton";
+import { ItemType } from "../types/modalProps";
+import RenameModal, { RenameModalProps } from "../components/modals/RenameModal";
+import EditImageModal, { EditImageProps } from "../components/modals/EditImageModal";
+import { LoadingIndicator } from "../components/LoadingIndicator";
+import { useRandomizerEditor } from "../hooks/useRandomizerEditor";
+import { useRandomizersData } from "../hooks/data/useRandomizersData";
 
 function Dashboard () {
-    const [randomizerData, setRandomizerData] = useState<RandomizerCardProps[]>([]);
+    const {isFetching, error, randomizerData} = useRandomizersData();
+    const {createRand, deleteRand, editRandName, editRandImage} = useRandomizerEditor("randomizerData", false);
 
-    useEffect( () => {
-        getRandomizersWithImageUrl()
-            .then(json => setRandomizerData(json))
-    }, [] );
-
-
-    const handleCreateSubmit = async (event: React.FormEvent<HTMLFormElement>, name: string, description: string, image: File | undefined) => {
-        event.preventDefault();
-
-        const data : CreateRandomizerDto = {
-            name: name,
-            imageFile: image,
-            description: description
-        }
-        
-        try {
-            const response = await createRandomizer(data)
-            
-            let imageUrl;
-            if (response.imageKey && image) {
-                imageUrl = URL.createObjectURL(image);
-            }
-
-            const newRand : RandomizerCardProps = {
-                id: response.id,
-                name: name,
-                imageKey: response.imageKey,
-                imageUrl: imageUrl,
-            }
-            setRandomizerData(prev => [...prev, newRand]);
-
-        } catch (error) {
-            console.error(`Failed to create randomizer:`, error);
-        }
-
-        createModal.close();
+    const handleCreateSubmit = async (name: string, description: string, image: File | undefined) => {
+        const dto: CreateRandomizerDto = {name: name, description: description};
+        await createRand(dto, image);
     }
 
-    const handleDelete = async () => {
-        const selectedCard = deleteConfirmModal.data;
-        if (!selectedCard) {
-            console.log("no randomizer id selected");
-            return;
-        }
-        try {
-            await apiDeleteRandomizer(selectedCard.id);
-            setRandomizerData(prev => prev.filter(randomizer => randomizer.id !== selectedCard.id));
-        } catch (error) {
-            console.error(`Failed to delete randomizer ${selectedCard.id}:`, error);
-        }
+    const handleDelete = async (item: ItemType) => {
+        await deleteRand(item as RandomizerCardProps);
     }
 
-    const handleSubmitRename = async (event: React.FormEvent<HTMLFormElement>, renameInput: string) => {
-        event.preventDefault();
-        const selectedCard = renameModal.data as RandomizerCardProps;
-
-        if (!selectedCard) {
-            console.log("no randomizer id selected");
-            return;
-        }
-
-        try {
-            await editRandomizerName(selectedCard.id, renameInput);
-            setRandomizerData(prev => 
-                prev.map(randomizer => {
-                    if (randomizer.id === selectedCard.id) {
-                        console.log("editing name");
-                        return {...randomizer, name: renameInput};
-                    }
-                    else {
-                        return randomizer;
-                    }
-                })
-            );
-
-        } catch (error) {
-            console.error(`Failed to rename randomizer ${selectedCard.id}:`, error);
-        }
-
-        renameModal.close();
+    const handleSubmitRename = async (item: ItemType, renameInput: string) => {
+        await editRandName(item as RandomizerCardProps, renameInput);
     }
 
-    const handleSubmitEditThumb = async (event: React.FormEvent<HTMLFormElement>, image: File | undefined) => {
-        event.preventDefault();
-
-        const selectedCard = editThumbModal.data;
-
-        if (!selectedCard) {
-            console.log("no randomizer selected");
-            return;
-        }
-        
-        try {
-            const putResponse = await editRandomizerImage(selectedCard.id, image as File);
-            
-            let imageUrl: string;
-            if (putResponse.imageKey && image) {
-                imageUrl = URL.createObjectURL(image);
-            }
-
-            setRandomizerData(prev => 
-                prev.map(randomizer => {
-                    if (randomizer.id === putResponse.id) {
-                        console.log("editing image key");
-                        return {...randomizer, imageKey: putResponse.imageKey, imageUrl: imageUrl};
-                    }
-                    else {
-                        return randomizer;
-                    }
-                })
-            );
-
-        } catch (error) {
-            console.error(`Failed to edit randomizer thumbnail ${selectedCard.id}:`, error);
-        }
-
-        editThumbModal.close()
+    const handleSubmitEditThumb = async (item: ItemType, imageFile: File | undefined) => {
+        await editRandImage(item as RandomizerCardProps, imageFile as File);
     }
 
     
@@ -156,36 +56,48 @@ function Dashboard () {
         {handleSubmit: handleDelete}
     )
 
+    if (error) throw new Error(); 
+
+    const showPageContent = () => (
+        <>
+        <CustomGrid
+            data={(randomizerData as RandomizerCardProps[]).map(randomizer => ({
+                ...randomizer,
+                onRenameClick: renameModal.openWithData,
+                onDeleteClick: deleteConfirmModal.openWithData,
+                onEditThumbClick: editThumbModal.openWithData,
+            }))}
+            Component={RandomizerCardEdit}
+        />
+
+        {deleteConfirmModal.modalNode}
+        {renameModal.modalNode}
+        {editThumbModal.modalNode}
+        {createModal.modalNode}
+        </>
+    )
 
     return (
         <>
             <Group>
                 <h1>Dashboard</h1>
 
-                <CreateItemButton
-                    onClick={createModal.open}
-                    toolTipLabel="Create new randomizer"
-                />
+                { !(isFetching) ? 
+                    <CreateItemButton
+                        onClick={createModal.open}
+                        toolTipLabel="Create new randomizer"
+                    />
+                    : null
+                }
+                
                 
             </Group>
             
-            <CustomGrid
-                data={randomizerData.map(randomizer => ({
-                    ...randomizer,
-                    onRenameClick: renameModal.openWithData,
-                    onDeleteClick: deleteConfirmModal.openWithData,
-                    onEditThumbClick: editThumbModal.openWithData,
-                }))}
-                Component={RandomizerCardEdit}
-            />
-
-            {deleteConfirmModal.modalNode}
-
-            {renameModal.modalNode}
-
-            {editThumbModal.modalNode}
-
-            {createModal.modalNode}
+            {
+                (isFetching) ? 
+                    <LoadingIndicator /> : 
+                    showPageContent()
+            }
 
         </>
     )

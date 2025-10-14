@@ -1,26 +1,23 @@
-import { useState, useEffect } from "react"
 import { RandomizerCardPublic } from "../components/RandomizerCard"
 import CustomGrid from "../components/CustomGrid"
-import { getRandomizersWithImageUrl } from "../api/randomizer";
-import { RandomizerCardProps} from "../types/randomizer";
+import { useRandomizersData } from "../hooks/data/useRandomizersData";
+import { LoadingIndicator } from "../components/LoadingIndicator";
+import { RandomizerCardProps } from "../types/randomizer";
 
 function Home () {
-    const [randomizerData, setRandomizerData] = useState<RandomizerCardProps[]>([]);
+    const {isFetching, error, randomizerData} = useRandomizersData();
 
-    useEffect( () => {
-        getRandomizersWithImageUrl()
-            .then(json => setRandomizerData(json))
-    }, [] );
+    const pageContent = 
+        <CustomGrid
+            data={randomizerData as RandomizerCardProps[]}
+            Component={RandomizerCardPublic}
+        />
 
+    if (error) throw new Error();
     return (
         <>
             <h1>Home</h1>
-
-            <CustomGrid
-                data={randomizerData}
-                Component={RandomizerCardPublic}
-            />
-            
+            { (isFetching) ? <LoadingIndicator /> : pageContent }
         </>
     )
 }
