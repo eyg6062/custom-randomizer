@@ -12,6 +12,7 @@ import { useTraitOptionData } from "../../hooks/data/useTraitOptionData"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { showErrorNotification, showSavedNotification } from "../../Utils/showNotifications"
 import { QueryKey } from "../../types/queryKeys"
+import { LoadingIndicator } from "../LoadingIndicator"
 
 interface BasicEditSectionProps {
     trait: BasicTrait
@@ -20,7 +21,8 @@ interface BasicEditSectionProps {
 function BasicEditSection({trait}: BasicEditSectionProps) {
     const [tempId, setTempId] = useState<number>(0);
 
-    const {optionData, setOptionData} = useTraitOptionData(trait.id);
+    const {isFetching, error, optionData, setOptionData} = useTraitOptionData(trait.id);
+    
     const queryClient = useQueryClient();
 
     const getTempId = () : string => {
@@ -135,7 +137,9 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
         await queryClient.invalidateQueries({ queryKey: [QueryKey.TraitOptionData] })
     }
 
-    return (
+    if (error) throw new Error();
+
+    const pageContent = (
         <>
 
         <CreateItemButton
@@ -161,6 +165,8 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
 
         </>
     )
+
+    return isFetching ? <LoadingIndicator/> : pageContent;
 }
 
 export default BasicEditSection

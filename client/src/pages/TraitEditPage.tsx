@@ -12,12 +12,13 @@ import CircleButton from "../components/CircleButton";
 import { IconPencil } from "@tabler/icons-react";
 import { useCustomModal } from "../hooks/useCustomModal";
 import RenameModal, { RenameModalProps } from "../components/modals/RenameModal";
+import { LoadingIndicator } from "../components/LoadingIndicator";
 
 export function TraitEditPage () {
     const {id: traitId} = useParams<{ id: string }>();
     if (traitId === undefined) throw new Error("Missing route parameter: id");
 
-    const {singleTraitData: traitData} = useSingleTraitData(traitId);
+    const {isPending, isFetching, error, singleTraitData: traitData} = useSingleTraitData(traitId);
     const {editTraitName} = useTraitEditor(QueryKey.SingleTraitData, true);
 
     const handleSubmitRename = async (item: ItemType, renameInput: string) => {
@@ -30,6 +31,7 @@ export function TraitEditPage () {
         {handleSubmit: handleSubmitRename}
     );
 
+    if (error) throw new Error();
     if (!traitData) return null;
 
     const renderTraitSection = () => {
@@ -45,26 +47,26 @@ export function TraitEditPage () {
 
     const pageContent = (
         <>
-        <p>(Trait option edit view)</p>
-        
-        <Group>
-            <CircleButton
-                icon={IconPencil}
-                onClick={() => {
-                    traitData ? renameModal.openWithData(traitData) : console.log("no trait data");
-                }}
-            />
-            <h1>{traitData ? traitData.name : null}</h1>
-        </Group>
+            <p>(Trait option edit view)</p>
+            
+            <Group>
+                <CircleButton
+                    icon={IconPencil}
+                    onClick={() => {
+                        traitData ? renameModal.openWithData(traitData) : console.log("no trait data");
+                    }}
+                />
+                <h1>{traitData ? traitData.name : null}</h1>
+            </Group>
 
-        {renameModal.modalNode}
+            {renameModal.modalNode}
+            {renderTraitSection()}
         </>
     )
 
     return (
         <>
-        {pageContent}
-        {renderTraitSection()}
+        { isPending || isFetching ? <LoadingIndicator/> : pageContent }
         </>
     )
 }

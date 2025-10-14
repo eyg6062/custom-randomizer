@@ -21,21 +21,11 @@ import { QueryKey } from "../types/queryKeys";
 import { useTraitData } from "../hooks/data/useTraitData";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 
-function RandomizerEditPage () {
-    const {id} = useParams<{ id: string }>();
-    if (id === undefined) throw new Error("Missing route parameter: id");
-
-    const {
-        handleUpdateTraitCard,
-        clearAllCards,
-        randomizeAllCards,
-    } = useTraitRandomizer();
+function RandomizerSection ({id}: {id: string}) {
+    const {isFetching, error, randomizerData} = useSingleRandomizerData(id);
     
-    const {isFetching: isFetchingRand, error: randError, randomizerData} = useSingleRandomizerData(id);
-    const {isFetching: isFetchingTraits, error, traitData} = useTraitData(id);
     const {editRandName, editRandDesc} = useRandomizerEditor(QueryKey.SingleRandomizerData, true);
-    const {createTrait, editTraitName, deleteTrait} = useTraitEditor(QueryKey.TraitData, false)
-
+    
     const handleSubmitRandRename = async (item: ItemType, renameValue: string) => {
         editRandName(item as Randomizer, renameValue);
     }
@@ -43,23 +33,6 @@ function RandomizerEditPage () {
     const handleSubmitEditDesc = async (item: ItemType, descValue: string) => {
         editRandDesc(item as Randomizer, descValue);
     }
-
-    const handleSubmitCreate = async (data: ModalCreateAnyTraitDto) => {
-        const createData = {...data, randomizerId: id};
-        console.log(createData);
-        await createTrait(createData);
-    }
-
-    const handleSubmitTraitRename = async (item: ItemType, renameInput: string) => {        
-        const selectedTrait = item as AnyTrait;
-        await editTraitName(selectedTrait, renameInput);
-    }
-
-    const handleDelete = async (item: ItemType) => {
-        const selectedTrait = item as AnyTrait;
-        await deleteTrait(selectedTrait);
-    }
-
 
     const renameRandModal = useCustomModal<RandomizerCardProps, RenameModalProps>(
         RenameModal,
@@ -71,25 +44,9 @@ function RandomizerEditPage () {
         {handleSubmit: handleSubmitEditDesc}
     )
 
-    const createModal =  useCustomModal<undefined, CreateTraitProps>(
-        CreateTraitModal,
-        {handleSubmit: handleSubmitCreate}
-    )
-
-    const renameTraitModal = useCustomModal<AnyTrait, RenameModalProps>(
-        RenameModal,
-        {handleSubmit: handleSubmitTraitRename}
-    )
-
-    const deleteConfirmModal = useCustomModal<AnyTrait, DeleteConfirmProps>(
-        DeleteConfirmModal,
-        {handleSubmit: handleDelete}
-    )
-
-    if (randError || error) throw new Error("error loading randomizer edit page");
-    if (!randomizerData || !traitData ) {return null;}
-
-    const showRandContent = () => (
+    if (error) throw new Error(); 
+    if (!randomizerData) return null;
+    const pageContent = (
         <>
             <p>(edit view)</p>
             <Group>
@@ -107,10 +64,58 @@ function RandomizerEditPage () {
                 />
                 <p>{randomizerData.description || "(description)"}</p>
             </Group>
+
+            {renameRandModal.modalNode}
+            {editDescModal.modalNode}
         </>
     )
 
-    const showTraitContent = () => (
+    return isFetching ? <LoadingIndicator/> : pageContent;
+}
+
+function TraitsSection ({id}: {id: string}) {
+    const {isFetching, error, traitData} = useTraitData(id);
+    const {
+        handleUpdateTraitCard,
+        clearAllCards,
+        randomizeAllCards,
+    } = useTraitRandomizer();
+    const {createTrait, editTraitName, deleteTrait} = useTraitEditor(QueryKey.TraitData, false)
+
+    const handleSubmitCreate = async (data: ModalCreateAnyTraitDto) => {
+        const createData = {...data, randomizerId: id};
+        console.log(createData);
+        await createTrait(createData);
+    }
+
+    const handleSubmitTraitRename = async (item: ItemType, renameInput: string) => {        
+        const selectedTrait = item as AnyTrait;
+        await editTraitName(selectedTrait, renameInput);
+    }
+
+    const handleDelete = async (item: ItemType) => {
+        const selectedTrait = item as AnyTrait;
+        await deleteTrait(selectedTrait);
+    }
+
+    const createModal =  useCustomModal<undefined, CreateTraitProps>(
+        CreateTraitModal,
+        {handleSubmit: handleSubmitCreate}
+    )
+
+    const renameTraitModal = useCustomModal<AnyTrait, RenameModalProps>(
+        RenameModal,
+        {handleSubmit: handleSubmitTraitRename}
+    )
+
+    const deleteConfirmModal = useCustomModal<AnyTrait, DeleteConfirmProps>(
+        DeleteConfirmModal,
+        {handleSubmit: handleDelete}
+    )
+
+    if (!traitData) {return null;}
+    if (error) throw new Error();    
+    const pageContent = (
         <>
             <CreateItemButton
                 onClick={createModal.open}
@@ -136,24 +141,24 @@ function RandomizerEditPage () {
                     Clear All
                 </Button>
             </Group>
-        </>
-    )
 
-    return (
-        <>
-            { isFetchingRand ? <LoadingIndicator/> :
-                showRandContent()
-            }
-
-            { isFetchingTraits ? <LoadingIndicator/> :
-                showTraitContent()
-            }
-
-            {renameRandModal.modalNode}
-            {editDescModal.modalNode}
             {createModal.modalNode}
             {renameTraitModal.modalNode}
             {deleteConfirmModal.modalNode}
+        </>
+    )
+
+    return isFetching ? <LoadingIndicator/> : pageContent;
+}
+
+function RandomizerEditPage () {
+    const {id} = useParams<{ id: string }>();
+    if (id === undefined) throw new Error("Missing route parameter: id");
+
+    return (
+        <>
+            <RandomizerSection id={id} />
+            <TraitsSection id={id} />
         </>
     )
 }

@@ -17,9 +17,10 @@ export function useTraitOptionData (traitId: string) {
         return result;
     }
 
-    const { isFetching, error, data: fetchData } = useQuery<TraitOptionEditProps[]>({
+    const {isPending, isFetching, error, data: fetchData } = useQuery<TraitOptionEditProps[]>({
         queryKey: [QueryKey.TraitOptionData],
         queryFn: fetchTraitOptions,
+        placeholderData: [],
     })
 
     useEffect(() => {
@@ -28,5 +29,5 @@ export function useTraitOptionData (traitId: string) {
         }
     }, [fetchData])
 
-    return {isFetching, error, optionData, setOptionData};
+    return {isPending, isFetching, error, optionData, setOptionData};
 }

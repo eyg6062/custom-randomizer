@@ -4,10 +4,11 @@ import { getTrait } from "../../api/trait";
 import { AnyTrait } from "../../types/trait";
 
 export function useSingleTraitData (id: string) {
-    const { isFetching, error, data: singleTraitData } = useQuery<AnyTrait>({
+    const { isPending, isFetching, error, data: singleTraitData } = useQuery<AnyTrait>({
         queryKey: [QueryKey.SingleTraitData],
         queryFn: () => getTrait(id),
+        placeholderData: undefined,
     })
 
-    return {isFetching, error, singleTraitData};
+    return {isPending, isFetching, error, singleTraitData};
 }
