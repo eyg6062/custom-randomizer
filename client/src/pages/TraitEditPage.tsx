@@ -32,7 +32,7 @@ export function TraitEditPage () {
     );
 
     if (error) throw new Error();
-    if (!traitData) return null;
+    if (!traitData) return <LoadingIndicator/>;
 
     const renderTraitSection = () => {
         switch (traitData.traitType) {
