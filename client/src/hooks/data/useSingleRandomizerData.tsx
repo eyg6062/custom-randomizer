@@ -4,10 +4,10 @@ import { getRandomizer } from "../../api/randomizer"
 
 export function useSingleRandomizerData(id: string) {
     
-    const { isFetching, error, data: randomizerData } = useQuery<Randomizer>({
+    const { isPending, isFetching, error, data: randomizerData } = useQuery<Randomizer>({
         queryKey: ['singleRandomizerData'],
         queryFn: () => getRandomizer(id),
     })
     
-    return { isFetching, error, randomizerData }
+    return { isPending, isFetching, error, randomizerData }
 }

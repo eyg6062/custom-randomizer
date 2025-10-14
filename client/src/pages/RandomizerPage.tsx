@@ -10,7 +10,7 @@ import { LoadingIndicator } from "../components/LoadingIndicator";
 function RandomizerSection ({id}: {id: string}) {
     const {isFetching, randomizerData} = useSingleRandomizerData(id);
     
-    if (!randomizerData) return null;
+    if (!randomizerData) return <LoadingIndicator/>;
     const pageContent = (
         <>
             <h1>{randomizerData.name}</h1>
@@ -32,7 +32,7 @@ function TraitsSection ({id}: {id: string}) {
         randomizeAllCards,
     } = useTraitRandomizer();
     
-    if (!traitData) return null;
+    if (!traitData) return <LoadingIndicator/>;
     const pageContent = (
         <>
             <CustomGrid 

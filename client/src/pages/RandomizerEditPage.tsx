@@ -45,7 +45,7 @@ function RandomizerSection ({id}: {id: string}) {
     )
 
     if (error) throw new Error(); 
-    if (!randomizerData) return null;
+    if (!randomizerData) return <LoadingIndicator/>;
     const pageContent = (
         <>
             <p>(edit view)</p>
@@ -113,8 +113,8 @@ function TraitsSection ({id}: {id: string}) {
         {handleSubmit: handleDelete}
     )
 
-    if (!traitData) {return null;}
-    if (error) throw new Error();    
+    if (error) throw new Error();
+    if (!traitData) return <LoadingIndicator/>; 
     const pageContent = (
         <>
             <CreateItemButton

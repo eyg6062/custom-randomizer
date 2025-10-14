@@ -13,7 +13,7 @@ function Home () {
             Component={RandomizerCardPublic}
         />
 
-    if (error) return <p>error loading home page</p>;
+    if (error) throw new Error();
     return (
         <>
             <h1>Home</h1>

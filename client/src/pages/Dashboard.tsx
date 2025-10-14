@@ -56,7 +56,7 @@ function Dashboard () {
         {handleSubmit: handleDelete}
     )
 
-    if (error) return <p>error loading dashboard</p>; 
+    if (error) throw new Error(); 
 
     const showPageContent = () => (
         <>
