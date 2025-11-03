@@ -77,7 +77,7 @@ function TraitCard (props: TraitCardPropsWithFunction, menu: ReactNode = null) {
                     </div>
                 </Card.Section>
                 <Group justify="space-between" p={0} mt="md">
-                    <Text>{props.name}</Text>
+                    <p className="text-current/75">{props.name}</p>
                     <>{menu}</>
                 </Group>
             </Card>

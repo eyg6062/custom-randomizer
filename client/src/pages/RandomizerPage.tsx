@@ -15,9 +15,7 @@ function RandomizerSection ({id}: {id: string}) {
         <>
             <h1>{randomizerData.name}</h1>
 
-            <Text>
-                {randomizerData.description}
-            </Text>
+            <p className="text-current/75">{randomizerData.description}</p>
         </>
     )
 

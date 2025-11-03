@@ -61,7 +61,7 @@ function RandomizerSection ({id}: {id: string}) {
                     icon={IconPencil}
                     onClick={() => editDescModal.openWithData(randomizerData)}
                 />
-                <p>{randomizerData.description || "(description)"}</p>
+                <p className="text-current/75">{randomizerData.description || "(description)"}</p>
             </Group>
 
             {renameRandModal.modalNode}
