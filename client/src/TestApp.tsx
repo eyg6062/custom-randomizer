@@ -28,7 +28,9 @@ function Layout() {
     return (
         <main>
             <Header />
-            <Outlet />
+            <div className="p-6 md:p-10 mx-auto space-y-3">
+                <Outlet />
+            </div>
         </main>
     )
 }

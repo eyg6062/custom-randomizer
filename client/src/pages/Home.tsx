@@ -17,6 +17,8 @@ function Home () {
     return (
         <>
             <h1>Home</h1>
+            <div className="h-3" />
+            
             { (isFetching) ? <LoadingIndicator /> : pageContent }
         </>
     )

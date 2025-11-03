@@ -48,7 +48,6 @@ function RandomizerSection ({id}: {id: string}) {
     if (!randomizerData) return <LoadingIndicator/>;
     const pageContent = (
         <>
-            <p>(edit view)</p>
             <Group>
                 <CircleButton
                     icon={IconPencil}
@@ -158,6 +157,7 @@ function RandomizerEditPage () {
     return (
         <>
             <RandomizerSection id={id} />
+            <div className="h-6" />
             <TraitsSection id={id} />
         </>
     )

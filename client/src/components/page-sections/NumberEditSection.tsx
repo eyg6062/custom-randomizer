@@ -31,7 +31,7 @@ function NumberEditSection({trait}: NumberEditSectionProps) {
     return (
         <>
         <Fieldset>
-            <form onSubmit={(e) => {handleSubmit(e)}}>
+            <form onSubmit={(e) => {handleSubmit(e)}} className="space-y-3">
                 <Group>
                     <NumberInput
                         label="Min number"

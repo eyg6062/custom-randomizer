@@ -67,6 +67,7 @@ function RandomizerPage () {
     return (
         <>
             <RandomizerSection id={id}/>
+            <div className="h-6" />
             <TraitsSection id={id}/>
         </>
     )

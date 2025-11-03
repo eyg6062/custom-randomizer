@@ -141,6 +141,7 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
 
     const pageContent = (
         <>
+        <div className="h-3" />
 
         <CreateItemButton
             onClick={handleCreateOption}
@@ -157,6 +158,8 @@ function BasicEditSection({trait}: BasicEditSectionProps) {
             }))}
             Component={TraitOptionCard}
         />
+        
+        <div className="h-3" />
 
         <Group>
             <Button type="button" onClick={handleCancel} variant="default">Cancel</Button>

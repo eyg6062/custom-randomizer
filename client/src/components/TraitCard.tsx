@@ -31,8 +31,7 @@ function BasicContent(props: TraitCardProps) {
                 <Image
                     src={props.imageUrl}
                     fit="contain"
-                    height="100%"
-                    width="100%"
+                    className="h-40 p-2"
                 />
             ) : null}
 
@@ -72,10 +71,10 @@ function TraitCard (props: TraitCardPropsWithFunction, menu: ReactNode = null) {
         <div onClick={ () => props.onCardClick(props) } style={{cursor: "pointer"}}>
         
             <Card padding="xs" radius="md" withBorder style={{ minWidth: 300, maxWidth: 300 }}>
-                <Card.Section style={{ height: 160 }}>
-                    <Center style={{width:"100%", height:"100%"}}>
+                <Card.Section className="min-h-40">
+                    <div className="flex items-center justify-center h-full min-h-40">
                         {content}
-                    </Center>
+                    </div>
                 </Card.Section>
                 <Group justify="space-between" p={0} mt="md">
                     <Text>{props.name}</Text>

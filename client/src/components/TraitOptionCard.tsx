@@ -43,7 +43,7 @@ export function TraitOptionCard (props: TraitOptionCardProps) {
                 <Image
                     src={props.imageUrl}
                     fit="contain"
-                    height={160}
+                    className="h-40"
                     width="100%"
                 />
                 ) 

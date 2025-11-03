@@ -47,8 +47,6 @@ export function TraitEditPage () {
 
     const pageContent = (
         <>
-            <p>(Trait option edit view)</p>
-            
             <Group>
                 <CircleButton
                     icon={IconPencil}

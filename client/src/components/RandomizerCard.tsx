@@ -14,7 +14,7 @@ function RandomizerCard (props: RandomizerCardProps, menu: ReactNode = null) {
             <Card.Section>
                 <Image 
                 src={imageUrl ? imageUrl : diceIcon}
-                height={160}
+                className="h-40"
                 fit="contain"
                 />
             </Card.Section>
