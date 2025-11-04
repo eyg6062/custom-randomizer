@@ -1,8 +1,9 @@
-import { Button, Group, Modal, NativeSelect, NumberInput, TextInput } from "@mantine/core"
+import { Group, NativeSelect, NumberInput, TextInput } from "@mantine/core"
 import { useState } from "react";
 import { ItemType, ModalProps } from "../../types/modalProps";
 import { reverseTypeLabelMap, TraitType, typeLabelMap } from "../../types/traitType";
 import { CreateAnyTraitDto } from "../../types/trait";
+import BaseFormModal from "./BaseFormModal";
 
 export interface CreateTraitProps {
     handleSubmit: (data: ModalCreateAnyTraitDto) => Promise<void>
@@ -22,9 +23,7 @@ function CreateTraitModal({ opened, close, handleSubmit } : ModalProps<ItemType>
         setTypeInput(TraitType.Basic);
     }
 
-    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
+    const onSubmit = async () => {
         const data: ModalCreateAnyTraitDto = {traitType: typeInput, name: nameInput};
 
         let result: ModalCreateAnyTraitDto;
@@ -45,8 +44,7 @@ function CreateTraitModal({ opened, close, handleSubmit } : ModalProps<ItemType>
                 return;
         }
 
-        handleSubmit(result);
-        close();
+        await handleSubmit(result);
     }
 
     const selectTypeInput = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -80,29 +78,23 @@ function CreateTraitModal({ opened, close, handleSubmit } : ModalProps<ItemType>
     }
 
     return (
-        <>
-            <Modal opened={opened} onExitTransitionEnd={resetValues} onClose={close} title={"Create a new trait"} centered>
-                <form onSubmit={onSubmit}>
-                    <TextInput
-                        label="Name"
-                        value={nameInput}
-                        onChange={(event) => setNameInput(event.currentTarget.value)}
-                        data-autofocus
-                    />
+        <BaseFormModal opened={opened} close={close} title={"Create a new trait:"} submitFn={onSubmit} reset={resetValues}>
+            <TextInput
+                label="Name"
+                value={nameInput}
+                onChange={(event) => setNameInput(event.currentTarget.value)}
+                data-autofocus
+            />
 
-                    <NativeSelect
-                        value={reverseTypeLabelMap[typeInput]}
-                        onChange={selectTypeInput}
-                        data={Object.keys(typeLabelMap)}
-                        label="Trait Type"
-                    />
+            <NativeSelect
+                value={reverseTypeLabelMap[typeInput]}
+                onChange={selectTypeInput}
+                data={Object.keys(typeLabelMap)}
+                label="Trait Type"
+            />
 
-                    {renderTraitTypeForm()}
-
-                    <Button type="submit" variant="default">Submit</Button>
-                </form>
-            </Modal>
-        </>
+            {renderTraitTypeForm()}
+        </BaseFormModal>
     )
 }
 

@@ -1,6 +1,6 @@
 import CustomGrid from "../components/CustomGrid";
 import { TraitCardPublic } from "../components/TraitCard";
-import { Button, Group, Text } from "@mantine/core";
+import { Button, Group, } from "@mantine/core";
 import { useTraitRandomizer } from "../hooks/useTraitRandomizer";
 import { useSingleRandomizerData } from "../hooks/data/useSingleRandomizerData";
 import { useParams } from "react-router";

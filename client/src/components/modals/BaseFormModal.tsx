@@ -20,8 +20,9 @@ export default function BaseFormModal({opened, close, title, submitFn, children,
     
     return (
         <Modal opened={opened} onClose={close} onExitTransitionEnd={reset} title={title} centered>
-            <form onSubmit={onSubmit}>
+            <form onSubmit={onSubmit} className="space-y-3">
                 {children}
+                <div className="h-3"></div>
                 <Button type="submit" variant="default" disabled={submitDisabled}>
                     Submit
                 </Button>
